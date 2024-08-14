@@ -119,6 +119,7 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private bool _hasHoverCooldown;
     [SerializeField, ConditionalField(nameof(_hasHoverCooldown))] private float _hoverCooldown = 0.05f;
     [SerializeField] private bool _deselectOnStart = true;
+    [SerializeField] private bool _autoDehover = true;
 
     [Header("data")]
     [SerializeField] private List<SelectableItemData> _data = new List<SelectableItemData>();
@@ -170,7 +171,7 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [ButtonMethod]
     private void printTest()
     {
-        print("buttonStatus: seleted: " + Selected);
+        print("buttonStatus: seleted: " + Selected + ", hovered: " + Hovered + ", disabled: " + Disabled);
     }
 
     [ButtonMethod]
@@ -208,6 +209,7 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         if (Disabled) return;
         Selected = selected;
+        if (_autoDehover) Hovered = false;
         UpdateVisuals();
     }
 
