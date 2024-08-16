@@ -248,6 +248,7 @@ MonoBehaviour:
   _firstFloorPrefab: {fileID: 8477803291879560362, guid: 6d0ede67995b6e143a446816a514d968, type: 3}
   _floorPrefabs:
   - {fileID: 6848943907970769686, guid: 90f7a127f53f27a41ba0600e6f0de327, type: 3}
+  - {fileID: 5644033485396267274, guid: b679ca7a62ae5754bac1ea541de58ceb, type: 3}
   _targetHeight: 40
 --- !u!1 &311704075
 GameObject:
@@ -296,7 +297,8 @@ MonoBehaviour:
   _firstFloorPrefab: {fileID: 8477803291879560362, guid: 6d0ede67995b6e143a446816a514d968, type: 3}
   _floorPrefabs:
   - {fileID: 6848943907970769686, guid: 90f7a127f53f27a41ba0600e6f0de327, type: 3}
-  _targetHeight: 4
+  - {fileID: 5644033485396267274, guid: b679ca7a62ae5754bac1ea541de58ceb, type: 3}
+  _targetHeight: 6
 --- !u!1 &330617392
 GameObject:
   m_ObjectHideFlags: 0
@@ -451,6 +453,7 @@ MonoBehaviour:
   _firstFloorPrefab: {fileID: 8477803291879560362, guid: 6d0ede67995b6e143a446816a514d968, type: 3}
   _floorPrefabs:
   - {fileID: 6848943907970769686, guid: 90f7a127f53f27a41ba0600e6f0de327, type: 3}
+  - {fileID: 5644033485396267274, guid: b679ca7a62ae5754bac1ea541de58ceb, type: 3}
   _targetHeight: 10
 --- !u!1001 &545843975
 PrefabInstance:
@@ -2467,6 +2470,14 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 7a225693cb6d62e498d274a7e2202e3e, type: 2}
     - target: {fileID: 8366213242286255598, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
       propertyPath: _fallingGravity
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8366213242286255598, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
+      propertyPath: _vertClimbSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8366213242286255598, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
+      propertyPath: _climbStrafeSpeed
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8366213242286255598, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
