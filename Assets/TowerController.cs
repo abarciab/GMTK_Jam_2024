@@ -15,12 +15,13 @@ public class TowerController : MonoBehaviour
     private void Start()
     {
         _completeSound = Instantiate(_completeSound);
+        GameManager.i.Towers.Add(this);
     }
 
     public float CheckProgress(float y)
     {
         if (Complete) return 1;
-        var progress = Mathf.InverseLerp(transform.position.y, MaxHeight, y);
+        var progress = Mathf.InverseLerp(transform.position.y, MaxHeight * transform.localScale.x, y);
         if (progress > 0.98) CompleteTower();
         return progress;
     }

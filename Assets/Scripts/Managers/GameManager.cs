@@ -18,8 +18,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _pauseMenu;
     [SerializeField] Fade _fade;
     [SerializeField] MusicPlayer _music;
+    [SerializeField] private float _growthSpeed;
 
     [HideInInspector] public PlayerController Player;
+    [HideInInspector] public List<TowerController> Towers = new List<TowerController>();
 
     private float _highScore;
     private TowerController _currentTower;
@@ -45,6 +47,7 @@ public class GameManager : MonoBehaviour
             UIManager.i.ShowCurrentTowerProgress(_towerProgress);
             if (_currentTower.Complete) UIManager.i.CompleteTower(_currentTower.Index);
         }
+        foreach (var t in Towers) if (t != _currentTower) t.transform.localScale += Vector3.one * _growthSpeed * Time.deltaTime;
     }
 
     public void CompleteTower()
