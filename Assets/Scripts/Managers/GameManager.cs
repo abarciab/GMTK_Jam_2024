@@ -22,13 +22,19 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         _fade.Disappear();
-        Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = false;
+        HideMouse();
     }
 
     private void Update()
     {
+        if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) HideMouse();
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
+    }
+
+    private void HideMouse()
+    {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = false;
     }
 
     void TogglePause()
