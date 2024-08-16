@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.ShaderGraph.Internal;
+using UnityEditorInternal;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _runSpeed = 10;
     [SerializeField, Range(0, 1), Tooltip("What percent of forward speed is used for strafe")] private float _strafeSpeedMod = 0.8f;
     [SerializeField] private float _rotateSpeed;
+    [SerializeField] private Vector2 _groundedAndUngroundedRbDrag = new Vector2(4, 1);
 
     [Header("Jumping")]
     [SerializeField] private float _jumpForce;
@@ -34,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public bool IsRunning => _isRunning;
 
-    private Vector3 _moveDir;
+    private Vector3 inputDir;
     private Rigidbody _rb;
     private bool _isGrounded;
     private bool _isRunning;
@@ -94,6 +96,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        //if (_isGrounded) DoHorizontalMovement();
         DoHorizontalMovement();
         UpdateIsGrounded();
         if (_isGrounded && InputController.Get(Control.JUMP)) Jump();
@@ -119,6 +122,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        GameManager.i.UpdateCurrentTower(_currentLadder.GetComponentInParent<TowerController>());
         climbDir.y *= _vertClimbSpeed;
         climbDir.x *= _climbStrafeSpeed;
         _rb.velocity = climbDir;
@@ -147,7 +151,7 @@ public class PlayerController : MonoBehaviour
             GameManager.i.UpdateCurrentTower(colliders[0].GetComponentInParent<TowerController>());
             if (!oldState) Land();
         }
-
+        _rb.drag = _isGrounded ? _groundedAndUngroundedRbDrag.x : _groundedAndUngroundedRbDrag.y;
     }
 
     private void Land()
@@ -158,14 +162,23 @@ public class PlayerController : MonoBehaviour
 
     private void DoHorizontalMovement()
     {
-        _moveDir = GetMoveDir();
-        _isRunning = InputController.Get(Control.RUN) && _moveDir != Vector3.zero;
+        inputDir = GetInputDir().normalized;
+        _isRunning = InputController.Get(Control.RUN) && inputDir != Vector3.zero;
         var speed = _isRunning ? _runSpeed : _walkSpeed;
-        if (_moveDir != Vector3.zero) {
+        if (inputDir != Vector3.zero) {
+            if (!_isGrounded) inputDir *= 0.5f;
             var current = _rb.velocity;
-            var target = _moveDir * speed;
-            target.y = current.y;
-            _rb.velocity = target;
+            float speedForward = Vector3.Dot(current, transform.forward);
+            float speedRight = Vector3.Dot(current, transform.right);
+
+            var moveDir = current;
+            if (Mathf.Sign(inputDir.x) != Mathf.Sign(speedRight) || Mathf.Abs(speedRight) < speed) moveDir += inputDir.x * speed * transform.right; 
+            if (Mathf.Sign(inputDir.y) != Mathf.Sign(speedForward) || Mathf.Abs(speedForward) < speed) moveDir += inputDir.y * speed * transform.forward;
+
+            //if the speed along a axis of the transform is less than the max, add the moveDir speed;
+            //OR if the speed along a axis of the transform has a different sign (to make switching fast);
+
+            _rb.velocity = moveDir;
         }
     }
 
@@ -182,14 +195,14 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 GetMoveDir()
     {
-        _moveDir = Vector3.zero;
+        this.inputDir = Vector3.zero;
         var inputDir = GetInputDir();
-        if (inputDir.y > 0) _moveDir += transform.forward;
-        if (inputDir.x > 0) _moveDir += transform.right * _strafeSpeedMod;
-        if (inputDir.y < 0) _moveDir -= transform.forward;
-        if (inputDir.x < 0) _moveDir -= transform.right * _strafeSpeedMod;
-        _moveDir = _moveDir.normalized;
-        return _moveDir;
+        if (inputDir.y > 0) this.inputDir += transform.forward;
+        if (inputDir.x > 0) this.inputDir += transform.right * _strafeSpeedMod;
+        if (inputDir.y < 0) this.inputDir -= transform.forward;
+        if (inputDir.x < 0) this.inputDir -= transform.right * _strafeSpeedMod;
+        this.inputDir = this.inputDir.normalized;
+        return this.inputDir;
     }
 
     private void OnDrawGizmosSelected()

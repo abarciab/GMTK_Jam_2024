@@ -23,16 +23,24 @@ public class UIManager : MonoBehaviour
     [Header("Completed Towers")]
     [SerializeField] private List<SelectableItem> _completedTowerIcons = new List<SelectableItem>();
 
-    private void Awake() { i = this; }
+    private float _targetTowerProgress;
+
 
     public void ShowHighScore(int score) => _highScoreText.text = _highScoreTemplateString.Replace("SCORE", score.ToString());
-    public void ShowCurrentTowerProgress(float progress) => _towerProgresSlider.value = progress;
+    public void ShowCurrentTowerProgress(float progress) => _targetTowerProgress = progress;
     public void HideTowerProgress() => _towerProgressParent.SetActive(false);
     public void CompleteTower(int index) => _completedTowerIcons[index].SetEnabled(true);
+
+    private void Awake() { i = this; }
 
     private void Start()
     {
         foreach (var icon in _completedTowerIcons) icon.SetEnabled(false);
+    }
+
+    private void Update()
+    {
+        _towerProgresSlider.value = Mathf.Lerp(_towerProgresSlider.value, _targetTowerProgress, 8 * Time.deltaTime);
     }
 
     public void StartNewTower(string towerName, float progress)

@@ -44,8 +44,6 @@ public class GameManager : MonoBehaviour
 
         CalculateHighScore();
         if (_currentTower) {
-            UIManager.i.ShowCurrentTowerProgress(_towerProgress);
-            if (_currentTower.Complete) UIManager.i.CompleteTower(_currentTower.Index);
         }
         foreach (var t in Towers) if (t != _currentTower) t.transform.localScale += Vector3.one * _growthSpeed * Time.deltaTime;
     }
@@ -82,6 +80,9 @@ public class GameManager : MonoBehaviour
         if (newTower != _currentTower) {
             _currentTower = newTower;
             UIManager.i.StartNewTower(newTower.Name, _towerProgress);
+        }else {
+            UIManager.i.ShowCurrentTowerProgress(_towerProgress);
+            if (_currentTower.Complete) UIManager.i.CompleteTower(_currentTower.Index);
         }
     }
 
