@@ -3,24 +3,29 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent (typeof (TowerController))]
 public class TowerBuilder : MonoBehaviour
 {
     [SerializeField] private GameObject _firstFloorPrefab;
+    [SerializeField] private GameObject _lastFloorPrefab;
     [SerializeField] private List<GameObject> _floorPrefabs = new List<GameObject>();
-    [SerializeField] private int _targetHeight = 10;
+    [SerializeField, Min(2)] private int _targetHeight = 10;
 
     private List<FloorController> _placedFloors = new List<FloorController>();
     private FloorController _currentTopFloor;
+    private TowerController _controller;
 
     private void Start()
     {
-        GenerateTower();
+        _controller = GetComponent<TowerController>();
+        GenerateTower();  
     }
 
     private void GenerateTower()
     {
         PlaceFirstFloor();
         for (int i = 0; i < _targetHeight - 1; i++) PlaceNextFloor();
+        _controller.MaxHeight = _currentTopFloor.TopPos.y;
     }
 
     private void PlaceFirstFloor()
@@ -30,9 +35,12 @@ public class TowerBuilder : MonoBehaviour
         _placedFloors.Add(_currentTopFloor);
     }
 
+
     private void PlaceNextFloor()
     {
         var selectedPrefab = _floorPrefabs[Random.Range(0, _floorPrefabs.Count)];
+        if (_placedFloors.Count == _targetHeight - 1) selectedPrefab = _lastFloorPrefab;
+
         var newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, transform.rotation, transform);
         var newFloor = newFloorObj.GetComponent<FloorController>();
         _placedFloors.Add(newFloor);

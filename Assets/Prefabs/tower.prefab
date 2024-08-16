@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5943532702685144740
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7570282849007067534}
+  - component: {fileID: 8026788566478727394}
+  - component: {fileID: 8781711337011915082}
+  m_Layer: 0
+  m_Name: tower
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7570282849007067534
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5943532702685144740}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.71057844, z: 0, w: -0.70361793}
+  m_LocalPosition: {x: -24, y: 0, z: 36.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -269.436, z: 0}
+--- !u!114 &8026788566478727394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5943532702685144740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 421321df99f459d4d9be5efc8843a3aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _firstFloorPrefab: {fileID: 8477803291879560362, guid: 6d0ede67995b6e143a446816a514d968, type: 3}
+  _lastFloorPrefab: {fileID: 5474933323093752411, guid: 9d88759319804a741930343523fea18c, type: 3}
+  _floorPrefabs:
+  - {fileID: 6848943907970769686, guid: 90f7a127f53f27a41ba0600e6f0de327, type: 3}
+  - {fileID: 5644033485396267274, guid: b679ca7a62ae5754bac1ea541de58ceb, type: 3}
+  - {fileID: 5644033485396267274, guid: b679ca7a62ae5754bac1ea541de58ceb, type: 3}
+  _targetHeight: 2
+--- !u!114 &8781711337011915082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5943532702685144740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49e6c838ca40ee44181acac25bbca17a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: A
+  Index: 0
+  _completeSound: {fileID: 11400000, guid: 7612bd5aa041e9040944c46a16af08eb, type: 2}
+  MaxHeight: 0

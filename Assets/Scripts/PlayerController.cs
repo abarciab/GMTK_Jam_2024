@@ -143,7 +143,11 @@ public class PlayerController : MonoBehaviour
         bool oldState = _isGrounded;
         var colliders = Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius, _groundLayermask);
         _isGrounded = colliders.Length > 0;
-        if (!oldState && _isGrounded) Land();
+        if (_isGrounded) {
+            GameManager.i.UpdateCurrentTower(colliders[0].GetComponentInParent<TowerController>());
+            if (!oldState) Land();
+        }
+
     }
 
     private void Land()

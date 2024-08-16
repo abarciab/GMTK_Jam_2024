@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     private void Awake() { i = this; }
 
     public Transform Camera;
+    [SerializeField] private int _totalTowerCount = 4;
+
 
     [SerializeField] GameObject _pauseMenu;
     [SerializeField] Fade _fade;
@@ -20,11 +22,17 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public PlayerController Player;
 
     private float _highScore;
+    private TowerController _currentTower;
+    private int _towersLeft;
+
+    private float _playerY => Player.transform.position.y;  
+    private float _towerProgress => _currentTower == null ? 0 : _currentTower.CheckProgress(_playerY);
 
     private void Start()
     {
         _fade.Disappear();
         HideMouse();
+        _towersLeft = _totalTowerCount;
     }
 
     private void Update()
@@ -32,10 +40,45 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) HideMouse();
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
 
+        CalculateHighScore();
+        if (_currentTower) {
+            UIManager.i.ShowCurrentTowerProgress(_towerProgress);
+            if (_currentTower.Complete) UIManager.i.CompleteTower(_currentTower.Index);
+        }
+    }
+
+    public void CompleteTower()
+    {
+        _towersLeft -= 1;
+        if (_towersLeft == 0) StartCoroutine(WaitThenEndGame());
+    }
+
+    private IEnumerator WaitThenEndGame()
+    {
+        yield return new WaitForSeconds(1.5f);
+        EndGame();
+    }
+
+    private void CalculateHighScore()
+    {
         var currentScore = Player.transform.position.y;
         if (Mathf.FloorToInt(currentScore) > _highScore) {
             _highScore = currentScore;
             UIManager.i.ShowHighScore(Mathf.FloorToInt(_highScore));
+        }
+    }
+
+    public void UpdateCurrentTower(TowerController newTower)
+    {
+        if (newTower == null) {
+            _currentTower = newTower;
+            UIManager.i.HideTowerProgress();
+            return;
+        }
+
+        if (newTower != _currentTower) {
+            _currentTower = newTower;
+            UIManager.i.StartNewTower(newTower.Name, _towerProgress);
         }
     }
 
