@@ -1,6 +1,7 @@
 using MyBox;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,10 +11,20 @@ public class GameManager : MonoBehaviour
     public static GameManager i;
     private void Awake() { i = this; }
 
+    public Transform Camera;
+
     [SerializeField] GameObject _pauseMenu;
     [SerializeField] Fade _fade;
     [SerializeField] MusicPlayer _music;
-    public Transform Camera;
+
+    [HideInInspector] public PlayerController Player;
+
+    private void Start()
+    {
+        _fade.Disappear();
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = false;
+    }
 
     private void Update()
     {
@@ -26,11 +37,6 @@ public class GameManager : MonoBehaviour
         else Pause();
     }
 
-
-    private void Start()
-    {
-        _fade.Disappear();
-    }
 
     public void Resume()
     {

@@ -1,3 +1,4 @@
+using MyBox;
 using UnityEngine;
 
 [System.Serializable]
@@ -5,7 +6,7 @@ public class MappedKeyData
 {
     public string DisplayName;
     public Control Control;
-    public KeyCode Key;
+    [SearchableEnum] public KeyCode Key;
 
     public MappedKeyData(Control control = Control.NONE) 
     {

@@ -13,8 +13,8 @@ public class InputController : MonoBehaviour
     public static InputController i;
 
     public static bool GetDown(Control key) => i.GetKeyDownInternal(key);
-    public static bool Get(Control key) => i.GetKeyDownInternal(key);
-    public static bool GetUp(Control key) => i.GetKeyDownInternal(key);
+    public static bool Get(Control key) => i.GetKeyInternal(key);
+    public static bool GetUp(Control key) => i.GetKeyUpInternal(key);
 
     private void Awake()
     {
