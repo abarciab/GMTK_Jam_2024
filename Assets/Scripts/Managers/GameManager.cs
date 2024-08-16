@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public PlayerController Player;
 
+    private float _highScore;
+
     private void Start()
     {
         _fade.Disappear();
@@ -29,6 +31,12 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) HideMouse();
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
+
+        var currentScore = Player.transform.position.y;
+        if (Mathf.FloorToInt(currentScore) > _highScore) {
+            _highScore = currentScore;
+            UIManager.i.ShowHighScore(Mathf.FloorToInt(_highScore));
+        }
     }
 
     private void HideMouse()

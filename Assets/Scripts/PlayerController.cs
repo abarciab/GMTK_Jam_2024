@@ -91,7 +91,13 @@ public class PlayerController : MonoBehaviour
         bool oldState = _isGrounded;
         var colliders = Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius, _groundLayermask);
         _isGrounded = colliders.Length > 0;
-        if (!oldState && _isGrounded) _landSound.Play();
+        if (!oldState && _isGrounded) Land();
+    }
+
+    private void Land()
+    {
+        _landSound.Play();
+        GameManager.i.Camera.GetComponent<CameraShake>().ShakeManual(3, 0.1f, 0.05f);
     }
 
     private void DoHorizontalMovement()
