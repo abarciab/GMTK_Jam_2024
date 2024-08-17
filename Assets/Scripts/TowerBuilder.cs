@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
-using Unity.VisualScripting;
 using UnityEngine;
-using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent (typeof (TowerController))]
 public class TowerBuilder : MonoBehaviour
@@ -41,15 +38,27 @@ public class TowerBuilder : MonoBehaviour
     {
         Vector3 newFloorRotation = Vector3.zero;
 
-        // switch (_currentTopFloor.ExitSide)
-        // {
-        //     case 
-        // }
+        if(_currentTopFloor.ExitSide == FloorController.CardinalDirection.North)
+        {
+            newFloorRotation =  new Vector3(0f, 180f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
+        }
+        else if(_currentTopFloor.ExitSide == FloorController.CardinalDirection.South)
+        {
+             newFloorRotation =  new Vector3(0f, _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
+        }
+        else if(_currentTopFloor.ExitSide == FloorController.CardinalDirection.East)
+        {
+             newFloorRotation =  new Vector3(0f, 270f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
+        }
+        else if(_currentTopFloor.ExitSide == FloorController.CardinalDirection.West)
+        {
+             newFloorRotation =  new Vector3(0f, 90f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
+        }
 
         GameObject selectedPrefab = _towerFloorPrefabs[Random.Range(0, _towerFloorPrefabs.Count)].floorPrefab;
         if (_placedFloors.Count == _targetHeight - 1) selectedPrefab = _lastFloorPrefab;
 
-        GameObject newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, Quaternion.Euler(), transform);
+        GameObject newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, Quaternion.Euler(newFloorRotation), transform);
         FloorController newFloor = newFloorObj.GetComponent<FloorController>();
         _placedFloors.Add(newFloor);
         newFloorObj.name = "floor " + _placedFloors.Count;
