@@ -24,23 +24,63 @@ public class FloorController : MonoBehaviour
     [SerializeField, ReadOnly] private List<float> _expandedOffsets = new List<float>();
     [SerializeField, ReadOnly] private List<float> _currentOffsets = new List<float>();
 
+    [Header("Particles")]
+    [SerializeField] private ParticleSystem _dustParticles;
+    [SerializeField] private int _dustBurstCount = 250;
+    [SerializeField] private ParticleSystem _brickParticles;
+    [SerializeField] private int _brickBurstCount = 50;
+
+    [Header("Sounds")]
+    [SerializeField] private Sound _slidingSound;
+
 
     [HideInInspector] public FloorController PreviousFloor;
     [HideInInspector] public CardinalDirection ExitSide => _exitSide;
     [HideInInspector] public Vector3 TopPos => _top.position;
 
-    public float TargetExpansion;
+    [HideInInspector] public float TargetExpansion;
 
     private void OnValidate()
     {
         if (_floorSections.Count == 5) UpdateModel();
     }
 
+    private void Start()
+    {
+        _slidingSound = Instantiate(_slidingSound);
+        _slidingSound.PlaySilent(transform);
+    }
+
     private void Update()
     {
         if (PreviousFloor) transform.position = PreviousFloor.TopPos;
         _expansionProgress = Mathf.Lerp(_expansionProgress, TargetExpansion, 2 * Time.deltaTime);
+        _slidingSound.SetPercentVolume(TargetExpansion - _expansionProgress > 0.1f ? 1 : 0, 0.05f);
         UpdateModel();
+    }
+
+    public void IncrementTargetExpansion()
+    {
+        if (_floorSections.Count != 5) return;
+        if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion += 0.25f);
+    }
+
+    public void SetTargetExpansion(float newTarget)
+    {
+        TargetExpansion = newTarget;
+        _dustParticles.Emit(_dustBurstCount);
+        _brickParticles.Emit(_brickBurstCount);
+
+        Transform particlesParent = transform;
+        if (newTarget < 0.25f) particlesParent = _floorSections[1];
+        else if (newTarget < 0.5f) particlesParent = _floorSections[2];
+        else if (newTarget < 0.5f) particlesParent = _floorSections[3];
+        else if (newTarget < 0.5f) particlesParent = _floorSections[4];
+        _dustParticles.transform.SetParent(particlesParent);
+        var pos = _dustParticles.transform.localPosition;
+        pos.y = 0;
+        _dustParticles.transform.localPosition = pos;
+        _brickParticles.transform.position = _dustParticles.transform.position;
     }
 
     [ButtonMethod]

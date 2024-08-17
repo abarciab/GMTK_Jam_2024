@@ -10,17 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93e0513045be1974d934eb6431407da8, type: 3}
-  m_Name: land
+  m_Name: towerSlide
   m_EditorClassIdentifier: 
   Type: 0
   Unpauseable: 0
   _clips:
-  - Name: landAlt2
-    Clip: {fileID: 8300000, guid: 6d2eb92ba65aa534e904dd70815b8527, type: 3}
-    Looping: 0
-  _volume: 0.049
-  _pitch: 0.87
+  - Name: towerExpansionSlidingLoop
+    Clip: {fileID: 8300000, guid: 8ef627f14901ae244b09883e9e0b9aa0, type: 3}
+    Looping: 1
+  _volume: 0.619
+  _pitch: 0.73
   _randomizePitch: 1
-  _pitchRandomizeAmount: 0.005
+  _pitchRandomizeAmount: 0.047
+  _custom3DSettings: 1
+  _minDist: 1
+  _maxDist: 110
+  _rolloffMode: 1
   AudioSource: {fileID: 0}
   Instantialized: 0

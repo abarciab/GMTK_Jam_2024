@@ -11,7 +11,7 @@ public class TowerController : MonoBehaviour
     [SerializeField] private Sound _completeSound;
     [SerializeField] private bool _isCurrentTower;
 
-    [HideInInspector] public float MaxHeight;
+    [HideInInspector] public float MaxHeight => _floors[_floors.Count-1].TopPos.y;
     [HideInInspector] public bool Complete { get; private set; }
 
     private List<FloorController> _floors = new List<FloorController>();
@@ -52,7 +52,7 @@ public class TowerController : MonoBehaviour
 
             var selected = incompleteFloors[Random.Range(0, incompleteFloors.Count)];
             if (selected.TargetExpansion > 0.9f) incompleteFloors.Remove(selected);
-            else selected.TargetExpansion += 0.25f;
+            else selected.IncrementTargetExpansion();
 
             yield return new WaitForSeconds(step);
         }

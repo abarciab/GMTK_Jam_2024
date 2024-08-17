@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _pauseMenu;
     [SerializeField] Fade _fade;
     [SerializeField] MusicPlayer _music;
-    [SerializeField] private float _growthSpeed;
+    [SerializeField] private GameObject _flood;
+    [SerializeField] private float _trigggerFloodStartHeight = 15;
 
     [HideInInspector] public PlayerController Player;
     [HideInInspector] public List<TowerController> Towers = new List<TowerController>();
@@ -30,12 +31,14 @@ public class GameManager : MonoBehaviour
 
     private float _playerY => Player.transform.position.y;  
     private float _towerProgress => _currentTower == null ? 0 : _currentTower.CheckProgress(_playerY);
+    private bool _lostGame;
 
     private void Start()
     {
         _fade.Disappear();
         HideMouse();
         _towersLeft = _totalTowerCount;
+        _flood.SetActive(false);
     }
 
     private void Update()
@@ -44,9 +47,20 @@ public class GameManager : MonoBehaviour
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
 
         CalculateHighScore();
-        if (_currentTower) {
-        }
-        foreach (var t in Towers) if (t != _currentTower) t.transform.localScale += Vector3.up * _growthSpeed * Time.deltaTime;
+    }
+
+    public float GetMaxHeight()
+    {
+        float height = 0;
+        foreach (var t in Towers) if (t.MaxHeight > height) height = t.MaxHeight;
+        return height;
+    }
+
+    public float GetShortestMaxHeight()
+    {
+        float height = GetMaxHeight();
+        foreach (var t in Towers) if (t.MaxHeight < height) height = t.MaxHeight;
+        return height;
     }
 
     public void CompleteTower()
@@ -68,6 +82,7 @@ public class GameManager : MonoBehaviour
             _highScore = currentScore;
             UIManager.i.ShowHighScore(Mathf.FloorToInt(_highScore));
         }
+        if (currentScore > _trigggerFloodStartHeight) _flood.SetActive(true);
     }
 
     public void UpdateCurrentTower(TowerController newTower)
@@ -125,6 +140,14 @@ public class GameManager : MonoBehaviour
         Resume();
         StartCoroutine(FadeThenLoadScene(0));
     }
+
+    public void LoseGame()
+    {
+        if (_lostGame) return;
+        _lostGame = true;
+        StartCoroutine(FadeThenLoadScene(1));
+    }
+
 
     [ButtonMethod]
     public void EndGame()

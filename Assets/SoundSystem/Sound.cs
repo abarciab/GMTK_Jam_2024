@@ -35,6 +35,10 @@ public class Sound : ScriptableObject
     [Range(0, 2), DefaultValue(1.0f), SerializeField] private float _pitch = 1;
     [SerializeField] private bool _randomizePitch;
     [SerializeField, ConditionalField(nameof(_randomizePitch)), Range(0, 1)] private float _pitchRandomizeAmount;
+    [SerializeField] private bool _custom3DSettings;
+    [SerializeField, ConditionalField(nameof(_custom3DSettings))] private float _minDist = 1;
+    [SerializeField, ConditionalField(nameof(_custom3DSettings))] private float _maxDist = 150;
+    [SerializeField, ConditionalField(nameof(_custom3DSettings))] private AudioRolloffMode _rolloffMode = AudioRolloffMode.Linear;
 
     [HideInInspector] public AudioSource AudioSource;
     [HideInInspector] public bool Instantialized;
@@ -149,7 +153,17 @@ public class Sound : ScriptableObject
         AudioSource.pitch = pitch;
         AudioSource.loop = clip.Looping;
         AudioSource.clip = clip.Clip;
+
+        if (_custom3DSettings) Configure3DSettings(AudioSource);
+
         AudioSource.Play();
+    }
+
+    private void Configure3DSettings(AudioSource source)
+    {
+        source.minDistance = _minDist;
+        source.maxDistance = _maxDist;
+        source.rolloffMode = _rolloffMode;
     }
 
     private ClipData GetClip()

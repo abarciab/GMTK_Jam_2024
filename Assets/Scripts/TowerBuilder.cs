@@ -25,7 +25,6 @@ public class TowerBuilder : MonoBehaviour
     {
         PlaceFirstFloor();
         for (int i = 0; i < _targetHeight - 1; i++) PlaceNextFloor();
-        _controller.MaxHeight = _currentTopFloor.TopPos.y;
         _controller.Initialize(_placedFloors);
     }
 
