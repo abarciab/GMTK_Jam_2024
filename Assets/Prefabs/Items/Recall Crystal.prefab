@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8270754373931430674
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -4579378121541590612, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: description
+      value: Use this to move yourself to somewhere you have been before.
+      objectReference: {fileID: 0}
+    - target: {fileID: -4579378121541590612, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: leftClickText
+      value: Travel to your recall point.
+      objectReference: {fileID: 0}
+    - target: {fileID: -4579378121541590612, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: rightClickText
+      value: Set your recall point to where you stand.
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2616298751221403234, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4309536793727018630, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      propertyPath: m_Name
+      value: Recall Crystal
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -4579378121541590612, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4309536793727018630, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1082088583867500995}
+  m_SourcePrefab: {fileID: 100100000, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+--- !u!1 &5262759260057752980 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4309536793727018630, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
+  m_PrefabInstance: {fileID: 8270754373931430674}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1082088583867500995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5262759260057752980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7aa6077b7e070545b34a80ab4749678, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventorySprite: {fileID: 21300000, guid: 2d58fc5e96c5fbb46b9281fc49d6d50d, type: 3}
+  description: Use this to move yourself to somewhere you have been before.
+  leftClickText: Travel to your recall point.
+  rightClickText: Set your recall point to where you stand.
+  useSound: {fileID: 11400000, guid: 937ddfdca0a09a343831e509caa6a123, type: 2}
+  errorSound: {fileID: 11400000, guid: b7980b5b65bfb844bbe44aac54db5303, type: 2}

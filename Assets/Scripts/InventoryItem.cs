@@ -8,6 +8,8 @@ public class InventoryItem : MonoBehaviour
     [SerializeField] private string description;
     [SerializeField] private string leftClickText;
     [SerializeField] private string rightClickText;
+    [SerializeField] protected Sound useSound;
+    [SerializeField] protected Sound errorSound;
 
     private enum ItemState { Inventory, Equipped, Dropped }
     private ItemState itemState = ItemState.Dropped;
@@ -16,6 +18,8 @@ public class InventoryItem : MonoBehaviour
     void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
+        useSound = Instantiate(useSound);
+        errorSound = Instantiate(errorSound);
     }
 
     void Start()
@@ -36,12 +40,12 @@ public class InventoryItem : MonoBehaviour
         }
     }
 
-    public void LeftClick()
+    public virtual void LeftClick()
     {
         print(gameObject.name + " - Left Click");
     }
 
-    public void RightClick()
+    public virtual void RightClick()
     {
         print(gameObject.name + " - Right Click");
     }
