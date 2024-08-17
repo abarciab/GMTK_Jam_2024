@@ -11,7 +11,7 @@ public enum CardinalDirection { South, East, North, West };
 
 public class FloorController : MonoBehaviour
 {
-    [SerializeField, MustBeAssigned] private Transform _top;
+    [SerializeField] private Transform _top;
     [SerializeField] private CardinalDirection _exitSide;
 
     [SerializeField] private Transform _rootParent;
@@ -20,9 +20,8 @@ public class FloorController : MonoBehaviour
 
     [Header("expansion")]
     [SerializeField, Range(0, 1)] private float _expansionProgress;
-    [SerializeField, ReadOnly] private List<float> _compressedOffsets = new List<float>(); 
     [SerializeField, ReadOnly] private List<float> _expandedOffsets = new List<float>();
-    [SerializeField, ReadOnly] private List<float> _currentOffsets = new List<float>();
+    [SerializeField, ReadOnly] private List<float> _compressedOffsets = new List<float>(); 
 
     [Header("Particles")]
     [SerializeField] private ParticleSystem _dustParticles;
@@ -49,6 +48,7 @@ public class FloorController : MonoBehaviour
     {
         _slidingSound = Instantiate(_slidingSound);
         _slidingSound.PlaySilent(transform);
+        _expansionProgress = 0;
     }
 
     private void Update()
@@ -59,6 +59,7 @@ public class FloorController : MonoBehaviour
         UpdateModel();
     }
 
+    [ButtonMethod]
     public void IncrementTargetExpansion()
     {
         if (_floorSections.Count != 5) return;
@@ -117,8 +118,7 @@ public class FloorController : MonoBehaviour
 
     private void UpdateModel()
     {
-        if (_floorSections.Count != 5 || _hiddenExtras.Count != 2) return;
-        _currentOffsets.Clear();
+        if (_floorSections.Count != 5 || _hiddenExtras.Count != 2 || _compressedOffsets.Count + _expandedOffsets.Count != 10) return;
 
         float quarterProgress = Mathf.InverseLerp(0f, 0.25f, _expansionProgress);
         float secondCurrentOffset = Mathf.Lerp(_compressedOffsets[1], _expandedOffsets[1], quarterProgress);
@@ -147,13 +147,6 @@ public class FloorController : MonoBehaviour
     }
 
     [ButtonMethod]
-    private void SetCompressedPositions()
-    {
-        _compressedOffsets.Clear();
-        foreach (var s in _floorSections) _compressedOffsets.Add(s.localPosition.y);
-    }
-
-    [ButtonMethod]
     private void SetExpandedPositions()
     {
         _expandedOffsets.Clear();
@@ -162,4 +155,12 @@ public class FloorController : MonoBehaviour
             _expandedOffsets.Add(_floorSections[i].localPosition.y);
         }
     }
+
+    [ButtonMethod]
+    private void SetCompressedPositions()
+    {
+        _compressedOffsets.Clear();
+        foreach (var s in _floorSections) _compressedOffsets.Add(s.localPosition.y);
+    }
+
 }

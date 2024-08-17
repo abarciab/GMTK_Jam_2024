@@ -54,7 +54,7 @@ public class MovingPlatform : MonoBehaviour
 
     private void SnapToState(DoorState state, bool targetIsState1)
     {
-        transform.SetPositionAndRotation(state.Pos, state.Rot);
+        transform.SetLocalPositionAndRotation(state.Pos, state.Rot);
         _inState1 = targetIsState1;
     }
 

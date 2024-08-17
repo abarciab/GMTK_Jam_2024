@@ -1056,15 +1056,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9182699676585307299}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.5003604, z: 0}
+  m_LocalRotation: {x: -0, y: -0.70710707, z: -0, w: 0.70710653}
+  m_LocalPosition: {x: -0.4392501, y: 1.5003605, z: 0.03426361}
   m_LocalScale: {x: 5.0786734, y: 5.0786734, z: 5.0786734}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8785806552810396579}
   - {fileID: 6667222100412688320}
   m_Father: {fileID: 5371652066591471805}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!33 &2758385619473822276
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1165,7 +1165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1923620315125187829, guid: ae3a384cc642a9841a63621fec5b8d08, type: 3}
       propertyPath: m_Name
-      value: expandableFloor
+      value: floor1
       objectReference: {fileID: 0}
     - target: {fileID: 3965689501642767151, guid: ae3a384cc642a9841a63621fec5b8d08, type: 3}
       propertyPath: _top
