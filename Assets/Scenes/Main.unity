@@ -221,7 +221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &330617393
 Transform:
   m_ObjectHideFlags: 0
@@ -2351,10 +2351,6 @@ PrefabInstance:
       propertyPath: _pauseMenu
       value: 
       objectReference: {fileID: 851367946}
-    - target: {fileID: 7732473814443129502, guid: 8d1e776dc1e2905408652eb5a758e713, type: 3}
-      propertyPath: _growthSpeed
-      value: 0.002
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2407,10 +2403,6 @@ PrefabInstance:
     - target: {fileID: 396697864714516158, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8366213242286255598, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
-      propertyPath: _climbStrafeSpeed
-      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8580997805359560301, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
       propertyPath: m_Name

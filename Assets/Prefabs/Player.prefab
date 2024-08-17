@@ -154,23 +154,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b85cb4ce9be57d84b9f27d2aec48e392, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 5
-  _runSpeed: 10
+  _walkSpeed: 4
+  _runSpeed: 8
   _strafeSpeedMod: 0.8
   _rotateSpeed: 25
-  _jumpForce: 18
-  _jumpingUpGravity: 1.5
-  _fallingGravity: 3
-  _minimumJumpTime: 0.1
+  _groundedAndUngroundedRbDrag: {x: 4, y: 2}
+  _jumpForce: 13
+  _jumpingUpGravity: 2
+  _fallingGravity: 6
+  _minimumJumpTime: 0.05
   _groundCheckRadius: 0.21
-  _groundCheckOffset: {x: 0, y: -0.33, z: 0}
+  _groundCheckOffset: {x: 0, y: -0.4, z: 0}
   _groundLayermask:
     serializedVersion: 2
     m_Bits: 8
+  _gliderUnlocked: 0
+  _tempConstFlySpeed: 10
+  _vertClimbSpeed: 5
+  _climbStrafeSpeed: 6
   _jumpUpSound: {fileID: 11400000, guid: 7a225693cb6d62e498d274a7e2202e3e, type: 2}
   _landSound: {fileID: 11400000, guid: 09b0a361762355343bb58651ab7257c0, type: 2}
-  _vertClimbSpeed: 5
-  _climbStrafeSpeed: 3
+  _openGliderSound: {fileID: 11400000, guid: 1e6a93b7e846bd94a9e6e4e97b11a608, type: 2}
 --- !u!54 &3062164361182654132
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -180,7 +184,7 @@ Rigidbody:
   m_GameObject: {fileID: 8580997805359560301}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 4
+  m_Drag: 1
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}

@@ -26,13 +26,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 _groundCheckOffset;
     [SerializeField] private LayerMask _groundLayermask;
 
-    [Header("Sounds")]
-    [SerializeField] private Sound _jumpUpSound;
-    [SerializeField] private Sound _landSound;
+    [Header("Gliding")]
+    [SerializeField] private bool _gliderUnlocked;
+    [SerializeField] private float _tempConstFlySpeed = 10;
+
 
     [Header("Climbing")]
     [SerializeField] private float _vertClimbSpeed = 3;
     [SerializeField] private float _climbStrafeSpeed = 1;
+
+    [Header("Sounds")]
+    [SerializeField] private Sound _jumpUpSound;
+    [SerializeField] private Sound _landSound;
+    [SerializeField] private Sound _openGliderSound;
 
     [HideInInspector] public bool IsRunning => _isRunning;
 
@@ -40,6 +46,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rb;
     private bool _isGrounded;
     private bool _isRunning;
+    private bool _isGliding;
     private bool _isClimbing;
     private float _lastJumpTime;
     private Ladder _currentLadder;
@@ -71,6 +78,7 @@ public class PlayerController : MonoBehaviour
     {
         _jumpUpSound = Instantiate(_jumpUpSound);
         _landSound = Instantiate(_landSound);
+        _openGliderSound = Instantiate(_openGliderSound);
     }
 
     private void Update()
@@ -89,19 +97,36 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        if (_currentLadder && !_isClimbing) _isClimbing = InputController.Get(Control.MOVE_FORWARD);
+        UpdateIsGrounded();
 
+        if (!_isGliding && !_isGrounded && _rb.velocity.y < 0 && InputController.GetDown(Control.JUMP) && _gliderUnlocked) StartGliding();
+        if (_isGliding) {
+            Glide();
+            return;
+        }
+
+        if (_currentLadder && !_isClimbing) _isClimbing = InputController.Get(Control.MOVE_FORWARD);
         if (_isClimbing) {
             Climb();
             return;
         }
 
-        //if (_isGrounded) DoHorizontalMovement();
-        DoHorizontalMovement();
-        UpdateIsGrounded();
         if (_isGrounded && InputController.Get(Control.JUMP)) Jump();
+        WalkRun();
         if (!_isGrounded && _rb.velocity.y > 0.1) ApplyGravity(_jumpingUpGravity);
         if (!_isGrounded && _rb.velocity.y < 0.1) ApplyGravity(_fallingGravity);
+    }
+
+    private void StartGliding()
+    {
+        _openGliderSound.Play();
+        _isGliding = true;
+        _rb.isKinematic = true;
+    }
+
+    private void Glide()
+    {
+
     }
 
     private void Climb()
@@ -135,11 +160,14 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (Time.time - _lastJumpTime < _minimumJumpTime) return;
+        float timeSinceLastJump = Time.time - _lastJumpTime;
+        if (timeSinceLastJump < _minimumJumpTime) return;
 
-        _jumpUpSound.Play();
+        print("jumping. timeSinceLast: " + timeSinceLastJump);
+        _jumpUpSound.Play(restart:false);
         _rb.velocity += Vector3.up * _jumpForce;
         _lastJumpTime = Time.time;
+        _isGrounded = false;
     }
 
     private void UpdateIsGrounded()
@@ -160,7 +188,7 @@ public class PlayerController : MonoBehaviour
         GameManager.i.Camera.GetComponent<CameraShake>().ShakeManual(3, 0.1f, 0.05f);
     }
 
-    private void DoHorizontalMovement()
+    private void WalkRun()
     {
         inputDir = GetInputDir().normalized;
         _isRunning = InputController.Get(Control.RUN) && inputDir != Vector3.zero;
@@ -174,9 +202,6 @@ public class PlayerController : MonoBehaviour
             var moveDir = current;
             if (Mathf.Sign(inputDir.x) != Mathf.Sign(speedRight) || Mathf.Abs(speedRight) < speed) moveDir += inputDir.x * speed * transform.right; 
             if (Mathf.Sign(inputDir.y) != Mathf.Sign(speedForward) || Mathf.Abs(speedForward) < speed) moveDir += inputDir.y * speed * transform.forward;
-
-            //if the speed along a axis of the transform is less than the max, add the moveDir speed;
-            //OR if the speed along a axis of the transform has a different sign (to make switching fast);
 
             _rb.velocity = moveDir;
         }
