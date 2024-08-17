@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
         CalculateHighScore();
         if (_currentTower) {
         }
-        foreach (var t in Towers) if (t != _currentTower) t.transform.localScale += Vector3.one * _growthSpeed * Time.deltaTime;
+        foreach (var t in Towers) if (t != _currentTower) t.transform.localScale += Vector3.up * _growthSpeed * Time.deltaTime;
     }
 
     public void CompleteTower()

@@ -47,10 +47,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _firstFloorPrefab: {fileID: 8477803291879560362, guid: 6d0ede67995b6e143a446816a514d968, type: 3}
   _lastFloorPrefab: {fileID: 5474933323093752411, guid: 9d88759319804a741930343523fea18c, type: 3}
-  _floorPrefabs:
-  - {fileID: 6848943907970769686, guid: 90f7a127f53f27a41ba0600e6f0de327, type: 3}
-  - {fileID: 5644033485396267274, guid: b679ca7a62ae5754bac1ea541de58ceb, type: 3}
-  - {fileID: 5644033485396267274, guid: b679ca7a62ae5754bac1ea541de58ceb, type: 3}
+  _towerFloorPrefabs:
+  - {fileID: 11400000, guid: 05f04743c77058d438cce4c37eac846d, type: 2}
+  - {fileID: 11400000, guid: 4e9ebed199ddb7742bc623f468a726fe, type: 2}
+  - {fileID: 11400000, guid: 1d6bc4d9aa433354089488d2dc24c7a5, type: 2}
+  - {fileID: 11400000, guid: a56dda936aba920489f637af45b931c2, type: 2}
   _targetHeight: 10
 --- !u!114 &8781711337011915082
 MonoBehaviour:

@@ -49,7 +49,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5410486246525779403}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 3
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -133,9 +133,9 @@ MonoBehaviour:
   _walkSpeed: 4
   _runSpeed: 8
   _strafeSpeedMod: 0.8
-  _rotateSpeed: 25
+  _rotateSpeed: 2.5
   _groundedAndUngroundedRbDrag: {x: 4, y: 2}
-  _jumpForce: 13
+  _jumpForce: 25
   _jumpingUpGravity: 2
   _fallingGravity: 6
   _minimumJumpTime: 0.05

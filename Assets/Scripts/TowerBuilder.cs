@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent (typeof (TowerController))]
 public class TowerBuilder : MonoBehaviour
 {
     [SerializeField] private GameObject _firstFloorPrefab;
     [SerializeField] private GameObject _lastFloorPrefab;
-    [SerializeField] private List<GameObject> _floorPrefabs = new List<GameObject>();
+    [SerializeField] private List<TowerFloorData> _towerFloorPrefabs = new List<TowerFloorData>();
     [SerializeField, Min(2)] private int _targetHeight = 10;
 
     private List<FloorController> _placedFloors = new List<FloorController>();
@@ -37,13 +39,20 @@ public class TowerBuilder : MonoBehaviour
 
     private void PlaceNextFloor()
     {
-        var selectedPrefab = _floorPrefabs[Random.Range(0, _floorPrefabs.Count)];
+        Vector3 newFloorRotation = Vector3.zero;
+
+        // switch (_currentTopFloor.ExitSide)
+        // {
+        //     case 
+        // }
+
+        GameObject selectedPrefab = _towerFloorPrefabs[Random.Range(0, _towerFloorPrefabs.Count)].floorPrefab;
         if (_placedFloors.Count == _targetHeight - 1) selectedPrefab = _lastFloorPrefab;
 
-        var newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, transform.rotation, transform);
-        var newFloor = newFloorObj.GetComponent<FloorController>();
+        GameObject newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, Quaternion.Euler(), transform);
+        FloorController newFloor = newFloorObj.GetComponent<FloorController>();
         _placedFloors.Add(newFloor);
-        newFloor.gameObject.name = "floor " + _placedFloors.Count;
+        newFloorObj.name = "floor " + _placedFloors.Count;
         _currentTopFloor = newFloor;
     }
 }
