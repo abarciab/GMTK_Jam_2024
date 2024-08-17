@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -9,7 +10,6 @@ using UnityEngine;
 public class FloorController : MonoBehaviour
 {
     [SerializeField] private float _height;
-    [SerializeField] private Vector2 _exitSide;
 
     [SerializeField] private List<Transform> _floorSections = new List<Transform>();
     [SerializeField] private List<Transform> _extras = new List<Transform>();
@@ -20,7 +20,9 @@ public class FloorController : MonoBehaviour
     [SerializeField, ReadOnly] private List<float> _expandedOffsets = new List<float>();
     [SerializeField, ReadOnly] private List<float> _currentOffsets = new List<float>();
 
-    public Vector2 ExitSide => _exitSide;
+    [SerializeField] private CardinalDirection _exitSide;
+    public CardinalDirection ExitSide => _exitSide;
+    public enum CardinalDirection { South, East, North, West };
     public Vector3 TopPos => transform.position + Vector3.up * _height;
 
     private void OnValidate()
