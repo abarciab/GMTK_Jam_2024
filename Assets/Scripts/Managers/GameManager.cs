@@ -73,18 +73,18 @@ public class GameManager : MonoBehaviour
     public void UpdateCurrentTower(TowerController newTower)
     {
         if (newTower == null) {
-            if (_currentTower) _currentTower.IsCurrentTower = false;
+            if (_currentTower) _currentTower.SetAsCurrentTower(false);
             _currentTower = newTower;
-            if (_currentTower) _currentTower.IsCurrentTower = true;
+            if (_currentTower) _currentTower.SetAsCurrentTower(true);
             UIManager.i.HideTowerProgress();
             return;
         }
         //else if (_currentTower) _currentTower.IsCurrentTower = false;
 
         if (newTower != _currentTower) {
-            if (_currentTower) _currentTower.IsCurrentTower = false;
+            if (_currentTower) _currentTower.SetAsCurrentTower(false);
             _currentTower = newTower;
-            _currentTower.IsCurrentTower = true;
+            _currentTower.SetAsCurrentTower(true);
             UIManager.i.StartNewTower(newTower.Name, _towerProgress);
         }else {
             UIManager.i.ShowCurrentTowerProgress(_towerProgress);

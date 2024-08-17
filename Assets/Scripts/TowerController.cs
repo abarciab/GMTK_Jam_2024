@@ -7,20 +7,33 @@ public class TowerController : MonoBehaviour
     public string Name;
 
     [Range(0, 3)] public int Index;
-    [Range(0, 1), SerializeField] private float _growthProgress;
     [SerializeField] private float _secondToFullExpansion = 60;
     [SerializeField] private Sound _completeSound;
+    [SerializeField] private bool _isCurrentTower;
 
     [HideInInspector] public float MaxHeight;
     [HideInInspector] public bool Complete { get; private set; }
 
     private List<FloorController> _floors = new List<FloorController>();
-    public bool IsCurrentTower;
 
     private void Start()
     {
         _completeSound = Instantiate(_completeSound);
         GameManager.i.Towers.Add(this);
+    }
+
+    public void SetAsCurrentTower(bool isCurrent)
+    {
+        _isCurrentTower = isCurrent;
+        if (isCurrent) FinishAllInProgressFloors();
+    }
+
+    private void FinishAllInProgressFloors()
+    {
+        foreach (var f in _floors) {
+            if (f.TargetExpansion > 0.5f) f.TargetExpansion = 1;
+            if (f.TargetExpansion > 0 && f.TargetExpansion < 0.5f) f.TargetExpansion = 0.5f;
+        }
     }
 
     public void Initialize(List<FloorController> floors)
@@ -35,11 +48,11 @@ public class TowerController : MonoBehaviour
         int numSteps = _floors.Count * 4;
         float step = _secondToFullExpansion / numSteps;
         for (int i = 0; i < numSteps; i++) {
-            while (IsCurrentTower) yield return null;
+            while (_isCurrentTower) yield return null;
 
             var selected = incompleteFloors[Random.Range(0, incompleteFloors.Count)];
-            selected.TargetExpansion += 0.25f;
             if (selected.TargetExpansion > 0.9f) incompleteFloors.Remove(selected);
+            else selected.TargetExpansion += 0.25f;
 
             yield return new WaitForSeconds(step);
         }
@@ -48,8 +61,8 @@ public class TowerController : MonoBehaviour
     public float CheckProgress(float y)
     {
         if (Complete) return 1;
-        var progress = Mathf.InverseLerp(transform.position.y, MaxHeight * transform.localScale.x, y);
-        if (progress > 0.98) CompleteTower();
+        var progress = Mathf.InverseLerp(transform.position.y, MaxHeight, y);
+        if (y >= MaxHeight) CompleteTower();
         return progress;
     }
 
