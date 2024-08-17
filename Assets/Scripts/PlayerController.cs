@@ -77,6 +77,8 @@ public class PlayerController : MonoBehaviour
         _lastJumpTime = Time.time;
         _isGrounded = true;
 
+        EquipItem(0);
+
         InitializeSounds();
     }
 
@@ -151,12 +153,16 @@ public class PlayerController : MonoBehaviour
             _currentDroppedItem.Pickup(transform);
             _inventoryItems[_currentItemIndex]?.Drop();
             _inventoryItems[_currentItemIndex] = _currentDroppedItem;
+            UIManager.i.SetInventoryImage(_currentDroppedItem.GetSprite(), _currentItemIndex);
+            EquipItem(_currentItemIndex);
+            _currentDroppedItem = null;
         }
 
         else if(InputController.GetDown(Control.DROP) && _inventoryItems[_currentItemIndex])
         {
             _inventoryItems[_currentItemIndex].Drop();
             _inventoryItems[_currentItemIndex] = null;
+            UIManager.i.RemoveInventoryImage(_currentItemIndex);
         }
 
         else if(InputController.GetDown(Control.USE_PRIMARY) && _inventoryItems[_currentItemIndex])
@@ -169,12 +175,12 @@ public class PlayerController : MonoBehaviour
             _inventoryItems[_currentItemIndex].RightClick();
         }
 
-        else if(InputController.GetDown(Control.NEXT_ITEM))
+        else if(InputController.GetDown(Control.NEXT_ITEM) || Input.mouseScrollDelta.y > 0f)
         {
             EquipNextItem();
         }
 
-        else if(InputController.GetDown(Control.LAST_ITEM))
+        else if(InputController.GetDown(Control.LAST_ITEM) || Input.mouseScrollDelta.y < 0f)
         {
             EquipPreviousItem();
         }
@@ -342,9 +348,10 @@ public class PlayerController : MonoBehaviour
 
     private void EquipItem(int index)
     {
-        _inventoryItems[_currentItemIndex]?.Unequip();
+        if (_currentItemIndex != index) _inventoryItems[_currentItemIndex]?.Unequip();
         _currentItemIndex = index;
         _inventoryItems[_currentItemIndex]?.Equip();
+        UIManager.i.SelectInventoryImage(index);
     }
 
     private void EquipNextItem()

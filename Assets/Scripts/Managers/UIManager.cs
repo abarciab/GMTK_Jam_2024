@@ -23,6 +23,10 @@ public class UIManager : MonoBehaviour
     [Header("Completed Towers")]
     [SerializeField] private List<SelectableItem> _completedTowerIcons = new List<SelectableItem>();
 
+    [Header("Inventory")]
+    [SerializeField] private List<Image> _inventoryImages;
+    [SerializeField] private Image _inventorySelectionIndicator;
+
     private float _targetTowerProgress;
 
 
@@ -36,6 +40,8 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         foreach (var icon in _completedTowerIcons) icon.SetEnabled(false);
+        foreach (var image in _inventoryImages) image.enabled = false;
+        _inventorySelectionIndicator.enabled = false;
     }
 
     private void Update()
@@ -57,4 +63,23 @@ public class UIManager : MonoBehaviour
         string timeString = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
         return timeString;
     }
+
+    public void SetInventoryImage(Sprite sprite, int index)
+    {
+        _inventoryImages[index].sprite = sprite;
+        _inventoryImages[index].enabled = true;
+    }
+
+    public void RemoveInventoryImage(int index)
+    {
+        _inventoryImages[index].sprite = null;
+        _inventoryImages[index].enabled = false;
+    }
+
+    public void SelectInventoryImage(int index)
+    {
+        _inventorySelectionIndicator.transform.position = _inventoryImages[index].transform.position;
+        _inventorySelectionIndicator.enabled = true;
+    }
+    
 }
