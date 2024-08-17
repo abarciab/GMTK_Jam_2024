@@ -13,7 +13,7 @@ public class Test : MonoBehaviour
     [ButtonMethod]
     private void SetParent()
     {
-        _testChild.SetParent(_testParent);1
+        _testChild.SetParent(_testParent);
     }
     
 }
