@@ -62,6 +62,7 @@ public class PlayerController : MonoBehaviour
     private InventoryItem _currentDroppedItem;
     private float _glideSpeed;
     private Vector3 oldPos;
+    private GameObject _currentFloorObj;
 
     private float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     private float _currentLadderDist => _currentLadder == null ? Mathf.Infinity : DistanceTo(_currentLadder.transform.position);
@@ -282,10 +283,37 @@ public class PlayerController : MonoBehaviour
         bool oldState = _isGrounded;
         var colliders = Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius, _groundLayermask);
         _isGrounded = colliders.Length > 0;
+
         if (_isGrounded) {
-            GameManager.i.UpdateCurrentTower(colliders[0].GetComponentInParent<TowerController>());
+            var collider = colliders[0];
+
+            GameManager.i.UpdateCurrentTower(collider.GetComponentInParent<TowerController>());
+            
+            var movingPlatform = collider.GetComponentInParent<MovingPlatform>();
+            if (movingPlatform) transform.SetParent(movingPlatform.transform);
+            else transform.SetParent(null);
+
+            var decayingPlatform = collider.GetComponentInParent<DecayingPlatform>();
+            decayingPlatform?.StartStandingOnPlatform();
+            
             if (!oldState) Land();
+
+            if (_currentFloorObj) {
+                var oldDecay = _currentFloorObj.GetComponent<DecayingPlatform>();
+                if (oldDecay && oldDecay != decayingPlatform) oldDecay.LeavePlatform();
+            } 
+            if (movingPlatform) _currentFloorObj = movingPlatform.gameObject;
+            if (decayingPlatform) _currentFloorObj = decayingPlatform.gameObject;
+            else _currentFloorObj = collider.gameObject;
         }
+        else {
+            transform.SetParent(null);
+            if (_currentFloorObj) {
+                //_currentFloorObj.GetComponent<DecayingPlatform>()?.LeavePlatform();
+            }
+            _currentFloorObj = null;
+        }
+
         _rb.drag = _isGrounded ? _groundedAndUngroundedRbDrag.x : _groundedAndUngroundedRbDrag.y;
     }
 
