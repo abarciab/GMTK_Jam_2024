@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
-using Unity.VisualScripting;
 using UnityEngine;
-using Vector3 = UnityEngine.Vector3;
 
 [RequireComponent (typeof (TowerController))]
 public class TowerBuilder : MonoBehaviour
@@ -49,7 +46,7 @@ public class TowerBuilder : MonoBehaviour
         GameObject selectedPrefab = _towerFloorPrefabs[Random.Range(0, _towerFloorPrefabs.Count)].floorPrefab;
         if (_placedFloors.Count == _targetHeight - 1) selectedPrefab = _lastFloorPrefab;
 
-        GameObject newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, Quaternion.Euler(), transform);
+        GameObject newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, Quaternion.identity, transform);
         FloorController newFloor = newFloorObj.GetComponent<FloorController>();
         _placedFloors.Add(newFloor);
         newFloorObj.name = "floor " + _placedFloors.Count;

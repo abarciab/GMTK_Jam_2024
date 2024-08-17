@@ -168,7 +168,7 @@ public class PlayerController : MonoBehaviour
 
         if (all.Count > 0) {
             StopGliding();
-            print("overlapping w: " + all[0].gameObject.name);
+            //print("overlapping w: " + all[0].gameObject.name);
         }
     }
 
