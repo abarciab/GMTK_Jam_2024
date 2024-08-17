@@ -59,11 +59,16 @@ public class PlayerController : MonoBehaviour
     private bool _isClimbing;
     private float _lastJumpTime;
     private Ladder _currentLadder;
+    private InventoryItem _currentDroppedItem;
     private float _glideSpeed;
     private Vector3 oldPos;
 
     private float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     private float _currentLadderDist => _currentLadder == null ? Mathf.Infinity : DistanceTo(_currentLadder.transform.position);
+    private float _currentItemDist => _currentDroppedItem == null ? Mathf.Infinity : DistanceTo(_currentDroppedItem.transform.position);
+
+    private InventoryItem[] _inventoryItems = {null, null, null, null, null, null, null, null, null, null};
+    private int _currentItemIndex = 0;
 
     private void Start()
     {
@@ -85,6 +90,16 @@ public class PlayerController : MonoBehaviour
         if (_currentLadder == ladder) _currentLadder = null;
     }
 
+    public void SetClosestItem(InventoryItem item)
+    {
+        if (_currentDroppedItem == null || _currentItemDist < DistanceTo(item.transform.position)) _currentDroppedItem = item;
+    }
+
+    public void ClearItem(InventoryItem item)
+    {
+        if (_currentDroppedItem == item) _currentDroppedItem = null;
+    }
+
     private void InitializeSounds() 
     {
         _jumpUpSound = Instantiate(_jumpUpSound);
@@ -96,6 +111,7 @@ public class PlayerController : MonoBehaviour
     {
         Rotate();
         Move();
+        Inventory();
     }
 
     private void Rotate()
@@ -126,6 +142,42 @@ public class PlayerController : MonoBehaviour
         WalkRun();
         if (!_isGrounded && _rb.velocity.y > 0.1) ApplyGravity(_jumpingUpGravity);
         if (!_isGrounded && _rb.velocity.y < 0.1) ApplyGravity(_fallingGravity);
+    }
+
+    private void Inventory()
+    {
+        if(InputController.GetDown(Control.INTERACT) && _currentDroppedItem)
+        {
+            _currentDroppedItem.Pickup(transform);
+            _inventoryItems[_currentItemIndex]?.Drop();
+            _inventoryItems[_currentItemIndex] = _currentDroppedItem;
+        }
+
+        else if(InputController.GetDown(Control.DROP) && _inventoryItems[_currentItemIndex])
+        {
+            _inventoryItems[_currentItemIndex].Drop();
+            _inventoryItems[_currentItemIndex] = null;
+        }
+
+        else if(InputController.GetDown(Control.USE_PRIMARY) && _inventoryItems[_currentItemIndex])
+        {
+            _inventoryItems[_currentItemIndex].LeftClick();
+        }
+
+        else if(InputController.GetDown(Control.USE_SECONDARY) && _inventoryItems[_currentItemIndex])
+        {
+            _inventoryItems[_currentItemIndex].RightClick();
+        }
+
+        else if(InputController.GetDown(Control.NEXT_ITEM))
+        {
+            EquipNextItem();
+        }
+
+        else if(InputController.GetDown(Control.LAST_ITEM))
+        {
+            EquipPreviousItem();
+        }
     }
 
     private void StartGliding()
@@ -286,5 +338,26 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
         Gizmos.DrawWireSphere(transform.TransformPoint(_downGlideCheckerOffset), _downGlideCheckerRadius);
+    }
+
+    private void EquipItem(int index)
+    {
+        _inventoryItems[_currentItemIndex]?.Unequip();
+        _currentItemIndex = index;
+        _inventoryItems[_currentItemIndex]?.Equip();
+    }
+
+    private void EquipNextItem()
+    {
+        var nextIndex = _currentItemIndex + 1;
+        if (nextIndex >= _inventoryItems.Length) nextIndex = 0;
+        EquipItem(nextIndex);
+    }
+
+    private void EquipPreviousItem()
+    {
+        var previousIndex = _currentItemIndex - 1;
+        if (previousIndex < 0) previousIndex = _inventoryItems.Length - 1;
+        EquipItem(previousIndex);
     }
 }
