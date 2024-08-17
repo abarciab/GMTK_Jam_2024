@@ -7,9 +7,12 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum CardinalDirection { South, East, North, West };
+
 public class FloorController : MonoBehaviour
 {
-    [SerializeField] private float _height;
+    [SerializeField, MustBeAssigned] private Transform _top;
+    [SerializeField] private CardinalDirection _exitSide;
 
     [SerializeField] private List<Transform> _floorSections = new List<Transform>();
     [SerializeField] private List<Transform> _extras = new List<Transform>();
@@ -20,25 +23,35 @@ public class FloorController : MonoBehaviour
     [SerializeField, ReadOnly] private List<float> _expandedOffsets = new List<float>();
     [SerializeField, ReadOnly] private List<float> _currentOffsets = new List<float>();
 
-    [SerializeField] private CardinalDirection _exitSide;
-    public CardinalDirection ExitSide => _exitSide;
-    public enum CardinalDirection { South, East, North, West };
-    public Vector3 TopPos => transform.position + Vector3.up * _height;
+
+    [HideInInspector] public FloorController PreviousFloor;
+    [HideInInspector] public CardinalDirection ExitSide => _exitSide;
+    [HideInInspector] public Vector3 TopPos => _top.position;
+
+    public float TargetExpansion;
 
     private void OnValidate()
     {
         if (_floorSections.Count == 5) UpdateModel();
     }
 
+    private void Update()
+    {
+        if (PreviousFloor) transform.position = PreviousFloor.TopPos;
+        _expansionProgress = Mathf.Lerp(_expansionProgress, TargetExpansion, 2 * Time.deltaTime);
+        UpdateModel();
+    }
+
     private void UpdateModel()
     {
+        if (_floorSections.Count != 5) return;
         _currentOffsets.Clear();
 
         float quarterProgress = Mathf.InverseLerp(0f, 0.25f, _expansionProgress);
         float secondCurrentOffset = Mathf.Lerp(_compressedOffsets[1], _expandedOffsets[1], quarterProgress);
         _floorSections[1].localPosition = Vector3.up * secondCurrentOffset;
 
-        float extras1Progress = Mathf.InverseLerp(0.15f, 0.4f, _expansionProgress);
+        float extras1Progress = Mathf.InverseLerp(0.25f, 0.5f, _expansionProgress);
         var extra1Scale = new Vector3(extras1Progress, 1, extras1Progress);
         _extras[0].localScale = extra1Scale;
 
@@ -50,7 +63,7 @@ public class FloorController : MonoBehaviour
         float fourthCurrentOffset = Mathf.Lerp(_compressedOffsets[3], _expandedOffsets[3], thirdQuarterProgress);
         _floorSections[3].localPosition = Vector3.up * fourthCurrentOffset;
 
-        float extras2Progress = Mathf.InverseLerp(0.65f, 0.9f, _expansionProgress);
+        float extras2Progress = Mathf.InverseLerp(0.75f, 1f, _expansionProgress);
         var extra2Scale = new Vector3(extras2Progress, 1, extras2Progress);
         _extras[1].localScale = extra2Scale;
 
@@ -75,10 +88,5 @@ public class FloorController : MonoBehaviour
         for (int i = 0; i < _floorSections.Count; i++) {
             _expandedOffsets.Add(_floorSections[i].localPosition.y);
         }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.up * _height);
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent (typeof (TowerController))]
@@ -25,6 +26,7 @@ public class TowerBuilder : MonoBehaviour
         PlaceFirstFloor();
         for (int i = 0; i < _targetHeight - 1; i++) PlaceNextFloor();
         _controller.MaxHeight = _currentTopFloor.TopPos.y;
+        _controller.Initialize(_placedFloors);
     }
 
     private void PlaceFirstFloor()
@@ -38,19 +40,19 @@ public class TowerBuilder : MonoBehaviour
     {
         Vector3 newFloorRotation = Vector3.zero;
 
-        if(_currentTopFloor.ExitSide == FloorController.CardinalDirection.North)
+        if(_currentTopFloor.ExitSide == CardinalDirection.North)
         {
             newFloorRotation =  new Vector3(0f, 180f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
         }
-        else if(_currentTopFloor.ExitSide == FloorController.CardinalDirection.South)
+        else if(_currentTopFloor.ExitSide == CardinalDirection.South)
         {
              newFloorRotation =  new Vector3(0f, _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
         }
-        else if(_currentTopFloor.ExitSide == FloorController.CardinalDirection.East)
+        else if(_currentTopFloor.ExitSide == CardinalDirection.East)
         {
              newFloorRotation =  new Vector3(0f, 270f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
         }
-        else if(_currentTopFloor.ExitSide == FloorController.CardinalDirection.West)
+        else if(_currentTopFloor.ExitSide == CardinalDirection.West)
         {
              newFloorRotation =  new Vector3(0f, 90f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
         }
@@ -63,5 +65,6 @@ public class TowerBuilder : MonoBehaviour
         _placedFloors.Add(newFloor);
         newFloorObj.name = "floor " + _placedFloors.Count;
         _currentTopFloor = newFloor;
+        if (_placedFloors.Count > 1) newFloor.PreviousFloor = _placedFloors[_placedFloors.Count-2];
     }
 }
