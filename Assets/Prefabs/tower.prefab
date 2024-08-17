@@ -14,7 +14,7 @@ GameObject:
   m_Layer: 0
   m_Name: tower
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -48,11 +48,11 @@ MonoBehaviour:
   _firstFloorPrefab: {fileID: 8477803291879560362, guid: 6d0ede67995b6e143a446816a514d968, type: 3}
   _lastFloorPrefab: {fileID: 5474933323093752411, guid: 9d88759319804a741930343523fea18c, type: 3}
   _towerFloorPrefabs:
-  - {fileID: 11400000, guid: a56dda936aba920489f637af45b931c2, type: 2}
-  - {fileID: 11400000, guid: 05f04743c77058d438cce4c37eac846d, type: 2}
-  - {fileID: 11400000, guid: 4e9ebed199ddb7742bc623f468a726fe, type: 2}
-  - {fileID: 11400000, guid: 05a6e2bfc8cc7ec43a627648126ce39a, type: 2}
-  _targetHeight: 10
+  - {fileID: 11400000, guid: 105b616432094934783953be00284d2f, type: 2}
+  - {fileID: 11400000, guid: 711e01f8ef89c4c47848592ae33dc750, type: 2}
+  - {fileID: 11400000, guid: 25b6a62d8eb71b74b8b6522e601114f8, type: 2}
+  - {fileID: 11400000, guid: c789bb84e1ed0bf48b056ef3fed86e0f, type: 2}
+  _targetHeight: 18
 --- !u!114 &8781711337011915082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,5 +67,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: A
   Index: 0
+  _secondToFullExpansion: 423
   _completeSound: {fileID: 11400000, guid: 7612bd5aa041e9040944c46a16af08eb, type: 2}
-  MaxHeight: 0
+  _isCurrentTower: 0
