@@ -35,7 +35,6 @@ public class TowerBuilder : MonoBehaviour
         _placedFloors.Add(_currentTopFloor);
     }
 
-
     private void PlaceNextFloor()
     {
         var selectedPrefab = _floorPrefabs[Random.Range(0, _floorPrefabs.Count)];

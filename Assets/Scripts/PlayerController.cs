@@ -2,6 +2,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEditorInternal;
 using UnityEngine;
@@ -9,7 +10,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-
     [Header("Walking, running, turning")]
     [SerializeField] private float _walkSpeed = 5;
     [SerializeField] private float _runSpeed = 10;
@@ -29,6 +29,15 @@ public class PlayerController : MonoBehaviour
     [Header("Gliding")]
     [SerializeField] private bool _gliderUnlocked;
     [SerializeField] private float _tempConstFlySpeed = 10;
+    [SerializeField] private float _glideAngleIncreaseFactor = 1;
+    [SerializeField] private float _glideSpeedMax = 10;
+    [SerializeField] private float _glideGravity = 1;
+    [SerializeField] private float _glideLerpFactor = 3;
+    [SerializeField] private float _glideEndBoost = 3;
+    [SerializeField] private float _forwardGlideCheckerRadius;
+    [SerializeField] private Vector3 _forwardGlideCheckerOffset;
+    [SerializeField] private float _downGlideCheckerRadius;
+    [SerializeField] private Vector3 _downGlideCheckerOffset;
 
 
     [Header("Climbing")]
@@ -50,6 +59,8 @@ public class PlayerController : MonoBehaviour
     private bool _isClimbing;
     private float _lastJumpTime;
     private Ladder _currentLadder;
+    private float _glideSpeed;
+    private Vector3 oldPos;
 
     private float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     private float _currentLadderDist => _currentLadder == null ? Mathf.Infinity : DistanceTo(_currentLadder.transform.position);
@@ -122,11 +133,50 @@ public class PlayerController : MonoBehaviour
         _openGliderSound.Play();
         _isGliding = true;
         _rb.isKinematic = true;
+        _glideSpeed = _tempConstFlySpeed;
     }
 
     private void Glide()
     {
+        CheckIfShouldLand();
 
+        var currentSpeed = transform.position - oldPos;
+        oldPos = transform.position;
+
+        var dir = Camera.main.transform.forward.normalized;
+        
+        float downAngle = Vector3.Dot(dir, Vector3.down);
+        float targetGlideSpeed = _glideSpeed + _glideAngleIncreaseFactor * downAngle;
+        _glideSpeed = Mathf.Lerp(_glideSpeed, targetGlideSpeed, _glideLerpFactor * Time.deltaTime);
+        _glideSpeed = Mathf.Clamp(_glideSpeed, 0, _glideSpeedMax);
+
+        var posDelta = dir * _glideSpeed * Time.deltaTime;
+        posDelta += (currentSpeed.y + _glideGravity) * Time.deltaTime * Vector3.down;
+
+        transform.position += posDelta;
+    }
+
+    private void CheckIfShouldLand()
+    {
+        var camTrans = Camera.main.transform;
+        var all = new List<Collider>();
+        var forward = Physics.OverlapSphere(camTrans.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
+        var down = Physics.OverlapSphere(camTrans.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
+        all.AddRange(forward);
+        all.AddRange(down);
+        all = all.Where(x => x.GetComponent<PlayerController>() == null).ToList();
+
+        if (all.Count > 0) {
+            StopGliding();
+            print("overlapping w: " + all[0].gameObject.name);
+        }
+    }
+
+    private void StopGliding()
+    {
+        _isGliding = false;
+        _rb.isKinematic = false;
+        transform.position += Vector3.up * _glideEndBoost;
     }
 
     private void Climb()
@@ -163,7 +213,6 @@ public class PlayerController : MonoBehaviour
         float timeSinceLastJump = Time.time - _lastJumpTime;
         if (timeSinceLastJump < _minimumJumpTime) return;
 
-        print("jumping. timeSinceLast: " + timeSinceLastJump);
         _jumpUpSound.Play(restart:false);
         _rb.velocity += Vector3.up * _jumpForce;
         _lastJumpTime = Time.time;
@@ -232,6 +281,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
+        Gizmos.DrawWireSphere(transform.TransformPoint(_downGlideCheckerOffset), _downGlideCheckerRadius);
     }
 }
