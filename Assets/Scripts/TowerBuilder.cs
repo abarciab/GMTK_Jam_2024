@@ -10,6 +10,7 @@ public class TowerBuilder : MonoBehaviour
     [SerializeField] private GameObject _lastFloorPrefab;
     [SerializeField] private List<TowerFloorData> _towerFloorPrefabs = new List<TowerFloorData>();
     [SerializeField, Min(2)] private int _targetHeight = 10;
+    [SerializeField] private float _difficultyThreshold;
 
     private List<FloorController> _placedFloors = new List<FloorController>();
     private FloorController _currentTopFloor;
@@ -56,7 +57,9 @@ public class TowerBuilder : MonoBehaviour
              newFloorRotation =  new Vector3(0f, 90f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
         }
 
-        GameObject selectedPrefab = _towerFloorPrefabs[Random.Range(0, _towerFloorPrefabs.Count)].floorPrefab;
+        float currentDifficulty = (float)_placedFloors.Count / _targetHeight;
+
+        GameObject selectedPrefab = GetRandomFloorPrefabWithinDifficultyRange(currentDifficulty);
         if (_placedFloors.Count == _targetHeight - 1) selectedPrefab = _lastFloorPrefab;
 
         GameObject newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, Quaternion.Euler(newFloorRotation), transform);
@@ -65,5 +68,27 @@ public class TowerBuilder : MonoBehaviour
         newFloorObj.name = "floor " + _placedFloors.Count;
         _currentTopFloor = newFloor;
         if (_placedFloors.Count > 1) newFloor.PreviousFloor = _placedFloors[_placedFloors.Count-2];
+    }
+
+    private GameObject GetRandomFloorPrefabWithinDifficultyRange(float currentDifficulty)
+    {
+        List<GameObject> validPrefabs = new List<GameObject>();
+
+        float tempDifficultyThreshold = _difficultyThreshold;
+
+        while(validPrefabs.Count == 0)
+        {
+            foreach (TowerFloorData floor in _towerFloorPrefabs)
+            {
+                if(floor.difficulty >= currentDifficulty - tempDifficultyThreshold && floor.difficulty <= currentDifficulty + tempDifficultyThreshold)
+                {
+                    validPrefabs.Add(floor.floorPrefab);
+                }
+            }
+
+            tempDifficultyThreshold += 0.05f;
+        }
+
+        return validPrefabs[Random.Range(0, validPrefabs.Count)];
     }
 }

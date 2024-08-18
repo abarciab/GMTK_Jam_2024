@@ -30,8 +30,15 @@ public class UIManager : MonoBehaviour
     [Header("Misc")]
     public DialogueController _dialogue;
     [SerializeField] private GameObject _interactPrompt;
+    
+    [Header("Points Of Interest")]
+    [SerializeField] private Image _interestIndicator;
+    [SerializeField] private TextMeshProUGUI _interestDistanceText;
+    [SerializeField] private float _edgeBufferDistance;
 
     private float _targetTowerProgress;
+
+    private List<Transform> pointsOfInterest = new List<Transform>();
 
 
     public void ShowHighScore(int score) => _highScoreText.text = _highScoreTemplateString.Replace("SCORE", score.ToString());
@@ -51,6 +58,32 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         _towerProgresSlider.value = Mathf.Lerp(_towerProgresSlider.value, _targetTowerProgress, 8 * Time.deltaTime);
+
+        AdjustPointsOfInterest();
+    }
+
+    private void AdjustPointsOfInterest()
+    {
+        float closestDistance = float.MaxValue;
+        Transform closestPoint = null;
+        foreach (Transform point in pointsOfInterest)
+        {
+            float thisDistance = Vector3.Distance(point.position, GameManager.i.Player.transform.position);
+            if(thisDistance < closestDistance)
+            {
+                closestPoint = point;
+                closestDistance = thisDistance;
+            }
+        }
+        
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(closestPoint.position);
+        if(screenPos.z < 0f)
+        {
+            screenPos = new Vector3( Screen.width - _edgeBufferDistance - screenPos.x, Screen.height - _edgeBufferDistance - screenPos.y, screenPos.z);
+        }
+
+        _interestIndicator.transform.position = new Vector3(Mathf.Clamp(screenPos.x, _edgeBufferDistance, Screen.width - _edgeBufferDistance), Mathf.Clamp(screenPos.y, _edgeBufferDistance, Screen.height - _edgeBufferDistance), _interestIndicator.transform.position.z);
+        _interestDistanceText.text = closestDistance.ToString("0.0");
     }
 
     public void SetInteractPromptEnabled(bool enabled)
@@ -89,6 +122,16 @@ public class UIManager : MonoBehaviour
     {
         _inventorySelectionIndicator.transform.position = _inventoryImages[index].transform.position;
         _inventorySelectionIndicator.enabled = true;
+    }
+
+    public void AddPointOfInterest(Transform point)
+    {
+        pointsOfInterest.Add(point);
+    }
+
+    public void RemovePointOfInterest(Transform point)
+    {
+        pointsOfInterest.Remove(point);
     }
     
 }
