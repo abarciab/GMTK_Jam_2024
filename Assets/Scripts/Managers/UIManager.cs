@@ -27,6 +27,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private List<Image> _inventoryImages;
     [SerializeField] private Image _inventorySelectionIndicator;
 
+    [Header("Misc")]
+    public DialogueController _dialogue;
+    [SerializeField] private GameObject _interactPrompt;
+
     private float _targetTowerProgress;
 
 
@@ -47,6 +51,11 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         _towerProgresSlider.value = Mathf.Lerp(_towerProgresSlider.value, _targetTowerProgress, 8 * Time.deltaTime);
+    }
+
+    public void SetInteractPromptEnabled(bool enabled)
+    {
+        _interactPrompt.SetActive(enabled);
     }
 
     public void StartNewTower(string towerName, float progress)

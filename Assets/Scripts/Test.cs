@@ -7,13 +7,12 @@ using UnityEngine;
 public class Test : MonoBehaviour
 {
 
-    [SerializeField] private Transform _testChild;
-    [SerializeField] private Transform _testParent;
+    [SerializeField] private List<string> lines = new List<string>();
 
     [ButtonMethod]
-    private void SetParent()
+    private void startConversation()
     {
-        _testChild.SetParent(_testParent);
+        UIManager.i._dialogue.StartDialogue(lines);
     }
     
 }

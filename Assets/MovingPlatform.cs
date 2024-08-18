@@ -6,8 +6,8 @@ using MyBox;
 [SelectionBase]
 public class MovingPlatform : MonoBehaviour
 {
-    [SerializeField, ReadOnly] private DoorState _state1;
-    [SerializeField, ReadOnly] private DoorState _state2;
+    [SerializeField] private DoorState _state1;
+    [SerializeField] private DoorState _state2;
 
     [Header("Animation")]
     [SerializeField] private float _animateTime = 1.2f;
