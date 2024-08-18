@@ -20,6 +20,7 @@ public class FloorController : MonoBehaviour
 
     [Header("expansion")]
     [SerializeField, Range(0, 1)] private float _expansionProgress;
+    [SerializeField] private AnimationCurve _expansionCurve;
     [SerializeField, ReadOnly] private List<float> _expandedOffsets = new List<float>();
     [SerializeField, ReadOnly] private List<float> _compressedOffsets = new List<float>(); 
 
@@ -100,6 +101,8 @@ public class FloorController : MonoBehaviour
 
     private void PositionParticlesByProgress(float progress)
     {
+        if (_floorSections.Count != 5) return;
+
         float particlesY = 0;
         if (progress < 0.25f) particlesY = _floorSections[1].transform.position.y;
         else if (progress < 0.5f) particlesY = _floorSections[2].transform.position.y;
@@ -120,6 +123,17 @@ public class FloorController : MonoBehaviour
     [ButtonMethod]
     private void InitializeFromRoot()
     {
+        if (_rootParent.childCount == 14) {
+            var children = new List<Transform>();
+            for (int i = 0; i < _rootParent.childCount; i++) {
+                children.Add(_rootParent.GetChild(i));
+            }
+            for (int i = 0; i < children.Count; i++) {
+                var child = children[i];
+                if (child.gameObject.name.Contains("Decor")) child.SetParent(children[i + 1]);
+            }
+        }
+
         if (_rootParent.childCount != 9) {
             Debug.LogError("Incorrect number of children in heirarchy. Consult template");
             return;
@@ -154,7 +168,7 @@ public class FloorController : MonoBehaviour
         if (_floorSections.Count != 5 || _hiddenExtras.Count != 2 || _compressedOffsets.Count + _expandedOffsets.Count != 10) return;
 
         float quarterProgress = Mathf.InverseLerp(0f, 0.25f, _expansionProgress);
-        float secondCurrentOffset = Mathf.Lerp(_compressedOffsets[1], _expandedOffsets[1], quarterProgress);
+        float secondCurrentOffset = Ease(_compressedOffsets[1], _expandedOffsets[1], quarterProgress);
         _floorSections[1].localPosition = Vector3.up * secondCurrentOffset;
 
         float extras1Progress = Mathf.InverseLerp(0.25f, 0.5f, _expansionProgress);
@@ -162,11 +176,11 @@ public class FloorController : MonoBehaviour
         _hiddenExtras[0].localScale = extra1Scale;
 
         float halfProgress = Mathf.InverseLerp(0f, 0.5f, _expansionProgress);
-        float thirdCurrentOffset = Mathf.Lerp(_compressedOffsets[2], _expandedOffsets[2], halfProgress);
+        float thirdCurrentOffset = Ease(_compressedOffsets[2], _expandedOffsets[2], halfProgress);
         _floorSections[2].localPosition = Vector3.up * thirdCurrentOffset;
 
         float thirdQuarterProgress = Mathf.InverseLerp(0.5f, 0.75f, _expansionProgress);
-        float fourthCurrentOffset = Mathf.Lerp(_compressedOffsets[3], _expandedOffsets[3], thirdQuarterProgress);
+        float fourthCurrentOffset = Ease(_compressedOffsets[3], _expandedOffsets[3], thirdQuarterProgress);
         _floorSections[3].localPosition = Vector3.up * fourthCurrentOffset;
 
         float extras2Progress = Mathf.InverseLerp(0.75f, 1f, _expansionProgress);
@@ -174,9 +188,15 @@ public class FloorController : MonoBehaviour
         _hiddenExtras[1].localScale = extra2Scale;
 
         float secondHalfProgress = Mathf.InverseLerp(0.5f, 1f, _expansionProgress);
-        float fifthCurrentOffset = Mathf.Lerp(_compressedOffsets[4], _expandedOffsets[4], secondHalfProgress);
+        float fifthCurrentOffset = Ease(_compressedOffsets[4], _expandedOffsets[4], secondHalfProgress);
 
         _floorSections[4].localPosition = Vector3.up * fifthCurrentOffset;
+    }
+
+    private float Ease(float a, float b, float progress)
+    {
+        var curvedProgress = _expansionCurve.Evaluate(progress);
+        return Mathf.Lerp(a, b, curvedProgress);
     }
 
     [ButtonMethod]

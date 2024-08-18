@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
 
     [Header("FOV")]
     [SerializeField] private Vector2 _walkRunFovs;
+    [SerializeField] private Vector2 _glideMinMaxFovs;
     [SerializeField] private float _fovChangeLerpFator = 20;
 
     [Header("Misc")]
@@ -19,7 +20,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         SetPosAndRotation();
-        SetFov();
+        if (!GameManager.i.Player.IsGliding) SetFov();
     }
 
     private void SetPosAndRotation()
@@ -31,6 +32,13 @@ public class CameraController : MonoBehaviour
 
         var mouseY = Input.GetAxis("Mouse Y");
         transform.localEulerAngles += Vector3.right * mouseY * Time.deltaTime * Settings.MouseSensetivity * 100 * _verticalRotSpeed * -1;
+    }
+
+    public void SetGlideFovPercent(float percent)
+    {
+        var current = _camera.fieldOfView;
+        var target = Mathf.Lerp(_glideMinMaxFovs.x, _glideMinMaxFovs.y, percent);
+        _camera.fieldOfView = Mathf.Lerp(current, target, _fovChangeLerpFator * Time.deltaTime);
     }
 
     private void SetFov()

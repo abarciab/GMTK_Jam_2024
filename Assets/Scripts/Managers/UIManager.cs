@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     [Header("High score")]
     [SerializeField] private TextMeshProUGUI _highScoreText;
     [SerializeField] private string _highScoreTemplateString = "High score: SCOREm";
+    [SerializeField] private TextMeshProUGUI _timerText;
 
     [Header("Tower progress")]
     [SerializeField] private GameObject _towerProgressParent;
@@ -58,6 +59,7 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         _towerProgresSlider.value = Mathf.Lerp(_towerProgresSlider.value, _targetTowerProgress, 8 * Time.deltaTime);
+        _timerText.text = GetTimeString((int) Time.timeSinceLevelLoad);
 
         AdjustPointsOfInterest();
     }

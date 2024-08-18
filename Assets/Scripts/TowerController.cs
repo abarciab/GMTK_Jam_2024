@@ -7,7 +7,7 @@ public class TowerController : MonoBehaviour
     public string Name;
 
     [Range(0, 3)] public int Index;
-    [SerializeField] private float _secondsPerInitalBlockPlace = 5;
+    [SerializeField] private float _initialBuildTime = 25;
     [SerializeField] private float _secondToFullExpansion = 60;
     [SerializeField] private Sound _completeSound;
     [SerializeField] private bool _isCurrentTower;
@@ -19,7 +19,8 @@ public class TowerController : MonoBehaviour
 
     private void Start()
     {
-        _secondsPerInitalBlockPlace *= Random.Range(0.8f, 1.2f);
+        _initialBuildTime *= Random.Range(0.8f, 1.2f);
+        _secondToFullExpansion *= Random.Range(0.8f, 1.2f);
         _completeSound = Instantiate(_completeSound);
         GameManager.i.Towers.Add(this);
     }
@@ -43,7 +44,7 @@ public class TowerController : MonoBehaviour
         _floors = floors;
         foreach (var f in _floors) f.gameObject.SetActive(false);
         _floors[0].gameObject.SetActive(true);
-        _floors[_floors.Count-1].gameObject.SetActive(true);
+        //_floors[_floors.Count-1].gameObject.SetActive(true);
     }
 
     public void StartGrowing()
@@ -53,11 +54,12 @@ public class TowerController : MonoBehaviour
 
     private IEnumerator GrowTower()
     {
-        for (int i = 1; i < _floors.Count-1; i++) {
+        float intialStep = _initialBuildTime / _floors.Count;
+        for (int i = 1; i < _floors.Count; i++) {
             //Debug.LogError("testerror");
             _floors[i].gameObject.SetActive(true);
             _floors[i].EmitParticlesAtBase();
-            yield return new WaitForSeconds(_secondsPerInitalBlockPlace);
+            yield return new WaitForSeconds(intialStep);
         }
 
         List<FloorController> incompleteFloors = new List<FloorController>(_floors);

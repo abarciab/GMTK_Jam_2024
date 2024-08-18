@@ -45,8 +45,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Sound _jumpUpSound;
     [SerializeField] private Sound _landSound;
     [SerializeField] private Sound _openGliderSound;
+    [SerializeField] private Sound _windLoop;
 
     [HideInInspector] public bool IsRunning => _isRunning;
+    [HideInInspector] public bool IsGliding => _isGliding;
 
     private Vector3 inputDir;
     private Rigidbody _rb;
@@ -60,6 +62,7 @@ public class PlayerController : MonoBehaviour
     private float _glideSpeed;
     private Vector3 oldPos;
     private GameObject _currentFloorObj;
+    private CameraController _cam;
 
     private float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     private float _currentLadderDist => _currentLadder == null ? Mathf.Infinity : DistanceTo(_currentLadder.transform.position);
@@ -74,6 +77,7 @@ public class PlayerController : MonoBehaviour
         GameManager.i.Player = this;
         _lastJumpTime = Time.time;
         _isGrounded = true;
+        _cam = GameManager.i.Camera.GetComponent<CameraController>();
 
         EquipItem(0);
 
@@ -105,6 +109,8 @@ public class PlayerController : MonoBehaviour
         _jumpUpSound = Instantiate(_jumpUpSound);
         _landSound = Instantiate(_landSound);
         _openGliderSound = Instantiate(_openGliderSound);
+        _windLoop = Instantiate(_windLoop);
+        _windLoop.PlaySilent();
     }
 
     private void Update()
@@ -195,6 +201,7 @@ public class PlayerController : MonoBehaviour
     private void Glide()
     {
         CheckIfShouldLand();
+        if (!_isGliding) return;
 
         var currentSpeed = transform.position - oldPos;
         oldPos = transform.position;
@@ -205,6 +212,9 @@ public class PlayerController : MonoBehaviour
         float targetGlideSpeed = _glideSpeed + _glideAngleIncreaseFactor * downAngle;
         _glideSpeed = Mathf.Lerp(_glideSpeed, targetGlideSpeed, _glideLerpFactor * Time.deltaTime);
         _glideSpeed = Mathf.Clamp(_glideSpeed, 0, _glideSpeedMax);
+
+        _windLoop.SetPercentVolume(_glideSpeed / _glideSpeedMax, 0.5f);
+        _cam.SetGlideFovPercent(_glideSpeed / _glideSpeedMax);
 
         var posDelta = dir * _glideSpeed * Time.deltaTime;
         posDelta += (currentSpeed.y + _glideGravity) * Time.deltaTime * Vector3.down;
@@ -220,11 +230,11 @@ public class PlayerController : MonoBehaviour
         var down = Physics.OverlapSphere(camTrans.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
         all.AddRange(forward);
         all.AddRange(down);
-        all = all.Where(x => x.GetComponent<PlayerController>() == null).ToList();
+        all = all.Where(x => x.GetComponent<PlayerController>() == null && !x.isTrigger).ToList();
 
         if (all.Count > 0) {
             StopGliding();
-            //print("overlapping w: " + all[0].gameObject.name);
+            print("overlapping w: " + all[0].gameObject.name);
         }
     }
 
@@ -233,6 +243,7 @@ public class PlayerController : MonoBehaviour
         _isGliding = false;
         _rb.isKinematic = false;
         transform.position += Vector3.up * _glideEndBoost;
+        _windLoop.SetPercentVolume(0);
     }
 
     private void Climb()

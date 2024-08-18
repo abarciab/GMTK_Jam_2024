@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7570282849007067534}
   - component: {fileID: 8026788566478727394}
   - component: {fileID: 8781711337011915082}
+  - component: {fileID: 8917216657033817255}
   m_Layer: 0
   m_Name: tower
   m_TagString: Untagged
@@ -53,6 +54,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 25b6a62d8eb71b74b8b6522e601114f8, type: 2}
   - {fileID: 11400000, guid: c789bb84e1ed0bf48b056ef3fed86e0f, type: 2}
   _targetHeight: 18
+  _difficultyThreshold: 0
 --- !u!114 &8781711337011915082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,6 +69,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: A
   Index: 0
+  _secondsPerInitalBlockPlace: 5
   _secondToFullExpansion: 423
   _completeSound: {fileID: 11400000, guid: 7612bd5aa041e9040944c46a16af08eb, type: 2}
   _isCurrentTower: 0
+--- !u!114 &8917216657033817255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5943532702685144740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e38ccd74b0a23248874bd1b29f416b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
