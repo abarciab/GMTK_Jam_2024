@@ -13,6 +13,7 @@ public class MainMenuController : MonoBehaviour
     {
         _clickSound = Instantiate(_clickSound);
         _fade.Disappear();
+        Settings.Initialize();
     }
 
     public void Click()

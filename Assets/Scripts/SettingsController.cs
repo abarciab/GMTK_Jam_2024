@@ -9,6 +9,7 @@ public class SettingsController : MonoBehaviour
     [SerializeField] private Slider _musicVolume;
     [SerializeField] private Slider _ambientVolume;
     [SerializeField] private Slider _sfxVolume;
+    [SerializeField] private Slider _sensitivitySlider;
 
     private void Start()
     {
@@ -16,20 +17,27 @@ public class SettingsController : MonoBehaviour
         _musicVolume.onValueChanged.AddListener((float value) => AudioManager.i.SetMusicVolume(value));
         _ambientVolume.onValueChanged.AddListener((float value) => AudioManager.i.SetAmbientVolume(value));
         _sfxVolume.onValueChanged.AddListener((float value) => AudioManager.i.SetSfxVolume(value));
+        _sensitivitySlider.onValueChanged.AddListener((float value) => ChangeSesetivity(value));
+    }
+
+    private void ChangeSesetivity(float value)
+    {
+        Settings.SetSensetivity(value);
     }
 
     private void OnEnable()
     {
-        SetSliderValuesToAudioSettings();
+        SetSliderValuesToCurrentSettings();
     }
 
-    void SetSliderValuesToAudioSettings()
+    void SetSliderValuesToCurrentSettings()
     {
         var volumes = AudioManager.i.Volumes;
         _masterVolume.value = volumes[0];
         _musicVolume.value = volumes[1];
         _ambientVolume.value = volumes[2];
         _sfxVolume.value = volumes[3];
+        _sensitivitySlider.value = Settings.MouseSensetivity;
     }
 
 }

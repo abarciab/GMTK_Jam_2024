@@ -35,7 +35,7 @@ public class FloorController : MonoBehaviour
 
     [HideInInspector] public FloorController PreviousFloor;
     [HideInInspector] public CardinalDirection ExitSide => _exitSide;
-    [HideInInspector] public Vector3 TopPos => _top.position;
+    [HideInInspector] public Vector3 TopPos => !gameObject.activeInHierarchy && PreviousFloor ? PreviousFloor.TopPos : _top.position;
 
     [HideInInspector] public float TargetExpansion;
 
@@ -48,7 +48,6 @@ public class FloorController : MonoBehaviour
     {
         _slidingSound = Instantiate(_slidingSound);
         _slidingSound.PlaySilent(transform);
-        _expansionProgress = 0;
     }
 
     private void Update()
@@ -57,6 +56,24 @@ public class FloorController : MonoBehaviour
         _expansionProgress = Mathf.Lerp(_expansionProgress, TargetExpansion, 2 * Time.deltaTime);
         _slidingSound.SetPercentVolume(TargetExpansion - _expansionProgress > 0.1f ? 1 : 0, 0.05f);
         UpdateModel();
+    }
+
+    private void OnEnable()
+    {
+        //InitializeScale(_dustParticles.transform);
+        //InitializeScale(_brickParticles.transform);
+
+        if (PreviousFloor) transform.position = PreviousFloor.TopPos;
+        _expansionProgress = 0;
+        UpdateModel();
+    }
+
+    private void InitializeScale(Transform transform)
+    {
+        var originalParent = transform.parent;
+        transform.SetParent(null);
+        transform.localScale = Vector3.one;
+        transform.SetParent(originalParent);
     }
 
     [ButtonMethod]
@@ -69,19 +86,35 @@ public class FloorController : MonoBehaviour
     public void SetTargetExpansion(float newTarget)
     {
         TargetExpansion = newTarget;
+
+        PositionParticlesByProgress(newTarget);
+        EmitParticles();
+    }
+
+    public void EmitParticlesAtBase()
+    {
+        PositionParticlesByProgress(0);
+        EmitParticles();
+    }
+
+
+    private void PositionParticlesByProgress(float progress)
+    {
+        float particlesY = 0;
+        if (progress < 0.25f) particlesY = _floorSections[1].transform.position.y;
+        else if (progress < 0.5f) particlesY = _floorSections[2].transform.position.y;
+        else if (progress < 0.5f) particlesY = _floorSections[3].transform.position.y;
+        else if (progress < 0.5f) particlesY = _floorSections[4].transform.position.y;
+        var pos = _dustParticles.transform.position;
+        pos.y = particlesY;
+        _dustParticles.transform.position = pos;
+        _brickParticles.transform.position = pos;
+    }
+
+    private void EmitParticles()
+    {
         _dustParticles.Emit(_dustBurstCount);
         _brickParticles.Emit(_brickBurstCount);
-
-        Transform particlesParent = transform;
-        if (newTarget < 0.25f) particlesParent = _floorSections[1];
-        else if (newTarget < 0.5f) particlesParent = _floorSections[2];
-        else if (newTarget < 0.5f) particlesParent = _floorSections[3];
-        else if (newTarget < 0.5f) particlesParent = _floorSections[4];
-        _dustParticles.transform.SetParent(particlesParent);
-        var pos = _dustParticles.transform.localPosition;
-        pos.y = 0;
-        _dustParticles.transform.localPosition = pos;
-        _brickParticles.transform.position = _dustParticles.transform.position;
     }
 
     [ButtonMethod]

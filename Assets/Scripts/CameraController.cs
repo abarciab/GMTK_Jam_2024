@@ -30,7 +30,7 @@ public class CameraController : MonoBehaviour
         transform.eulerAngles = targetRot;
 
         var mouseY = Input.GetAxis("Mouse Y");
-        transform.localEulerAngles += Vector3.right * mouseY * Time.deltaTime * 100 * _verticalRotSpeed * -1;
+        transform.localEulerAngles += Vector3.right * mouseY * Time.deltaTime * Settings.MouseSensetivity * 100 * _verticalRotSpeed * -1;
     }
 
     private void SetFov()

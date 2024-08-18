@@ -2,6 +2,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(InputController))]
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _flood;
     [SerializeField] private float _trigggerFloodStartHeight = 15;
 
+
     [HideInInspector] public PlayerController Player;
     [HideInInspector] public List<TowerController> Towers = new List<TowerController>();
 
@@ -33,18 +35,24 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Settings.Initialize(); 
         _fade.Disappear();
-        HideMouse();
+        SetMouseState(false);
         _towersLeft = _totalTowerCount;
         _flood.SetActive(false);
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) HideMouse();
+        if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) SetMouseState(false);
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
 
         CalculateHighScore();
+    }
+
+    public void StartTowersGrowing()
+    {
+        foreach (var t in Towers) t.StartGrowing();
     }
 
     public float GetMaxHeight()
@@ -105,10 +113,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void HideMouse()
+    private void SetMouseState(bool visible)
     {
-        Cursor.lockState = CursorLockMode.Confined;
-        Cursor.visible = false;
+        Cursor.lockState = visible ? CursorLockMode.Confined : CursorLockMode.Locked;
+        Cursor.visible = visible;
     }
 
     void TogglePause()
@@ -123,6 +131,7 @@ public class GameManager : MonoBehaviour
         _pauseMenu.SetActive(false);
         Time.timeScale = 1;
         AudioManager.i.Resume();
+        SetMouseState(false);
     }
 
     public void Pause()
@@ -130,6 +139,7 @@ public class GameManager : MonoBehaviour
         _pauseMenu.SetActive(true);
         Time.timeScale = 0;
         AudioManager.i.Pause();
+        SetMouseState(true);
     }
 
     [ButtonMethod]

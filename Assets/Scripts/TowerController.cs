@@ -7,6 +7,7 @@ public class TowerController : MonoBehaviour
     public string Name;
 
     [Range(0, 3)] public int Index;
+    [SerializeField] private float _secondsPerInitalBlockPlace = 5;
     [SerializeField] private float _secondToFullExpansion = 60;
     [SerializeField] private Sound _completeSound;
     [SerializeField] private bool _isCurrentTower;
@@ -18,6 +19,7 @@ public class TowerController : MonoBehaviour
 
     private void Start()
     {
+        _secondsPerInitalBlockPlace *= Random.Range(0.8f, 1.2f);
         _completeSound = Instantiate(_completeSound);
         GameManager.i.Towers.Add(this);
     }
@@ -39,11 +41,25 @@ public class TowerController : MonoBehaviour
     public void Initialize(List<FloorController> floors)
     {
         _floors = floors;
+        foreach (var f in _floors) f.gameObject.SetActive(false);
+        _floors[0].gameObject.SetActive(true);
+        _floors[_floors.Count-1].gameObject.SetActive(true);
+    }
+
+    public void StartGrowing()
+    {
         StartCoroutine(GrowTower());
     }
 
     private IEnumerator GrowTower()
     {
+        for (int i = 1; i < _floors.Count-1; i++) {
+            //Debug.LogError("testerror");
+            _floors[i].gameObject.SetActive(true);
+            _floors[i].EmitParticlesAtBase();
+            yield return new WaitForSeconds(_secondsPerInitalBlockPlace);
+        }
+
         List<FloorController> incompleteFloors = new List<FloorController>(_floors);
         int numSteps = _floors.Count * 4;
         float step = _secondToFullExpansion / numSteps;

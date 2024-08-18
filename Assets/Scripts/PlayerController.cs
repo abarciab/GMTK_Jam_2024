@@ -118,7 +118,7 @@ public class PlayerController : MonoBehaviour
     {
         var mouseX = Input.GetAxis("Mouse X");
 
-        var rot = Vector3.up * mouseX * _rotateSpeed * Time.deltaTime * 100;
+        var rot = _rotateSpeed * 100 * mouseX * Time.deltaTime * Settings.MouseSensetivity * Vector3.up;
         transform.Rotate(rot);
     }
 
@@ -317,7 +317,7 @@ public class PlayerController : MonoBehaviour
     private void Land()
     {
         _landSound.Play();
-        GameManager.i.Camera.GetComponent<CameraShake>().ShakeManual(3, 0.1f, 0.05f);
+        //GameManager.i.Camera.GetComponent<CameraShake>().ShakeManual(3, 0.1f, 0.05f);
     }
 
     private void WalkRun()
