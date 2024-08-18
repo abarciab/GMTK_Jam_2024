@@ -697,6 +697,9 @@ MonoBehaviour:
   _inventorySelectionIndicator: {fileID: 5894055602246674243}
   _dialogue: {fileID: 3058578978178831594}
   _interactPrompt: {fileID: 2639637149953096352}
+  _interestIndicator: {fileID: 1398808770292673530}
+  _interestDistanceText: {fileID: 1223359387282562822}
+  _edgeBufferDistance: 50
 --- !u!114 &1945014446104884427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -710,9 +713,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lines: []
-  _interestIndicator: {fileID: 1398808770292673530}
-  _interestDistanceText: {fileID: 1223359387282562822}
-  _edgeBufferDistance: 50
 --- !u!1 &1437255108203571865
 GameObject:
   m_ObjectHideFlags: 0
