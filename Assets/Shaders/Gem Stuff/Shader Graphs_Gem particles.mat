@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Outline Mat
-  m_Shader: {fileID: -6465566751694194690, guid: 357bca32a16bb164ea6c78df0a0c21a0, type: 3}
+  m_Name: Shader Graphs_Gem particles
+  m_Shader: {fileID: -6465566751694194690, guid: a7c987390b8caae4d9c29fe4b8abbc08, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,12 +23,12 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _SampleTexture2DLOD_28e1db6ce57b4cfb8bf85588f183a122_Texture_1_Texture2D:
-        m_Texture: {fileID: 8400000, guid: 08fa902e36c3b684486b5002e1b47b05, type: 2}
+    - _Main_Tex:
+        m_Texture: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_b6b91262004e445fac9103334fdb9087_Texture_1_Texture2D:
-        m_Texture: {fileID: 8400000, guid: 08fa902e36c3b684486b5002e1b47b05, type: 2}
+    - _SampleTexture2D_5a96c44dcd6249fabb85ce0e4afd2e02_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: d0b6e2dd309af21469f9ce1ad08c62ab, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -45,12 +45,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Float: 0.0002
+    - _Float: 0
+    - _Hue_Offset: 0.05
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors: []
   m_BuildTextureStacks: []
---- !u!114 &1031495367030409344
+--- !u!114 &25281418641905804
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
