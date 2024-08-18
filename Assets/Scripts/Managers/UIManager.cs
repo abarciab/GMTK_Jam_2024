@@ -79,11 +79,12 @@ public class UIManager : MonoBehaviour
         Vector3 screenPos = Camera.main.WorldToScreenPoint(closestPoint.position);
         if(screenPos.z < 0f)
         {
-            screenPos = new Vector3( Screen.width - _edgeBufferDistance - screenPos.x, Screen.height - _edgeBufferDistance - screenPos.y, screenPos.z);
+            screenPos = new Vector3( Screen.width - _edgeBufferDistance - screenPos.x, Screen.height - _edgeBufferDistance, screenPos.z);
         }
 
         _interestIndicator.transform.position = new Vector3(Mathf.Clamp(screenPos.x, _edgeBufferDistance, Screen.width - _edgeBufferDistance), Mathf.Clamp(screenPos.y, _edgeBufferDistance, Screen.height - _edgeBufferDistance), _interestIndicator.transform.position.z);
-        _interestDistanceText.text = closestDistance.ToString("0.0");
+        // _interestDistanceText.text = closestDistance.ToString("0.0");
+        _interestDistanceText.text = closestDistance.ToString(screenPos.ToString());
     }
 
     public void SetInteractPromptEnabled(bool enabled)

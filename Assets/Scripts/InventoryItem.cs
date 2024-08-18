@@ -11,8 +11,8 @@ public class InventoryItem : MonoBehaviour
     [SerializeField] protected Sound useSound;
     [SerializeField] protected Sound errorSound;
 
-    private enum ItemState { Inventory, Equipped, Dropped }
-    private ItemState itemState = ItemState.Dropped;
+    protected enum ItemState { Inventory, Equipped, Dropped }
+    protected ItemState itemState = ItemState.Dropped;
     private MeshRenderer meshRenderer;
 
     void Awake()
@@ -58,7 +58,7 @@ public class InventoryItem : MonoBehaviour
         itemState = ItemState.Inventory;
     }
 
-    public void Equip()
+    public virtual void Equip()
     {
         print(gameObject.name + " - Equipped");
 
@@ -66,7 +66,7 @@ public class InventoryItem : MonoBehaviour
 
         itemState = ItemState.Equipped;
     }
-    public void Unequip()
+    public virtual void Unequip()
     {
         print(gameObject.name + " - Unequipped");
 
@@ -78,9 +78,14 @@ public class InventoryItem : MonoBehaviour
     public void Drop()
     {
         print(gameObject.name + " - Dropped");
+
+        if(itemState == ItemState.Equipped) Unequip();
+
         transform.parent = null;
 
         meshRenderer.enabled = true;
+
+        itemState = ItemState.Dropped;
     }
 
     public Sprite GetSprite()
