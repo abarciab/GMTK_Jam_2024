@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4309536793727018630, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
       propertyPath: m_Name
-      value: Recall Crystal
+      value: Forgiveness Charm
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -4579378121541590612, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
@@ -71,14 +71,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4309536793727018630, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1082088583867500995}
+      addedObject: {fileID: 3582606177473706826}
   m_SourcePrefab: {fileID: 100100000, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
 --- !u!1 &5262759260057752980 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4309536793727018630, guid: 130a9dc799f112c478a32a718872a1bd, type: 3}
   m_PrefabInstance: {fileID: 8270754373931430674}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1082088583867500995
+--- !u!114 &3582606177473706826
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,13 +87,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 5262759260057752980}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7aa6077b7e070545b34a80ab4749678, type: 3}
+  m_Script: {fileID: 11500000, guid: 116ddc47be130694ba3e901f055eb274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventorySprite: {fileID: 21300000, guid: 2d58fc5e96c5fbb46b9281fc49d6d50d, type: 3}
-  description: Use this to move yourself to somewhere you have been before.
-  leftClickText: Travel to your recall point.
-  rightClickText: Set your recall point to where you stand.
+  inventorySprite: {fileID: 21300000, guid: 05a9c80dc6b516f4cb5859b5f6df418b, type: 3}
+  description: Takes you to where you were 4 seconds ago.
+  leftClickText: Forgive yourself.
+  rightClickText: 
   useSound: {fileID: 11400000, guid: 937ddfdca0a09a343831e509caa6a123, type: 2}
   errorSound: {fileID: 11400000, guid: b7980b5b65bfb844bbe44aac54db5303, type: 2}
-  indicatorParticlesPrefab: {fileID: 7408869766375089464, guid: bb47cacb083d2e0488c76d66325a4fff, type: 3}
+  indicator: {fileID: 7408869766375089464, guid: bb47cacb083d2e0488c76d66325a4fff, type: 3}
