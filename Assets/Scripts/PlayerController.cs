@@ -2,9 +2,6 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.ShaderGraph.Internal;
-using UnityEditorInternal;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]

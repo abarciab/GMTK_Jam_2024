@@ -5,9 +5,6 @@ using UnityEngine.UI;
 using MyBox;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEditor.ShaderGraph.Internal;
-using System.Xml.Serialization;
-using UnityEditorInternal;
 
 public enum SelectableItemDataType { GRAPHIC, GAMEOBJECT, CANVASGROUP}
 
