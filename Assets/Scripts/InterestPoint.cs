@@ -7,7 +7,7 @@ public class InterestPoint : MonoBehaviour
 {
     private void Start()
     {
-        UIManager.i.AddPointOfInterest(transform);
+        if (UIManager.i) UIManager.i.AddPointOfInterest(transform);
     }
 
     private void OnTriggerEnter(Collider other)

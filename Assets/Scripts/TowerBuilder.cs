@@ -19,7 +19,7 @@ public class TowerBuilder : MonoBehaviour
     private void Start()
     {
         _controller = GetComponent<TowerController>();
-        GenerateTower();  
+        GenerateTower(); 
     }
 
     private void GenerateTower()

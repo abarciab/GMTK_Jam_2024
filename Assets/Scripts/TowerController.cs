@@ -11,6 +11,8 @@ public class TowerController : MonoBehaviour
     [SerializeField] private float _secondToFullExpansion = 60;
     [SerializeField] private Sound _completeSound;
     [SerializeField] private bool _isCurrentTower;
+    [SerializeField] private bool _displayOnly;
+    [SerializeField] private float _startOffsetTime = 1;
 
     [HideInInspector] public float MaxHeight => _floors[_floors.Count-1].TopPos.y;
     [HideInInspector] public bool Complete { get; private set; }
@@ -20,9 +22,10 @@ public class TowerController : MonoBehaviour
     private void Start()
     {
         _initialBuildTime *= Random.Range(0.8f, 1.2f);
+        _startOffsetTime *= Random.Range(0.8f, 1.2f);
         _secondToFullExpansion *= Random.Range(0.8f, 1.2f);
         _completeSound = Instantiate(_completeSound);
-        GameManager.i.Towers.Add(this);
+        if (GameManager.i) GameManager.i.Towers.Add(this);
     }
 
     public void SetAsCurrentTower(bool isCurrent)
@@ -43,8 +46,9 @@ public class TowerController : MonoBehaviour
     {
         _floors = floors;
         foreach (var f in _floors) f.gameObject.SetActive(false);
-        _floors[0].gameObject.SetActive(true);
+        if (!_displayOnly)_floors[0].gameObject.SetActive(true);
         //_floors[_floors.Count-1].gameObject.SetActive(true);
+        if (_displayOnly) StartGrowing();
     }
 
     public void StartGrowing()
@@ -54,8 +58,10 @@ public class TowerController : MonoBehaviour
 
     private IEnumerator GrowTower()
     {
+        print("Growing");
+        yield return new WaitForSeconds(_startOffsetTime);
         float intialStep = _initialBuildTime / _floors.Count;
-        for (int i = 1; i < _floors.Count; i++) {
+        for (int i = _displayOnly ? 0 :  1; i < _floors.Count; i++) {
             //Debug.LogError("testerror");
             _floors[i].gameObject.SetActive(true);
             _floors[i].EmitParticlesAtBase();
