@@ -7,21 +7,19 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Flood Water
+  m_Name: Flood Water 1
   m_Shader: {fileID: -6465566751694194690, guid: 9c03a809012f3254c9b32ee8967fa98e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _SURFACE_TYPE_TRANSPARENT
+  m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: 2000
   stringTagMap:
-    RenderType: Transparent
+    RenderType: Opaque
   disabledShaderPasses:
-  - DepthOnly
   - SHADOWCASTER
   m_LockedProperties: 
   m_SavedProperties:
@@ -82,16 +80,16 @@ Material:
     - _Blend: 0
     - _CastShadows: 0
     - _Cull: 2
-    - _DstBlend: 10
-    - _Float: 6.31
+    - _DstBlend: 0
+    - _Float: -0.81
     - _Hightlights: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _SrcBlend: 5
-    - _Surface: 1
+    - _SrcBlend: 1
+    - _Surface: 0
     - _ZTest: 4
-    - _ZWrite: 0
-    - _ZWriteControl: 0
+    - _ZWrite: 1
+    - _ZWriteControl: 1
     m_Colors:
     - _Color: {r: 0.09989874, g: 0.0060488326, b: 0.47353154, a: 1}
     - _Color_1: {r: 0.3207547, g: 0.037824843, b: 0.26485226, a: 0.16862746}
