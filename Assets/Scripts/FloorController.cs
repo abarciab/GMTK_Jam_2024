@@ -1,23 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using MyBox;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public enum CardinalDirection { South, East, North, West };
 
 [SelectionBase]
 public class FloorController : MonoBehaviour
 {
-    [SerializeField] private Transform _top;
     [SerializeField] private CardinalDirection _exitSide;
 
+    [Header("References")]
+    [SerializeField] private Transform _top;
     [SerializeField] private Transform _rootParent;
-    [SerializeField, ReadOnly] private List<Transform> _floorSections = new List<Transform>();
-    [SerializeField, ReadOnly] private List<Transform> _hiddenExtras = new List<Transform>();
+    [SerializeField] private Transform _bridgePointParent;
 
     [Header("expansion")]
     [SerializeField, Range(0, 1)] private float _expansionProgress;
     [SerializeField] private AnimationCurve _expansionCurve;
+    [SerializeField, ReadOnly] private List<Transform> _floorSections = new List<Transform>();
+    [SerializeField, ReadOnly] private List<Transform> _hiddenExtras = new List<Transform>();
     [SerializeField, ReadOnly] private List<float> _expandedOffsets = new List<float>();
     [SerializeField, ReadOnly] private List<float> _compressedOffsets = new List<float>(); 
 
@@ -32,8 +36,9 @@ public class FloorController : MonoBehaviour
 
     [Header("Bridge")]
     [SerializeField] private GameObject _bridgePrefab;
+    [SerializeField] private float _bridgeChance;
 
-
+    [HideInInspector] public bool HasBridge;
     [HideInInspector] public FloorController PreviousFloor;
     [HideInInspector] public CardinalDirection ExitSide => _exitSide;
     [HideInInspector] public Vector3 TopPos => !gameObject.activeInHierarchy && PreviousFloor ? PreviousFloor.TopPos : _top.position;
@@ -72,8 +77,15 @@ public class FloorController : MonoBehaviour
         UpdateModel();
     }
 
-    public void InitializeMaterials(Dictionary<Material, Material> matDict)
+    public void Initialize(Dictionary<Material, Material> matDict)
     {
+        if (_bridgePointParent && _bridgePointParent.childCount > 1) {
+            var bridgePoints = new List<Transform>();
+            foreach (Transform child in _bridgePointParent) bridgePoints.Add(child);
+            bridgePoints = bridgePoints.OrderBy(x => Vector3.Distance(GameManager.i.MiddlePoint, x.transform.position)).ToList();
+            for (int i = 1; i < bridgePoints.Count; i++) bridgePoints[i].gameObject.SetActive(false);
+        }
+
         if (_rootParent) ReplaceMaterials(_rootParent, matDict);
     }
 
@@ -231,6 +243,16 @@ public class FloorController : MonoBehaviour
         return Mathf.Lerp(a, b, curvedProgress);
     }
 
+    public Transform GetClosestBridgePoint(Vector3 pos)
+    {
+        if (!_bridgePointParent || _bridgePointParent.childCount == 0) return transform;
+
+        var options = new List<Transform>();
+        foreach (Transform child in _bridgePointParent) options.Add(child); 
+        options = options.Where(x => x.gameObject.activeInHierarchy).OrderBy(x => Vector3.Distance(x.position, pos)).ToList();
+        return options[0];
+    }
+
     [ButtonMethod]
     private void SetExpandedPositions()
     {
@@ -253,17 +275,18 @@ public class FloorController : MonoBehaviour
     {
         if (_floorSections.Count != 5) return;
         if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion += 0.25f);
-        if (TargetExpansion > 0.5f && (Random.Range(0, 1f) < 0.1f)) BuildBridge();
+        if (TargetExpansion > 0.5f && (Random.Range(0, 1f) < _bridgeChance)) BuildBridge();
     }
 
     [ButtonMethod]
-    private void BuildBridge()
+    public void BuildBridge()
     {
+        if (HasBridge) return;
         var end = GameManager.i.GetFloorAtY(_connectedTowers, transform.position.y);
         if (end == null) return;
         _connectedTowers.Add(end.GetComponentInParent<TowerController>());
         var bridge = Instantiate(_bridgePrefab).GetComponent<BridgeController>();
-        bridge.Initialize(transform, end.transform);
-
+        bridge.Initialize(GetClosestBridgePoint(end.transform.position), end.GetClosestBridgePoint(transform.position));
+        HasBridge = end.HasBridge = true;
     }
 }

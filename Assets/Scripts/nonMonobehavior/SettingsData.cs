@@ -18,7 +18,7 @@ public static class Settings
     {
         if (Time.time > 1) return;
 
-        Debug.Log("initialzing");
+        //Debug.Log("initialzing");
         MouseSensetivity = PlayerPrefs.GetFloat(sensKey, 0.05f);
     }
 }

@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-[System.Serializable] public class Conversation { [TextArea(2, 10)] public List<string> Lines = new List<string>(); }
-
-public class TutorialMentor : MonoBehaviour
+public class Lever : MonoBehaviour
 {
     [SerializeField] private float _activationDistance;
-    [SerializeField] private List<Conversation> _conversations = new List<Conversation>();
+    [SerializeField] private UnityEvent _OnActivate;
+    [SerializeField] private bool _autoDeactivate = true;
     private Transform _player;
 
     private void Update()
@@ -20,11 +20,10 @@ public class TutorialMentor : MonoBehaviour
         UIManager.i.SetInteractPromptEnabled(dist < _activationDistance, gameObject);
 
         if (dist > _activationDistance) return;
-        else if (InputController.GetDown(Control.INTERACT)){
-            UIManager.i._dialogue.StartDialogue(_conversations[0].Lines);
-            _conversations.RemoveAt(0);
-            if (_conversations.Count == 0) gameObject.SetActive(false);
+        else if (InputController.GetDown(Control.INTERACT)) {
             UIManager.i.SetInteractPromptEnabled(false, gameObject);
+            _OnActivate.Invoke();
+            if (_autoDeactivate) enabled = false;
         }
     }
 

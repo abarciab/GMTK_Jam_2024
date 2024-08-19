@@ -39,6 +39,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private float _edgeBufferDistance;
 
     private float _targetTowerProgress;
+    private GameObject _promptSource;
 
     private List<Transform> pointsOfInterest = new List<Transform>();
 
@@ -91,9 +92,12 @@ public class UIManager : MonoBehaviour
         _interestDistanceText.text = closestDistance.ToString(screenPos.ToString());
     }
 
-    public void SetInteractPromptEnabled(bool enabled)
+    public void SetInteractPromptEnabled(bool enabled, GameObject source)
     {
+        if (!enabled && source != _promptSource) return;
+
         _interactPrompt.SetActive(enabled);
+        _promptSource = source;
     }
 
     public void StartNewTower(string towerName, float progress)

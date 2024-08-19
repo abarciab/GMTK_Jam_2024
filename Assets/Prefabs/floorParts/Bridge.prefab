@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3115685051358200696}
   - component: {fileID: 7290197344348784301}
   - component: {fileID: 5620660909108902762}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: deck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.3956048, y: 0.3054, z: 43.860344}
+  m_LocalScale: {x: 5.317043, y: 0.3054, z: 43.860344}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2335160955997827217}
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 13527630e80818545898d7148bae16c3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -115,7 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2335160955997827217}
   - component: {fileID: 8748673808600233526}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Bridge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,12 +151,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2295c461161254a40a7afdf101ab2db9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _start: {fileID: 0}
-  _end: {fileID: 0}
+  _secondsToOpen: 5
   _deck: {fileID: 2568484265788900432}
   _sideWallParent: {fileID: 7331389860738154363}
   _sideWallPrefab: {fileID: 8715577886543642870, guid: 5c1c1e6db48cb854d9dc3f7079209e41, type: 3}
-  _sideWallWidth: 1
+  _sideWallWithRopePrefab: {fileID: 8715577886543642870, guid: dd224ea632205ed49aeed430fe20e6cc, type: 3}
+  _sideWallWidth: 2
+  _sideWallPlaceSound: {fileID: 11400000, guid: 3b9223a93f4eb354dbf567df299df427, type: 2}
 --- !u!1 &8886300517212337365
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,7 +167,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7331389860738154363}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: SideWalls
   m_TagString: Untagged
   m_Icon: {fileID: 0}

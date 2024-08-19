@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
 
 
     [HideInInspector] public PlayerController Player;
-    [HideInInspector] public List<TowerController> Towers = new List<TowerController>();
+    [HideInInspector] public List<TowerController> Towers { get; private set; } = new List<TowerController>();
+    [HideInInspector] public Vector3 MiddlePoint;
 
     private float _highScore;
     private TowerController _currentTower;
@@ -41,6 +42,19 @@ public class GameManager : MonoBehaviour
         SetMouseState(false);
         _towersLeft = _totalTowerCount;
         _flood.SetActive(false);
+    }
+
+    public void RegisterTower(TowerController _tower)
+    {
+        Towers.Add(_tower);
+        SetMiddle();
+    }
+
+    private void SetMiddle()
+    {
+        var total = new Vector3();
+        foreach (var t in Towers) total += transform.position;
+        MiddlePoint = total/Towers.Count;
     }
 
     private void Update()

@@ -36,13 +36,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _glideEndBoost = 3;
     [SerializeField] private float _forwardGlideCheckerRadius;
     [SerializeField] private Vector3 _forwardGlideCheckerOffset;
-    [SerializeField] private float _downGlideCheckerRadius;
-    [SerializeField] private Vector3 _downGlideCheckerOffset;
 
 
     [Header("Climbing")]
     [SerializeField] private float _vertClimbSpeed = 3;
     [SerializeField] private float _climbStrafeSpeed = 1;
+    [SerializeField] private float _ropSpinSpeed = 1;
 
     [Header("Sounds")]
     [SerializeField] private Sound _jumpUpSound;
@@ -73,6 +72,7 @@ public class PlayerController : MonoBehaviour
     private float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     private float _currentLadderDist => _currentLadder == null ? Mathf.Infinity : DistanceTo(_currentLadder.transform.position);
     private float _currentItemDist => _currentDroppedItem == null ? Mathf.Infinity : DistanceTo(_currentDroppedItem.transform.position);
+    private bool _onRope => _currentLadder && _currentLadder.IsRope;
 
     private InventoryItem[] _inventoryItems = {null, null, null, null, null, null, null, null, null, null};
     private int _currentItemIndex = 0;
@@ -93,12 +93,25 @@ public class PlayerController : MonoBehaviour
 
     public void SetClosestLadder(Ladder ladder)
     {
-        if (_currentLadder == null || _currentLadderDist < DistanceTo(ladder.transform.position)) _currentLadder = ladder;
+        if (_currentLadder == null || _currentLadderDist < DistanceTo(ladder.transform.position)) {
+            if (ladder.IsRope) {
+                transform.SetParent(ladder.transform);
+                var pos = transform.position;
+                StopGliding(pos);
+                transform.position = pos;
+                _rb.velocity = Vector3.zero;
+            }
+            _currentLadder = ladder;
+        }
     }
 
     public void ClearLadder(Ladder ladder)
     {
-        if (_currentLadder == ladder) _currentLadder = null;
+        if (_currentLadder == ladder) {
+            _currentLadder = null;
+            _isClimbing = false;
+            if (ladder.IsRope) transform.SetParent(null);
+        }
     }
 
     public void SetClosestItem(InventoryItem item)
@@ -235,30 +248,28 @@ public class PlayerController : MonoBehaviour
     {
         var camTrans = Camera.main.transform;
         var all = new List<Collider>();
-        var forward = Physics.OverlapSphere(camTrans.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
-        var down = Physics.OverlapSphere(camTrans.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
-        all.AddRange(forward);
-        all.AddRange(down);
-        all = all.Where(x => x.GetComponent<PlayerController>() == null && !x.isTrigger).ToList();
+        var forwardPoint = camTrans.TransformPoint(_forwardGlideCheckerOffset);
+        var forward = Physics.OverlapSphere(forwardPoint, _forwardGlideCheckerRadius);
+        var forwardList = forward.Where(x => x.GetComponent<PlayerController>() == null && !x.isTrigger).ToList();
 
-        if (all.Count > 0) {
-            StopGliding();
+        if (forwardList.Count > 0) {
+            StopGliding(forwardPoint);
             //print("overlapping w: " + all[0].gameObject.name);
         }
     }
 
-    private void StopGliding()
+    private void StopGliding(Vector3 endPoint)
     {
         _isGliding = false;
         _rb.isKinematic = false;
-        transform.position += Vector3.up * _glideEndBoost;
+        transform.position = endPoint + Vector3.up * _glideEndBoost;
         _windLoop.SetPercentVolume(0);
     }
 
     private void Climb()
     {
         if (!_currentLadder) {
-            _isClimbing = false;
+            ClearLadder(_currentLadder);
             return;
         }
 
@@ -268,9 +279,22 @@ public class PlayerController : MonoBehaviour
         if (inputDir.x > 0) climbDir += transform.right;
         if (inputDir.y < 0) climbDir -= Vector3.up;
         if (inputDir.x < 0) climbDir -= transform.right;
-        if (climbDir == Vector3.zero) {
-            _isClimbing = false;
+        if (_onRope) {
+            if (InputController.GetDown(Control.JUMP)) {
+                Jump(true);
+                ClearLadder(_currentLadder);
+                return;
+            }
+        }
+        else if (climbDir == Vector3.zero) {
+            ClearLadder(_currentLadder);
             return;
+        }
+
+        if (_currentLadder.IsRope) {
+            var rot = Vector3.up * inputDir.x * -_ropSpinSpeed * Time.deltaTime;
+            transform.parent.Rotate(rot);
+            climbDir.x = 0;
         }
 
         GameManager.i.UpdateCurrentTower(_currentLadder.GetComponentInParent<TowerController>());
@@ -284,10 +308,12 @@ public class PlayerController : MonoBehaviour
         _rb.velocity += Vector3.down * amount * Time.deltaTime * 10;
     }
 
-    private void Jump()
+    private void Jump(bool overrideConditions = false)
     {
-        float timeSinceLastJump = Time.time - _lastJumpTime;
-        if (_numJumpsLeft <= 0 || timeSinceLastJump < _minimumJumpTime) return;
+        if (!overrideConditions) {
+            float timeSinceLastJump = Time.time - _lastJumpTime;
+            if (_numJumpsLeft <= 0 || timeSinceLastJump < _minimumJumpTime) return;
+        }
 
         _numJumpsLeft -= 1;
         _jumpUpSound.Play(restart:false);
@@ -310,7 +336,7 @@ public class PlayerController : MonoBehaviour
             
             var movingPlatform = collider.GetComponentInParent<MovingPlatform>();
             if (movingPlatform) transform.SetParent(movingPlatform.transform);
-            else transform.SetParent(null);
+            else if (!_onRope)transform.SetParent(null);
 
             var decayingPlatform = collider.GetComponentInParent<DecayingPlatform>();
             decayingPlatform?.StartStandingOnPlatform();
@@ -327,7 +353,7 @@ public class PlayerController : MonoBehaviour
         }
         else {
             if (oldState) _timeWhenLastGrounded = Time.time;
-            transform.SetParent(null);
+            if (!_onRope)transform.SetParent(null);
             if (_currentFloorObj) {
                 //_currentFloorObj.GetComponent<DecayingPlatform>()?.LeavePlatform();
             }
@@ -398,7 +424,6 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawWireSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
-        Gizmos.DrawWireSphere(transform.TransformPoint(_downGlideCheckerOffset), _downGlideCheckerRadius);
     }
 
     private void EquipItem(int index)

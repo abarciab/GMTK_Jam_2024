@@ -33,16 +33,16 @@ public class TowerController : MonoBehaviour
         _startOffsetTime *= Random.Range(0.8f, 1.2f);
         _secondToFullExpansion *= Random.Range(0.8f, 1.2f);
         _completeSound = Instantiate(_completeSound);
-        if (GameManager.i) GameManager.i.Towers.Add(this);
+        if (GameManager.i) GameManager.i.RegisterTower(this);
     }
 
     public FloorController GetFloorAtY(float y)
     {
-        var closestFloor = _floors[0];
+        FloorController closestFloor = null;
         float shortestDist = Mathf.Infinity;
         foreach (var floor in _floors) {
             var dist = Mathf.Abs(floor.transform.position.y - y);
-            if (dist > shortestDist || floor.transform.position.y <= y) continue;
+            if (dist > shortestDist || floor.transform.position.y < y-10 || floor.HasBridge) continue;
             shortestDist = dist;
             closestFloor = floor;
         }
@@ -105,7 +105,7 @@ public class TowerController : MonoBehaviour
             var floor = _floors[i];
             floor.gameObject.SetActive(true);
             floor.EmitParticlesAtBase();
-            floor.InitializeMaterials(_matDict);
+            floor.Initialize(_matDict);
             yield return new WaitForSeconds(intialStep);
         }
 
