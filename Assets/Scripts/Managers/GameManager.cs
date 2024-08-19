@@ -1,6 +1,7 @@
 using MyBox;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -48,6 +49,13 @@ public class GameManager : MonoBehaviour
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
 
         CalculateHighScore();
+    }
+
+    public FloorController GetFloorAtY(List<TowerController> invalid, float y)
+    {
+        var validTowers = Towers.Where(x => !invalid.Contains(x)).ToList();
+        if (validTowers.Count == 0) return null;
+        return validTowers[Random.Range(0, validTowers.Count)].GetFloorAtY(y);
     }
 
     public void StartTowersGrowing()

@@ -1,14 +1,11 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using MyBox;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public enum CardinalDirection { South, East, North, West };
 
+[SelectionBase]
 public class FloorController : MonoBehaviour
 {
     [SerializeField] private Transform _top;
@@ -33,12 +30,17 @@ public class FloorController : MonoBehaviour
     [Header("Sounds")]
     [SerializeField] private Sound _slidingSound;
 
+    [Header("Bridge")]
+    [SerializeField] private GameObject _bridgePrefab;
+
 
     [HideInInspector] public FloorController PreviousFloor;
     [HideInInspector] public CardinalDirection ExitSide => _exitSide;
     [HideInInspector] public Vector3 TopPos => !gameObject.activeInHierarchy && PreviousFloor ? PreviousFloor.TopPos : _top.position;
 
     [HideInInspector] public float TargetExpansion;
+
+    private List<TowerController> _connectedTowers = new List<TowerController>();
 
     private void OnValidate()
     {
@@ -49,6 +51,7 @@ public class FloorController : MonoBehaviour
     {
         _slidingSound = Instantiate(_slidingSound);
         _slidingSound.PlaySilent(transform);
+        _connectedTowers.Add(GetComponentInParent<TowerController>());
     }
 
     private void Update()
@@ -69,6 +72,41 @@ public class FloorController : MonoBehaviour
         UpdateModel();
     }
 
+    public void InitializeMaterials(Dictionary<Material, Material> matDict)
+    {
+        if (_rootParent) ReplaceMaterials(_rootParent, matDict);
+    }
+
+    private void ReplaceMaterials(Transform current,  Dictionary<Material, Material> matDict)
+    {
+        var renderer = current.GetComponent<Renderer>();
+        if (renderer) {
+            var updatedMats = new List<Material>();
+            for (int i = 0; i < renderer.sharedMaterials.Length; i++) {
+                updatedMats.Add(matDict[renderer.sharedMaterials[i]]);
+            }
+            renderer.sharedMaterials = updatedMats.ToArray();
+        }
+        foreach (Transform child in current) ReplaceMaterials(child, matDict);
+    }
+
+    public List<Material> GetUniqueMaterials()
+    {
+        
+        List<Material> mats = new List<Material>();
+        if (_rootParent) SearchForUniqueMaterial(_rootParent, mats);
+        return new List<Material>(mats);
+    }
+
+    private void SearchForUniqueMaterial(Transform current, List<Material> mats)
+    {
+        var render = current.GetComponent<Renderer>();
+        if (render) {
+            foreach (var m in render.sharedMaterials) if (!mats.Contains(m)) mats.Add(m);
+        }
+        foreach (Transform child in current) SearchForUniqueMaterial(child, mats);
+    }
+
     private void InitializeScale(Transform transform)
     {
         var originalParent = transform.parent;
@@ -77,12 +115,6 @@ public class FloorController : MonoBehaviour
         transform.SetParent(originalParent);
     }
 
-    [ButtonMethod]
-    public void IncrementTargetExpansion()
-    {
-        if (_floorSections.Count != 5) return;
-        if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion += 0.25f);
-    }
 
     public void SetTargetExpansion(float newTarget)
     {
@@ -216,4 +248,22 @@ public class FloorController : MonoBehaviour
         foreach (var s in _floorSections) _compressedOffsets.Add(s.localPosition.y);
     }
 
+    [ButtonMethod]
+    public void IncrementTargetExpansion()
+    {
+        if (_floorSections.Count != 5) return;
+        if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion += 0.25f);
+        if (TargetExpansion > 0.5f && (Random.Range(0, 1f) < 0.1f)) BuildBridge();
+    }
+
+    [ButtonMethod]
+    private void BuildBridge()
+    {
+        var end = GameManager.i.GetFloorAtY(_connectedTowers, transform.position.y);
+        if (end == null) return;
+        _connectedTowers.Add(end.GetComponentInParent<TowerController>());
+        var bridge = Instantiate(_bridgePrefab).GetComponent<BridgeController>();
+        bridge.Initialize(transform, end.transform);
+
+    }
 }

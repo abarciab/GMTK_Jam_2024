@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _towerProgressParent;
     [SerializeField] private Slider _towerProgresSlider;
     [SerializeField] private TextMeshProUGUI _currentTowerText;
+    [SerializeField] private TextMeshProUGUI _towerPercentText;
     [SerializeField] private string _currentTowerTemplateString = "Current Tower: NAME";
 
     [Header("Completed Towers")]
@@ -42,7 +43,7 @@ public class UIManager : MonoBehaviour
     private List<Transform> pointsOfInterest = new List<Transform>();
 
 
-    public void ShowHighScore(int score) => _highScoreText.text = _highScoreTemplateString.Replace("SCORE", score.ToString());
+    public void ShowHighScore(int score) => _highScoreText.text = _highScoreTemplateString.Replace("SCORE", (Mathf.Max(0, score - 90)).ToString());
     public void ShowCurrentTowerProgress(float progress) => _targetTowerProgress = progress;
     public void HideTowerProgress() => _towerProgressParent.SetActive(false);
     public void CompleteTower(int index) => _completedTowerIcons[index].SetEnabled(true);
@@ -58,7 +59,8 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        _towerProgresSlider.value = Mathf.Lerp(_towerProgresSlider.value, _targetTowerProgress, 8 * Time.deltaTime);
+        _towerProgresSlider.value = Mathf.Lerp(_towerProgresSlider.value, _targetTowerProgress, 8 * Time.deltaTime); 
+        _towerPercentText.text = ((int) (_towerProgresSlider.value * 100)) + "%";
         _timerText.text = GetTimeString((int) Time.timeSinceLevelLoad);
 
         AdjustPointsOfInterest();

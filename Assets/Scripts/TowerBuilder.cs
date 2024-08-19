@@ -22,6 +22,13 @@ public class TowerBuilder : MonoBehaviour
         GenerateTower(); 
     }
 
+    public List<FloorController> GetFloorPrefabs()
+    {
+        var floors = new List<FloorController>();
+        foreach (var item in _towerFloorPrefabs) floors.Add(item.floorPrefab.GetComponent<FloorController>());
+        return floors;
+    }
+
     private void GenerateTower()
     {
         PlaceFirstFloor();
