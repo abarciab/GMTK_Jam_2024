@@ -2,6 +2,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -15,7 +16,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector2 _groundedAndUngroundedRbDrag = new Vector2(4, 1);
 
     [Header("Jumping")]
+    [SerializeField] private int _numJumps = 1;
     [SerializeField] private float _jumpForce;
+    [SerializeField] private float _coyoteTime = 1f;
     [SerializeField] private float _jumpingUpGravity = 2;
     [SerializeField] private float _fallingGravity = 5;
     [SerializeField, Tooltip("Minimum time between jumps")] private float _minimumJumpTime = 0.1f;
@@ -49,20 +52,23 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public bool IsRunning => _isRunning;
     [HideInInspector] public bool IsGliding => _isGliding;
+    private bool _isCoyoteGrounded => _isGrounded || (_numJumpsLeft > 0 && Time.time - _timeWhenLastGrounded < _coyoteTime);
 
-    private Vector3 inputDir;
+    private Vector3 _inputDir;
+    private Vector3 oldPos;
     private Rigidbody _rb;
+    private Ladder _currentLadder;
+    private InventoryItem _currentDroppedItem;
+    private GameObject _currentFloorObj;
+    private CameraController _cam;
     private bool _isGrounded;
     private bool _isRunning;
     private bool _isGliding;
     private bool _isClimbing;
     private float _lastJumpTime;
-    private Ladder _currentLadder;
-    private InventoryItem _currentDroppedItem;
     private float _glideSpeed;
-    private Vector3 oldPos;
-    private GameObject _currentFloorObj;
-    private CameraController _cam;
+    private float _timeWhenLastGrounded;
+    [SerializeField, ReadOnly] private int _numJumpsLeft;
 
     private float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     private float _currentLadderDist => _currentLadder == null ? Mathf.Infinity : DistanceTo(_currentLadder.transform.position);
@@ -70,6 +76,7 @@ public class PlayerController : MonoBehaviour
 
     private InventoryItem[] _inventoryItems = {null, null, null, null, null, null, null, null, null, null};
     private int _currentItemIndex = 0;
+
 
     private void Start()
     {
@@ -124,15 +131,17 @@ public class PlayerController : MonoBehaviour
     {
         var mouseX = Input.GetAxis("Mouse X");
 
-        var rot = _rotateSpeed * 100 * mouseX * Time.deltaTime * Settings.MouseSensetivity * Vector3.up;
-        transform.Rotate(rot);
+        var rotDelta = _rotateSpeed * 100 * mouseX * Time.deltaTime * Settings.MouseSensetivity;
+
+        rotDelta = Mathf.Clamp(rotDelta, -5, 5);
+        transform.Rotate(rotDelta * Vector3.up);
     }
 
     private void Move()
     {
         UpdateIsGrounded();
 
-        if (!_isGliding && !_isGrounded && _rb.velocity.y < 0 && InputController.GetDown(Control.JUMP) && _gliderUnlocked) StartGliding();
+        if (!_isGliding && !_isCoyoteGrounded && _rb.velocity.y < 0 && InputController.GetDown(Control.JUMP) && _gliderUnlocked) StartGliding();
         if (_isGliding) {
             Glide();
             return;
@@ -144,7 +153,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (_isGrounded && InputController.Get(Control.JUMP)) Jump();
+        if (_isCoyoteGrounded && InputController.GetDown(Control.JUMP)) Jump();
         WalkRun();
         if (!_isGrounded && _rb.velocity.y > 0.1) ApplyGravity(_jumpingUpGravity);
         if (!_isGrounded && _rb.velocity.y < 0.1) ApplyGravity(_fallingGravity);
@@ -234,7 +243,7 @@ public class PlayerController : MonoBehaviour
 
         if (all.Count > 0) {
             StopGliding();
-            print("overlapping w: " + all[0].gameObject.name);
+            //print("overlapping w: " + all[0].gameObject.name);
         }
     }
 
@@ -278,12 +287,14 @@ public class PlayerController : MonoBehaviour
     private void Jump()
     {
         float timeSinceLastJump = Time.time - _lastJumpTime;
-        if (timeSinceLastJump < _minimumJumpTime) return;
+        if (_numJumpsLeft <= 0 || timeSinceLastJump < _minimumJumpTime) return;
 
+        _numJumpsLeft -= 1;
         _jumpUpSound.Play(restart:false);
-        _rb.velocity += Vector3.up * _jumpForce;
+        var vel = _rb.velocity;
+        vel.y = _jumpForce;
+        _rb.velocity = vel;
         _lastJumpTime = Time.time;
-        _isGrounded = false;
     }
 
     private void UpdateIsGrounded()
@@ -315,6 +326,7 @@ public class PlayerController : MonoBehaviour
             else _currentFloorObj = collider.gameObject;
         }
         else {
+            if (oldState) _timeWhenLastGrounded = Time.time;
             transform.SetParent(null);
             if (_currentFloorObj) {
                 //_currentFloorObj.GetComponent<DecayingPlatform>()?.LeavePlatform();
@@ -327,13 +339,15 @@ public class PlayerController : MonoBehaviour
 
     private void Land()
     {
+        _numJumpsLeft = _numJumps;
         _landSound.Play();
         //GameManager.i.Camera.GetComponent<CameraShake>().ShakeManual(3, 0.1f, 0.05f);
     }
 
     private void WalkRun()
     {
-        inputDir = GetInputDir().normalized;
+        Vector3 inputDir = GetInputDir().normalized;
+
         _isRunning = InputController.Get(Control.RUN) && inputDir != Vector3.zero;
         var speed = _isRunning ? _runSpeed : _walkSpeed;
         if (inputDir != Vector3.zero) {
@@ -342,9 +356,14 @@ public class PlayerController : MonoBehaviour
             float speedForward = Vector3.Dot(current, transform.forward);
             float speedRight = Vector3.Dot(current, transform.right);
 
+            float acceleration = speed * 10f * Time.deltaTime;
+
             var moveDir = current;
-            if (Mathf.Sign(inputDir.x) != Mathf.Sign(speedRight) || Mathf.Abs(speedRight) < speed) moveDir += inputDir.x * speed * transform.right; 
-            if (Mathf.Sign(inputDir.y) != Mathf.Sign(speedForward) || Mathf.Abs(speedForward) < speed) moveDir += inputDir.y * speed * transform.forward;
+            if (Mathf.Sign(inputDir.x) != Mathf.Sign(speedRight) || Mathf.Abs(speedRight) < speed) moveDir += inputDir.x * acceleration * transform.right; 
+            if (Mathf.Sign(inputDir.y) != Mathf.Sign(speedForward) || Mathf.Abs(speedForward) < speed) moveDir += inputDir.y * acceleration * transform.forward;
+
+            //if (_oldMoveDir.magnitude < moveDir.magnitude) moveDir /= 2;
+            //_oldMoveDir = moveDir;            
 
             _rb.velocity = moveDir;
         }
@@ -363,14 +382,14 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 GetMoveDir()
     {
-        this.inputDir = Vector3.zero;
+        this._inputDir = Vector3.zero;
         var inputDir = GetInputDir();
-        if (inputDir.y > 0) this.inputDir += transform.forward;
-        if (inputDir.x > 0) this.inputDir += transform.right * _strafeSpeedMod;
-        if (inputDir.y < 0) this.inputDir -= transform.forward;
-        if (inputDir.x < 0) this.inputDir -= transform.right * _strafeSpeedMod;
-        this.inputDir = this.inputDir.normalized;
-        return this.inputDir;
+        if (inputDir.y > 0) this._inputDir += transform.forward;
+        if (inputDir.x > 0) this._inputDir += transform.right * _strafeSpeedMod;
+        if (inputDir.y < 0) this._inputDir -= transform.forward;
+        if (inputDir.x < 0) this._inputDir -= transform.right * _strafeSpeedMod;
+        this._inputDir = this._inputDir.normalized;
+        return this._inputDir;
     }
 
     private void OnDrawGizmosSelected()

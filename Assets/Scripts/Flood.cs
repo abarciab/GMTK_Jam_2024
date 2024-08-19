@@ -6,7 +6,8 @@ public class Flood : MonoBehaviour
 {
     [SerializeField] private float _totalSeconds = 600;
     [SerializeField] private AnimationCurve _curve;
-    [SerializeField] private float _offset;
+    [SerializeField] private float _offset = 90;
+    [SerializeField] private float _topOffset = 25;
 
     private float _timePassed;
 
@@ -15,11 +16,11 @@ public class Flood : MonoBehaviour
         _timePassed += Time.deltaTime;
         float progress = _timePassed / _totalSeconds;
         progress = _curve.Evaluate(progress);
-        float maxHeight = GameManager.i.GetShortestMaxHeight() - _offset;
+        float maxHeight = GameManager.i.GetShortestMaxHeight() - _topOffset;
         float targetHeight = progress * maxHeight;
 
         var pos = transform.position;
-        if (pos.y < targetHeight) pos.y = targetHeight;
+        if (pos.y < targetHeight) pos.y = targetHeight - _offset;
         transform.position = pos;
         if (GameManager.i.Player.transform.position.y < transform.position.y) GameManager.i.LoseGame();
     }

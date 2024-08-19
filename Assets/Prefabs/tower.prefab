@@ -53,7 +53,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 711e01f8ef89c4c47848592ae33dc750, type: 2}
   - {fileID: 11400000, guid: 25b6a62d8eb71b74b8b6522e601114f8, type: 2}
   - {fileID: 11400000, guid: c789bb84e1ed0bf48b056ef3fed86e0f, type: 2}
-  _targetHeight: 18
+  - {fileID: 11400000, guid: baf0d24a4f2397b4889c0cd95ce26106, type: 2}
+  _targetHeight: 17
   _difficultyThreshold: 0
 --- !u!114 &8781711337011915082
 MonoBehaviour:
@@ -69,8 +70,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: A
   Index: 0
-  _secondsPerInitalBlockPlace: 5
-  _secondToFullExpansion: 423
+  _initialBuildTime: 13
+  _secondToFullExpansion: 500
   _completeSound: {fileID: 11400000, guid: 7612bd5aa041e9040944c46a16af08eb, type: 2}
   _isCurrentTower: 0
 --- !u!114 &8917216657033817255

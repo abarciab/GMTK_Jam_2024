@@ -17,7 +17,7 @@ public class CameraController : MonoBehaviour
     [Header("Misc")]
     [SerializeField] private Camera _camera;
 
-    void Update()
+    void LateUpdate()
     {
         SetPosAndRotation();
         if (!GameManager.i.Player.IsGliding) SetFov();
@@ -31,7 +31,9 @@ public class CameraController : MonoBehaviour
         transform.eulerAngles = targetRot;
 
         var mouseY = Input.GetAxis("Mouse Y");
-        transform.localEulerAngles += Vector3.right * mouseY * Time.deltaTime * Settings.MouseSensetivity * 100 * _verticalRotSpeed * -1;
+        var rotDelta = mouseY * Time.deltaTime * Settings.MouseSensetivity * 100 * _verticalRotSpeed * -1;
+        rotDelta = Mathf.Clamp(rotDelta, -5, 5);
+        transform.localEulerAngles += Vector3.right * rotDelta;
     }
 
     public void SetGlideFovPercent(float percent)

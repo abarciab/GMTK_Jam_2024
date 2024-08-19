@@ -170,6 +170,7 @@ public class GameManager : MonoBehaviour
         _music.FadeOutCurrent(_fade.FadeTime);
         yield return new WaitForSeconds(_fade.FadeTime + 0.5f);
         Destroy(AudioManager.i.gameObject);
+        SetMouseState(true);
         SceneManager.LoadScene(num);
     }
 
