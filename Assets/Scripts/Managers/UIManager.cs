@@ -74,7 +74,10 @@ public class UIManager : MonoBehaviour
             _detailedInterest.SetActive(detailed);
             _simpleInterest.SetActive(!detailed);
         }
+    }
 
+    private void LateUpdate()
+    {
         AdjustPointsOfInterest();
     }
 
