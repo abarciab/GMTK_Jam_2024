@@ -2,6 +2,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Ladder : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Ladder : MonoBehaviour
     [SerializeField, ConditionalField(nameof(IsRope))] private Collider _solidCollider;
     private bool _isCoiled = true;
     private bool _playerClimbing;
+    [SerializeField] private UnityEvent _OnUncoil;
 
     public void Uncoil()
     {
@@ -21,6 +23,7 @@ public class Ladder : MonoBehaviour
         scale.y = targetLength;
         transform.localScale = scale;
         _isCoiled = false;
+        _OnUncoil.Invoke();
     }
 
     private void Update()

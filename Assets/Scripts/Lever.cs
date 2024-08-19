@@ -12,6 +12,7 @@ public class Lever : MonoBehaviour
 
     private void Update()
     {
+        if (!GameManager.i) return;
         if (!_player) _player = GameManager.i.Player.transform;
 
         if (UIManager.i._dialogue.gameObject.activeInHierarchy) return;

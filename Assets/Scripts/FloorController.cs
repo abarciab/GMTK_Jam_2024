@@ -79,7 +79,7 @@ public class FloorController : MonoBehaviour
 
     public void Initialize(Dictionary<Material, Material> matDict)
     {
-        if (_bridgePointParent && _bridgePointParent.childCount > 1) {
+        if (GameManager.i && _bridgePointParent && _bridgePointParent.childCount > 1) {
             var bridgePoints = new List<Transform>();
             foreach (Transform child in _bridgePointParent) bridgePoints.Add(child);
             bridgePoints = bridgePoints.OrderBy(x => Vector3.Distance(GameManager.i.MiddlePoint, x.transform.position)).ToList();

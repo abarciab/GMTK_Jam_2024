@@ -15,6 +15,10 @@ public class BridgeController : MonoBehaviour
     [SerializeField] private GameObject _sideWallWithRopePrefab;
     [SerializeField] private float _sideWallWidth;
 
+    [Header("Cinematic")]
+    [SerializeField] private float _distanceFromCamera;
+    [SerializeField] private float _totalY;
+
     [Header("Sounds")]
     [SerializeField] private Sound _sideWallPlaceSound;
 
@@ -47,7 +51,7 @@ public class BridgeController : MonoBehaviour
     [ButtonMethod]
     private IEnumerator PlaceSideWalls(float time)
     {
-        float waitTime = time/4;
+        float waitTime = time/10;
         time -= waitTime;
         yield return new WaitForSeconds(waitTime);
 
@@ -78,7 +82,9 @@ public class BridgeController : MonoBehaviour
         _end = end;
         RotateEnds(_start, _end);
 
-
+        var camPos = _middle;
+        camPos.y = _end.position.y;
+        GameManager.i.Camera.GetComponent<CameraController>().StartCinematicRotation(camPos, _distanceFromCamera, _totalY, _secondsToOpen + 2f);
         StartCoroutine(Animate());
         StartCoroutine(PlaceSideWalls(_secondsToOpen));
     }
@@ -105,7 +111,7 @@ public class BridgeController : MonoBehaviour
     {
         _animating = true;
         float timePassed = 0;
-        float deckTime = _secondsToOpen / 4;
+        float deckTime = _secondsToOpen / 10;
         while (timePassed < deckTime) {
             float progress = timePassed / deckTime;
             transform.position = Vector3.Lerp(_start.position, _end.position, progress/2);
@@ -120,5 +126,12 @@ public class BridgeController : MonoBehaviour
         }
 
         _animating = false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        var camPoint = transform.position + Vector3.right * _distanceFromCamera;
+        Gizmos.DrawLine(transform.position, camPoint);
+        Gizmos.DrawLine(camPoint + Vector3.down * _totalY/2, camPoint + Vector3.up * _totalY/2);
     }
 }

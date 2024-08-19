@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7819101081485932410}
   - component: {fileID: 7666413138966024806}
   - component: {fileID: 6753907708702057260}
+  - component: {fileID: 1296330805512313035}
   m_Layer: 0
   m_Name: ropeLadder
   m_TagString: Untagged
@@ -73,6 +74,34 @@ MonoBehaviour:
     m_Bits: 8
   IsRope: 1
   _solidCollider: {fileID: 73760124458043876}
+  _OnUncoil:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1296330805512313035}
+        m_TargetAssemblyTypeName: InterestPoint, Assembly-CSharp
+        m_MethodName: Remove
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1296330805512313035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2808706259101740996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7aae224851f79d46adf8087318cc2ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _icon: {fileID: 21300000, guid: b0f746b1f431d7f4f8520a9ad977d09e, type: 3}
 --- !u!1 &3516769564101300500
 GameObject:
   m_ObjectHideFlags: 0

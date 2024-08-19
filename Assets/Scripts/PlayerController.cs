@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField, Range(0, 1), Tooltip("What percent of forward speed is used for strafe")] private float _strafeSpeedMod = 0.8f;
     [SerializeField] private float _rotateSpeed;
     [SerializeField] private Vector2 _groundedAndUngroundedRbDrag = new Vector2(4, 1);
+    [SerializeField] private float _groundDragNoInputIncrease = 2;
 
     [Header("Jumping")]
     [SerializeField] private int _numJumps = 1;
@@ -360,7 +361,7 @@ public class PlayerController : MonoBehaviour
             _currentFloorObj = null;
         }
 
-        _rb.drag = _isGrounded ? _groundedAndUngroundedRbDrag.x : _groundedAndUngroundedRbDrag.y;
+        _rb.drag = _isGrounded ? _groundedAndUngroundedRbDrag.x + (GetInputDir().magnitude > 0 ? 0 : _groundDragNoInputIncrease) : _groundedAndUngroundedRbDrag.y;
     }
 
     private void Land()
