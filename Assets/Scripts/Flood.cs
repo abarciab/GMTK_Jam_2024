@@ -9,7 +9,14 @@ public class Flood : MonoBehaviour
     [SerializeField] private float _offset = 90;
     [SerializeField] private float _topOffset = 25;
 
+    [SerializeField] private Material slimePipeMat;
+
     private float _timePassed;
+
+    private void OnEnable()
+    {
+        slimePipeMat.SetFloat("_Ping", Time.time);
+    }
 
     private void Update()
     {
