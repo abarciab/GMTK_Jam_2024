@@ -4828,7 +4828,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _offset: 25
+  _offset: -11
   _topOffset: 25
 --- !u!1 &1472170836
 GameObject:
@@ -9449,6 +9449,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 632221820440938363, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
+      propertyPath: near clip plane
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 3616373755279173704, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
       propertyPath: m_LocalPosition.x
       value: 182.52301
@@ -9501,6 +9505,10 @@ PrefabInstance:
       propertyPath: far clip plane
       value: 1800
       objectReference: {fileID: 0}
+    - target: {fileID: 5245494209268831379, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
+      propertyPath: near clip plane
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 7047064408363365128, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -9514,24 +9522,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1028250758}
     - target: {fileID: 7784949826867567412, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
-      propertyPath: _walkRunFovs.y
-      value: 72
-      objectReference: {fileID: 0}
-    - target: {fileID: 7784949826867567412, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
       propertyPath: _maxCameraTpDist
       value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 7784949826867567412, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
       propertyPath: _verticalRotSpeed
       value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 7784949826867567412, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
-      propertyPath: _glideMinMaxFovs.x
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 7784949826867567412, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
-      propertyPath: _glideMinMaxFovs.y
-      value: 85
       objectReference: {fileID: 0}
     - target: {fileID: 7784949826867567412, guid: 7d0e96f3eb2f10b45a616d6828e47028, type: 3}
       propertyPath: _fovChangeLerpFator
