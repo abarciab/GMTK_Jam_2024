@@ -99,6 +99,7 @@ public class TowerController : MonoBehaviour
     private IEnumerator GrowTower()
     {
         //print("Growing");
+        _floors[0].DisableBridgePoints();
         yield return new WaitForSeconds(_startOffsetTime);
         float intialStep = _initialBuildTime / _floors.Count;
         for (int i = 0; i < _floors.Count; i++) {

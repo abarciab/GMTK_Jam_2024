@@ -77,6 +77,11 @@ public class FloorController : MonoBehaviour
         //if (_rootParent) HideRenderers(_rootParent);
     }
 
+    public void DisableBridgePoints()
+    {
+        if (_bridgePointParent != null) Destroy(_bridgePointParent.gameObject);
+    }
+
     [ButtonMethod]
     private void FindAllRends()
     {
@@ -108,6 +113,7 @@ public class FloorController : MonoBehaviour
         UpdateModel();
     }
 
+    [ButtonMethod]
     public void ExtendToFull()
     {
         StopAllCoroutines();
@@ -148,7 +154,9 @@ public class FloorController : MonoBehaviour
         if (renderer) {
             var updatedMats = new List<Material>();
             for (int i = 0; i < renderer.sharedMaterials.Length; i++) {
-                if (matDict.ContainsKey(renderer.sharedMaterials[i])) updatedMats.Add(matDict[renderer.sharedMaterials[i]]);
+                var originalMat = renderer.sharedMaterials[i];
+                if (matDict.ContainsKey(originalMat)) updatedMats.Add(matDict[originalMat]);
+                else updatedMats.Add(originalMat);
             }
             renderer.sharedMaterials = updatedMats.ToArray();
         }

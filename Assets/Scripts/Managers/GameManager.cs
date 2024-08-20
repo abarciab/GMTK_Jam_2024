@@ -191,7 +191,7 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         Resume();
-        StartCoroutine(FadeThenLoadScene(2));
+        StartCoroutine(FadeThenLoadScene(0));
     }
 
     IEnumerator FadeThenLoadScene(int num)

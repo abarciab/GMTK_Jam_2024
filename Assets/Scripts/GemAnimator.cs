@@ -10,7 +10,8 @@ public class GemAnimator : MonoBehaviour
 
     public ParticleSystem idlePS1, idlePS2, pickupParticles;
 
-    public AudioSource pickupSound, towerFinishSound;
+    //public AudioSource pickupSound, towerFinishSound;
+    //[SerializeField] private Sound PickupSound, TowerFinishSound
 
     // Start is called before the first frame update
     void Start()
@@ -68,8 +69,8 @@ public class GemAnimator : MonoBehaviour
 
         GameManager.i.CompleteTower();
 
-        pickupSound.Play();
+        //pickupSound.Play();
 
-        towerFinishSound.Play();
+        //towerFinishSound.Play();
     }
 }
