@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Sound _landSound;
     [SerializeField] private Sound _openGliderSound;
     [SerializeField] private Sound _windLoop;
+    [SerializeField] private Sound _gliderLand;
 
     [HideInInspector] public bool IsRunning => _isRunning;
     [HideInInspector] public bool IsGliding => _isGliding;
@@ -135,6 +136,7 @@ public class PlayerController : MonoBehaviour
         _openGliderSound = Instantiate(_openGliderSound);
         _windLoop = Instantiate(_windLoop);
         _windLoop.PlaySilent();
+        _gliderLand = Instantiate(_gliderLand);
     }
 
     private void Update()
@@ -268,6 +270,7 @@ public class PlayerController : MonoBehaviour
         _rb.isKinematic = false;
         transform.position = endPoint + Vector3.up * _glideEndBoost;
         _windLoop.SetPercentVolume(0);
+        _gliderLand.Play();
     }
 
     private void Climb()
