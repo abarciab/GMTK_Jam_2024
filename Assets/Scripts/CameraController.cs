@@ -8,7 +8,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform _player;
     [SerializeField] private Vector3 _offset;
     [SerializeField] private float _verticalRotSpeed;
-    [SerializeField] private float _maxCameraTpDist = 2;
+    //[SerializeField] private float _maxCameraTpDist = 2;
 
     [Header("FOV")]
     [SerializeField] private Vector2 _walkRunFovs;
@@ -100,8 +100,8 @@ public class CameraController : MonoBehaviour
     {
         var targetPos = _player.TransformPoint(_offset);
         var delta = targetPos - transform.position;
-        if (delta.magnitude > _maxCameraTpDist) transform.position = Vector3.Lerp(transform.position, targetPos, 10 * Time.deltaTime);
-        else transform.position = targetPos;
+        //if (delta.magnitude > _maxCameraTpDist) transform.position = Vector3.Lerp(transform.position, targetPos, 10 * Time.deltaTime);
+        transform.position = targetPos;
 
         var playerRot = _player.eulerAngles;
         var targetRot = new Vector3(transform.eulerAngles.x, playerRot.y, 0);
