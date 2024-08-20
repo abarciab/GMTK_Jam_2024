@@ -7,6 +7,7 @@ public static class Settings
 {
     public static float MouseSensetivity { get; private set; }
     private static string sensKey = "MouseSensetivity";
+    public static bool CompletedTutorial;
 
     public static void SetSensetivity(float value)
     {
@@ -19,6 +20,7 @@ public static class Settings
         if (Time.time > 1) return;
 
         //Debug.Log("initialzing");
-        MouseSensetivity = PlayerPrefs.GetFloat(sensKey, 0.05f);
+        MouseSensetivity = PlayerPrefs.GetFloat(sensKey, 0.15f);
+        CompletedTutorial = false;
     }
 }

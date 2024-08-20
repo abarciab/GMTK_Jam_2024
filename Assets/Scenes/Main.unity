@@ -6427,7 +6427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ce97fa3f70986946a54846120a7c0b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _totalSeconds: 600
+  _totalSeconds: 1200
   _curve:
     serializedVersion: 2
     m_Curve:
@@ -6564,13 +6564,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1448011726}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.91931355, z: -0, w: -0.39352578}
-  m_LocalPosition: {x: 52.713303, y: 95.7, z: 161.49892}
-  m_LocalScale: {x: 58.743744, y: 196.97876, z: 86.87684}
+  m_LocalRotation: {x: -0, y: -0.9189316, z: -0, w: -0.3944168}
+  m_LocalPosition: {x: 59.3, y: 95.7, z: 101}
+  m_LocalScale: {x: 76.0614, y: 196.97876, z: 154.02676}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1920823555}
-  m_LocalEulerAnglesHint: {x: 0, y: -61.348, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -226.459, z: 0}
 --- !u!65 &1448011728
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10123,6 +10123,10 @@ PrefabInstance:
       value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 486647064915566998, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
+      propertyPath: _firstFloorPrefab
+      value: 
+      objectReference: {fileID: 6798150737303350111, guid: 82d1d858700041f4fbcb1f4f8581f9f7, type: 3}
+    - target: {fileID: 486647064915566998, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.size
       value: 6
       objectReference: {fileID: 0}
@@ -10439,6 +10443,10 @@ PrefabInstance:
       value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 5033358097243397924, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
+      propertyPath: _firstFloorPrefab
+      value: 
+      objectReference: {fileID: 3520849585646756427, guid: 09da814b3dd05354ba3196548ccca39c, type: 3}
+    - target: {fileID: 5033358097243397924, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.size
       value: 6
       objectReference: {fileID: 0}
@@ -10722,6 +10730,10 @@ PrefabInstance:
       propertyPath: _targetHeight
       value: 18
       objectReference: {fileID: 0}
+    - target: {fileID: 7161693345827196858, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
+      propertyPath: _firstFloorPrefab
+      value: 
+      objectReference: {fileID: 1283955624199391826, guid: fa4e75253dab6a14aa0d5574c7526c3c, type: 3}
     - target: {fileID: 7161693345827196858, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.size
       value: 6
@@ -11307,6 +11319,10 @@ PrefabInstance:
       value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 9217417549335065813, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
+      propertyPath: _firstFloorPrefab
+      value: 
+      objectReference: {fileID: 2284901242780056263, guid: b731f463e3627e5449ba0577cb995e4c, type: 3}
+    - target: {fileID: 9217417549335065813, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.size
       value: 6
       objectReference: {fileID: 0}
@@ -11621,15 +11637,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 396697864714516158, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 89.4
+      value: 107
       objectReference: {fileID: 0}
     - target: {fileID: 396697864714516158, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 150
+      value: 30.9
       objectReference: {fileID: 0}
     - target: {fileID: 396697864714516158, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 187.8
+      value: 188
       objectReference: {fileID: 0}
     - target: {fileID: 396697864714516158, guid: 519ee0670d172af46a881a90b9dda30d, type: 3}
       propertyPath: m_LocalRotation.w

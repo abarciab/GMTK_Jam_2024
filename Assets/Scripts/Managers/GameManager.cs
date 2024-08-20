@@ -10,7 +10,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager i;
-    private void Awake() { i = this; }
+    private void Awake() { i = this;
+        Settings.Initialize();
+    }
 
     public Transform Camera;
     [SerializeField] private int _totalTowerCount = 4;
@@ -34,10 +36,10 @@ public class GameManager : MonoBehaviour
     private float _playerY => Player.transform.position.y;  
     private float _towerProgress => _currentTower == null ? 0 : _currentTower.CheckProgress(_playerY);
     private bool _lostGame;
+    private bool _startedGame;
 
     private void Start()
-    {
-        Settings.Initialize(); 
+    { 
         _fade.Disappear();
         _towersLeft = _totalTowerCount;
         //_flood.SetActive(false);
@@ -74,6 +76,8 @@ public class GameManager : MonoBehaviour
 
     public void StartTowersGrowing()
     {
+        _startedGame = true;
+        Settings.CompletedTutorial = true;
         foreach (var t in Towers) t.StartGrowing();
     }
 
@@ -105,6 +109,8 @@ public class GameManager : MonoBehaviour
 
     private void CalculateHighScore()
     {
+        if (!_startedGame) return;
+
         var currentScore = Player.transform.position.y;
         if (Mathf.FloorToInt(currentScore) > _highScore) {
             _highScore = currentScore;

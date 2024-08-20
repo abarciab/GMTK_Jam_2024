@@ -8,11 +8,13 @@ public class MovePlayer : MonoBehaviour
 
     public void MovePlayerHere()
     {
+        if (Settings.CompletedTutorial) return;
         GameManager.i.Player.transform.position = transform.position;
     }
 
     public void SetLook()
     {
+        if (Settings.CompletedTutorial) return;
         StartCoroutine(waitThenSetLook());
     }
 
