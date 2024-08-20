@@ -101,7 +101,7 @@ public class TowerController : MonoBehaviour
         //print("Growing");
         yield return new WaitForSeconds(_startOffsetTime);
         float intialStep = _initialBuildTime / _floors.Count;
-        for (int i = _displayOnly ? 0 :  1; i < _floors.Count; i++) {
+        for (int i = 0; i < _floors.Count; i++) {
             var floor = _floors[i];
             floor.gameObject.SetActive(true);
             floor.EmitParticlesAtBase();
