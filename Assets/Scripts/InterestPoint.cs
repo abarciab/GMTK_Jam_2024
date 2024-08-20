@@ -19,6 +19,11 @@ public class InterestPoint : MonoBehaviour
         UIManager.i.RemovePointOfInterest(transform);
     }
 
+    void OnDestroy()
+    {
+        UIManager.i.RemovePointOfInterest(transform);
+    }
+
     public void Activate()
     {
         if(!_isActiveByDefault)
