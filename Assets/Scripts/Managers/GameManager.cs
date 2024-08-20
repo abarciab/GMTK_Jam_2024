@@ -120,6 +120,7 @@ public class GameManager : MonoBehaviour
             _currentTower = newTower;
             if (_currentTower) _currentTower.SetAsCurrentTower(true);
             UIManager.i.HideTowerProgress();
+            _music.CurrentSong = 0;
             return;
         }
         //else if (_currentTower) _currentTower.IsCurrentTower = false;
@@ -133,6 +134,7 @@ public class GameManager : MonoBehaviour
             UIManager.i.ShowCurrentTowerProgress(_towerProgress);
             if (_currentTower.Complete) UIManager.i.CompleteTower(_currentTower.Index);
         }
+        _music.CurrentSong =  Mathf.FloorToInt((_towerProgress+0.1f) * 4);
     }
 
     private void SetMouseState(bool visible)

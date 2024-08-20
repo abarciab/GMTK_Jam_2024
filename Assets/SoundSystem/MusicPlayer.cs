@@ -22,13 +22,17 @@ public class AmbientSound
 
 public class MusicPlayer : MonoBehaviour
 {
-    [SerializeField] Sound mainMusic, altMusic, pauseMusic, ambientLoop;
+    [SerializeField] List<Sound> mainMusics = new List<Sound>();
+    [SerializeField] Sound altMusic, pauseMusic, ambientLoop;
     [SerializeField] Vector2 silenceWaitRange = new Vector2(1, 10);
     [SerializeField] bool fadeIn = true;
     public bool playAltMusic;
     bool playingMainMusic, fadingOut;
     float mainMusicTimeLeft;
-    
+
+    public int CurrentSong;
+
+    private Sound mainMusic => mainMusics[CurrentSong];
 
     [Header("Ambience")]
     [SerializeField] List<AmbientSound> ambientSounds = new List<AmbientSound>();
@@ -47,7 +51,7 @@ public class MusicPlayer : MonoBehaviour
             a.cooldown = Random.Range(a.waitTimeRange.x, a.waitTimeRange.y);
         }
 
-        mainMusic = Instantiate(mainMusic);
+        for (int i = 0; i < mainMusics.Count; i++) mainMusics[i] = Instantiate(mainMusics[i]);
         if (ambientLoop) ambientLoop = Instantiate(ambientLoop);
         if (pauseMusic) pauseMusic = Instantiate(pauseMusic);
         if (altMusic) altMusic = Instantiate(altMusic);
@@ -92,8 +96,8 @@ public class MusicPlayer : MonoBehaviour
 
     void StartNext(bool silent = false)
     {
-        if (silent) mainMusic.PlaySilent();
-        else mainMusic.Play();
+        if (silent) foreach (var m in mainMusics) m.PlaySilent();
+        else foreach (var m in mainMusics) m.Play();
         mainMusicTimeLeft = mainMusic.GetClipLength();
         playingMainMusic = true;
     }
@@ -123,7 +127,8 @@ public class MusicPlayer : MonoBehaviour
 
     void PlayNormalMusic(float pausedMod)
     {
-        if (playingMainMusic) mainMusic.SetPercentVolume(1 * pausedMod, 0.05f);
+        if (playingMainMusic) mainMusic.SetPercentVolume(1 * pausedMod, 3 * Time.deltaTime);
+        foreach (var m in mainMusics) if (m != mainMusic) m.SetPercentVolume(0, 1 * Time.deltaTime);
         if (altMusic) altMusic.SetPercentVolume(0, 0.1f);
 
         mainMusicTimeLeft -= Time.deltaTime;
