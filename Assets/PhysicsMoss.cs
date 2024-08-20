@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PhysicsMoss : MonoBehaviour
 {
+    public static int mossVel = Shader.PropertyToID("_Velocity");
+
     public Renderer rend;
 
     private Material mat;
@@ -25,7 +27,7 @@ public class PhysicsMoss : MonoBehaviour
     {
         velocity = Vector3.Lerp(velocity, oldPos - transform.position, Time.deltaTime * 2);
 
-        mat.SetVector("_Velocity", velocity);
+        mat.SetVector(mossVel, velocity);
 
         oldPos = transform.position;
     }
