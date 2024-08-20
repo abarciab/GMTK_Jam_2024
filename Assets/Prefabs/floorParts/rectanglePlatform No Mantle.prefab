@@ -68,5 +68,37 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 277524318881698915, guid: 5adb08d539ff14c439d97519cd83a39d, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1467972649430546946, guid: 5adb08d539ff14c439d97519cd83a39d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4366141316727497533}
   m_SourcePrefab: {fileID: 100100000, guid: 5adb08d539ff14c439d97519cd83a39d, type: 3}
+--- !u!1 &5804784510633357290 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1467972649430546946, guid: 5adb08d539ff14c439d97519cd83a39d, type: 3}
+  m_PrefabInstance: {fileID: 4959014703074792936}
+  m_PrefabAsset: {fileID: 0}
+--- !u!205 &4366141316727497533
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5804784510633357290}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0.00000017881393, y: -0.4836005, z: -0.00000011920929}
+  m_Size: 2.9672008
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.33526278
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 6051269228258345259}
+  m_Enabled: 1
+--- !u!23 &6051269228258345259 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1669596124817724611, guid: 5adb08d539ff14c439d97519cd83a39d, type: 3}
+  m_PrefabInstance: {fileID: 4959014703074792936}
+  m_PrefabAsset: {fileID: 0}

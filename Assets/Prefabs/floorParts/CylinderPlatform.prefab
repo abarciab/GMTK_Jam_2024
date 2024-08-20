@@ -51,7 +51,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8173308644384567987}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 2806620917997341139}
   - component: {fileID: 731336527843935682}
   - component: {fileID: 4601586981164756931}
+  - component: {fileID: 2049709002788385727}
   m_Layer: 3
   m_Name: CylinderPlatform
   m_TagString: Untagged
@@ -261,3 +262,23 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!205 &2049709002788385727
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028651658596908475}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0.00000017881393, y: -0.4836005, z: -0.00000011920929}
+  m_Size: 2.9672008
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.33526278
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 2806620917997341139}
+    - renderer: {fileID: 6117438051437051425}
+  m_Enabled: 1
