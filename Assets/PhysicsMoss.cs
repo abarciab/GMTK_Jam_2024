@@ -14,22 +14,22 @@ public class PhysicsMoss : MonoBehaviour
 
     private Vector3 velocity;
 
-    //// Start is called before the first frame update
-    //void Start()
-    //{
-    //    mat = new Material(rend.material);
+    // Start is called before the first frame update
+    void Start()
+    {
+        mat = new Material(rend.material);
 
-    //    rend.material = mat;
-    //}
+        rend.material = mat;
+    }
 
-    //// Update is called once per frame
-    //void Update()
-    //{
-    //    velocity = Vector3.Lerp(velocity, oldPos - transform.position, Time.deltaTime * 2);
+    // Update is called once per frame
+    void Update()
+    {
+        velocity = Vector3.Lerp(velocity, oldPos - transform.position, Time.deltaTime * 2);
 
-    //    mat.SetVector(mossVel, velocity);
+        mat.SetVector(mossVel, velocity);
 
-    //    oldPos = transform.position;
-    //}
+        oldPos = transform.position;
+    }
 
 }
