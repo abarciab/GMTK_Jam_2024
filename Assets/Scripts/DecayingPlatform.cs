@@ -34,7 +34,7 @@ public class DecayingPlatform : MonoBehaviour
         if (_decaying) return;
         _timeLeft = _decayTime;
         _decaying = true;
-        crackSounds.Play();
+        //crackSounds.Play();
         myCrackMat.SetFloat("_Crack", 1);
     }
 
@@ -54,7 +54,7 @@ public class DecayingPlatform : MonoBehaviour
     {
         _decaying = false;
         _collider.SetActive(false);
-        decaySound.Play();
+        //decaySound.Play();
         StartCoroutine(WaitThenReset());
     }
 
