@@ -33,6 +33,8 @@ public class FloorController : MonoBehaviour
 
     [Header("Sounds")]
     [SerializeField] private Sound _slidingSound;
+    [SerializeField] private Sound _growingSound1;
+    [SerializeField] private Sound _growingSound2;
 
     [Header("Bridge")]
     [SerializeField] private GameObject _bridgePrefab;
@@ -54,6 +56,17 @@ public class FloorController : MonoBehaviour
 
     private void Start()
     {
+        if(Random.Range(0, 2) == 0)
+        {
+            _growingSound1 = Instantiate(_growingSound1);
+            _growingSound1.Play(transform);
+        }
+        else
+        {
+            _growingSound2 = Instantiate(_growingSound2);
+            _growingSound2.Play(transform);
+        }
+        
         _slidingSound = Instantiate(_slidingSound);
         _slidingSound.PlaySilent(transform);
         _connectedTowers.Add(GetComponentInParent<TowerController>());

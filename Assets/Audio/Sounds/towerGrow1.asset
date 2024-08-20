@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93e0513045be1974d934eb6431407da8, type: 3}
-  m_Name: towerComplete
+  m_Name: towerGrow1
   m_EditorClassIdentifier: 
   Type: 0
   Unpauseable: 0
   _clips:
-  - Name: towerComplete
-    Clip: {fileID: 8300000, guid: ccbb2cbaf2671364cbe2bd0089f88929, type: 3}
+  - Name: Tower Grow 1
+    Clip: {fileID: 8300000, guid: db5f05d5b9b40f047ad12d70ecee8c52, type: 3}
     Looping: 0
-  _volume: 0.453
+  _volume: 1
   _pitch: 1
-  _randomizePitch: 0
-  _pitchRandomizeAmount: 0.047
-  _custom3DSettings: 0
+  _randomizePitch: 1
+  _pitchRandomizeAmount: 0.15
+  _custom3DSettings: 1
   _minDist: 1
-  _maxDist: 150
+  _maxDist: 200
   _rolloffMode: 1
   AudioSource: {fileID: 0}
   Instantialized: 0
