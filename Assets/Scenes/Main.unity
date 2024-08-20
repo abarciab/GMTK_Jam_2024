@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 00000000000000000000000000000000
-  m_OcclusionCullingData: {fileID: 0}
+  m_SceneGUID: 9fc0d4010bbf28b4594072e72b8655ab
+  m_OcclusionCullingData: {fileID: 36300000, guid: 1ffc3ccdaa906784ea49cfa3d04734e2, type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -712,6 +712,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sludge Tower (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8801611229774441554, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: _dustParticles
       value: 
@@ -804,6 +808,10 @@ PrefabInstance:
     - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: m_Name
       value: Sludge Tower (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8801611229774441554, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: _dustParticles
@@ -2150,6 +2158,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sludge Tower (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8801611229774441554, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: _dustParticles
       value: 
@@ -2639,6 +2651,10 @@ PrefabInstance:
     - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: m_Name
       value: Sludge Tower (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8801611229774441554, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: _dustParticles
@@ -4282,6 +4298,10 @@ PrefabInstance:
     - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: m_Name
       value: Sludge Tower (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8801611229774441554, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: _dustParticles
@@ -6773,6 +6793,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sludge Tower (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8801611229774441554, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: _dustParticles
       value: 
@@ -8557,24 +8581,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 486647064915566998, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.size
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 486647064915566998, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 9d77000263e83b64aa9bf90aa3794e23, type: 2}
+      objectReference: {fileID: 11400000, guid: 460be0521940ae749851f4d543d8bfca, type: 2}
     - target: {fileID: 486647064915566998, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: 7ab6a52f781357745a3d35ab3b20cc15, type: 2}
+      objectReference: {fileID: 11400000, guid: baf0d24a4f2397b4889c0cd95ce26106, type: 2}
     - target: {fileID: 486647064915566998, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[2]
       value: 
-      objectReference: {fileID: 11400000, guid: 52b65d4e11952d14eabb08dfcdf2e39b, type: 2}
+      objectReference: {fileID: 11400000, guid: 7ab6a52f781357745a3d35ab3b20cc15, type: 2}
     - target: {fileID: 486647064915566998, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[3]
       value: 
-      objectReference: {fileID: 11400000, guid: 460be0521940ae749851f4d543d8bfca, type: 2}
+      objectReference: {fileID: 11400000, guid: 52b65d4e11952d14eabb08dfcdf2e39b, type: 2}
     - target: {fileID: 486647064915566998, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[4]
       value: 
@@ -8869,24 +8893,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5033358097243397924, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.size
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5033358097243397924, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 9d77000263e83b64aa9bf90aa3794e23, type: 2}
+      objectReference: {fileID: 11400000, guid: 460be0521940ae749851f4d543d8bfca, type: 2}
     - target: {fileID: 5033358097243397924, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: 7ab6a52f781357745a3d35ab3b20cc15, type: 2}
+      objectReference: {fileID: 11400000, guid: baf0d24a4f2397b4889c0cd95ce26106, type: 2}
     - target: {fileID: 5033358097243397924, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[2]
       value: 
-      objectReference: {fileID: 11400000, guid: 52b65d4e11952d14eabb08dfcdf2e39b, type: 2}
+      objectReference: {fileID: 11400000, guid: 7ab6a52f781357745a3d35ab3b20cc15, type: 2}
     - target: {fileID: 5033358097243397924, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[3]
       value: 
-      objectReference: {fileID: 11400000, guid: 460be0521940ae749851f4d543d8bfca, type: 2}
+      objectReference: {fileID: 11400000, guid: 52b65d4e11952d14eabb08dfcdf2e39b, type: 2}
     - target: {fileID: 5033358097243397924, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[4]
       value: 
@@ -9149,24 +9173,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7161693345827196858, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.size
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7161693345827196858, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 9d77000263e83b64aa9bf90aa3794e23, type: 2}
+      objectReference: {fileID: 11400000, guid: 460be0521940ae749851f4d543d8bfca, type: 2}
     - target: {fileID: 7161693345827196858, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: 7ab6a52f781357745a3d35ab3b20cc15, type: 2}
+      objectReference: {fileID: 11400000, guid: baf0d24a4f2397b4889c0cd95ce26106, type: 2}
     - target: {fileID: 7161693345827196858, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[2]
       value: 
-      objectReference: {fileID: 11400000, guid: 52b65d4e11952d14eabb08dfcdf2e39b, type: 2}
+      objectReference: {fileID: 11400000, guid: 7ab6a52f781357745a3d35ab3b20cc15, type: 2}
     - target: {fileID: 7161693345827196858, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[3]
       value: 
-      objectReference: {fileID: 11400000, guid: 460be0521940ae749851f4d543d8bfca, type: 2}
+      objectReference: {fileID: 11400000, guid: 52b65d4e11952d14eabb08dfcdf2e39b, type: 2}
     - target: {fileID: 7161693345827196858, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[4]
       value: 
@@ -9729,24 +9753,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9217417549335065813, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.size
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9217417549335065813, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 9d77000263e83b64aa9bf90aa3794e23, type: 2}
+      objectReference: {fileID: 11400000, guid: 460be0521940ae749851f4d543d8bfca, type: 2}
     - target: {fileID: 9217417549335065813, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[1]
       value: 
-      objectReference: {fileID: 11400000, guid: 7ab6a52f781357745a3d35ab3b20cc15, type: 2}
+      objectReference: {fileID: 11400000, guid: baf0d24a4f2397b4889c0cd95ce26106, type: 2}
     - target: {fileID: 9217417549335065813, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[2]
       value: 
-      objectReference: {fileID: 11400000, guid: 52b65d4e11952d14eabb08dfcdf2e39b, type: 2}
+      objectReference: {fileID: 11400000, guid: 7ab6a52f781357745a3d35ab3b20cc15, type: 2}
     - target: {fileID: 9217417549335065813, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[3]
       value: 
-      objectReference: {fileID: 11400000, guid: 460be0521940ae749851f4d543d8bfca, type: 2}
+      objectReference: {fileID: 11400000, guid: 52b65d4e11952d14eabb08dfcdf2e39b, type: 2}
     - target: {fileID: 9217417549335065813, guid: 956672d72cc314b498a996dcb8178bc1, type: 3}
       propertyPath: _towerFloorPrefabs.Array.data[4]
       value: 
@@ -10273,7 +10297,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3351583328324157655, guid: fc8521c1bd63d47428cd05bb0e661507, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5129603100141594014, guid: fc8521c1bd63d47428cd05bb0e661507, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10617,6 +10641,10 @@ PrefabInstance:
     - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: m_Name
       value: Sludge Tower
+      objectReference: {fileID: 0}
+    - target: {fileID: 7864003940837410045, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8801611229774441554, guid: af9986db30c6cf24eaf1502a3336ec3f, type: 3}
       propertyPath: _dustParticles
