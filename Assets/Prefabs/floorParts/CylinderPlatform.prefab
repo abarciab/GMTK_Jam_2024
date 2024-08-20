@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5703973436091596783}
   - component: {fileID: 8833380457696144444}
   - component: {fileID: 1248867758631695582}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: CylinderPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,6 +132,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c98dbe243ed8f54996e44ac2ec6f353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _maxLength: 0
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  IsRope: 0
+  _solidCollider: {fileID: 0}
+  _OnUncoil:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &9028651658596908475
 GameObject:
   m_ObjectHideFlags: 0
@@ -145,7 +154,7 @@ GameObject:
   - component: {fileID: 2806620917997341139}
   - component: {fileID: 731336527843935682}
   - component: {fileID: 4601586981164756931}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: CylinderPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,7 +234,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9028651658596908475}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ac1133542efe264a97952717e0c24b2, type: 3}
   m_Name: 
