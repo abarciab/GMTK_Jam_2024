@@ -10,30 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93e0513045be1974d934eb6431407da8, type: 3}
-  m_Name: JumpUp
+  m_Name: gliderLand
   m_EditorClassIdentifier: 
   Type: 0
   Unpauseable: 0
   _clips:
-  - Name: Jump 1
-    Clip: {fileID: 8300000, guid: fa15882731887c444a699b96451f8f9b, type: 3}
-    Looping: 0
-  - Name: Jump 2
-    Clip: {fileID: 8300000, guid: 6660239ce59770149a34e84457e18708, type: 3}
-    Looping: 0
-  - Name: Jump 3
-    Clip: {fileID: 8300000, guid: e30f4e399e57cd3479e3c14aa4f6d155, type: 3}
-    Looping: 0
-  - Name: Jump 4
-    Clip: {fileID: 8300000, guid: 39e65bdd32b783d40b41b8128cc82ba8, type: 3}
-    Looping: 0
-  - Name: Jump 5
-    Clip: {fileID: 8300000, guid: 898181327aec28740904f708ffcd0f50, type: 3}
+  - Name: Landing
+    Clip: {fileID: 8300000, guid: 1c30220c252aaf84e84fc9c38d901fcc, type: 3}
     Looping: 0
   _volume: 1
   _pitch: 1
   _randomizePitch: 1
-  _pitchRandomizeAmount: 0.06
+  _pitchRandomizeAmount: 0.2
   _custom3DSettings: 0
   _minDist: 1
   _maxDist: 150
