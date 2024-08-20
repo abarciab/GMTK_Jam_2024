@@ -241,6 +241,128 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &3052335311299741478
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3287474851623968531}
+    m_Modifications:
+    - target: {fileID: 2592517020250772665, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_Name
+      value: Gem Prefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 6.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2592517020250772665, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1053728166256804919}
+  m_SourcePrefab: {fileID: 100100000, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+--- !u!4 &211029374997416229 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2932310452702793219, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+  m_PrefabInstance: {fileID: 3052335311299741478}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &695360521038500767 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2592517020250772665, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+  m_PrefabInstance: {fileID: 3052335311299741478}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1053728166256804919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695360521038500767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a90560c67bc38c4f8b147c271ba0c84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activationDistance: 7
+  _OnActivate:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4494959290773415516}
+        m_TargetAssemblyTypeName: GemAnimator, Assembly-CSharp
+        m_MethodName: PickUpGem
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 6892845145288314950}
+        m_TargetAssemblyTypeName: InterestPoint, Assembly-CSharp
+        m_MethodName: Remove
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _autoDeactivate: 1
+--- !u!114 &4494959290773415516 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1458426737221378426, guid: ca421d3b7987ec34c8246b0277dd4f7c, type: 3}
+  m_PrefabInstance: {fileID: 3052335311299741478}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695360521038500767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cec3e4396bf0fc64c98caf9aa52edf28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3200492553313039228
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -315,6 +437,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 775109582599218821, guid: 6b43423a2f7235542bf07262824dada0, type: 3}
   m_PrefabInstance: {fileID: 3200492553313039228}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6892845145288314950 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8341265911133381434, guid: 6b43423a2f7235542bf07262824dada0, type: 3}
+  m_PrefabInstance: {fileID: 3200492553313039228}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7aae224851f79d46adf8087318cc2ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5857156326822559406
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -393,6 +526,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8995861435458462141, guid: ae3a384cc642a9841a63621fec5b8d08, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2786550636250027513}
+    - targetCorrespondingSourceObject: {fileID: 8995861435458462141, guid: ae3a384cc642a9841a63621fec5b8d08, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 211029374997416229}
     - targetCorrespondingSourceObject: {fileID: 2838281744076795189, guid: ae3a384cc642a9841a63621fec5b8d08, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4333466275902805796}
