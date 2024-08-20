@@ -243,9 +243,16 @@ public class FloorController : MonoBehaviour
         return Mathf.Lerp(a, b, curvedProgress);
     }
 
+    public Transform GetClosestBridgePoint(float y)
+    {
+        var pos = transform.position;
+        pos.y = y;
+        return GetClosestBridgePoint(pos);
+    }
+
     public Transform GetClosestBridgePoint(Vector3 pos)
     {
-        if (!_bridgePointParent || _bridgePointParent.childCount == 0) return transform;
+        if (!_bridgePointParent || _bridgePointParent.childCount == 0) return null;
 
         var options = new List<Transform>();
         foreach (Transform child in _bridgePointParent) options.Add(child); 

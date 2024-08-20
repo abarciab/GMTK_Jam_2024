@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MyBox;
-using UnityEditorInternal;
 
 [SelectionBase]
 public class MovingPlatform : MonoBehaviour

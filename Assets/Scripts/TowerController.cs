@@ -42,7 +42,7 @@ public class TowerController : MonoBehaviour
         float shortestDist = Mathf.Infinity;
         foreach (var floor in _floors) {
             var dist = Mathf.Abs(floor.transform.position.y - y);
-            if (dist > shortestDist || floor.transform.position.y <= y || floor.HasBridge) continue;
+            if (dist > shortestDist || floor.transform.position.y <= y || floor.HasBridge || !floor.GetClosestBridgePoint(y)) continue;
             shortestDist = dist;
             closestFloor = floor;
         }
