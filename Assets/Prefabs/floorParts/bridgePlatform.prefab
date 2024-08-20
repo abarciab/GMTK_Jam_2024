@@ -54,6 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6984742676679480828}
+  - component: {fileID: 4678428399861498387}
   m_Layer: 3
   m_Name: bridgePlatform
   m_TagString: Untagged
@@ -79,6 +80,32 @@ Transform:
   - {fileID: 8746018982129169149}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -207.102, z: 0}
+--- !u!114 &4678428399861498387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6229193469235932863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b76bbd0e2255d8547b898fbae3cc864f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dontMove: 1
+  _state1:
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+  _state2:
+    Pos: {x: 0, y: 0, z: 0}
+    Rot: {x: 0, y: 0, z: 0, w: 0}
+  _animateTime: 1.2
+  _curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &7939564371725336105
 GameObject:
   m_ObjectHideFlags: 0

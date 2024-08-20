@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MyBox;
+using UnityEditorInternal;
 
 [SelectionBase]
 public class MovingPlatform : MonoBehaviour
 {
+    [SerializeField] private bool _dontMove;
+
     [SerializeField] private DoorState _state1;
     [SerializeField] private DoorState _state2;
 
@@ -17,6 +20,10 @@ public class MovingPlatform : MonoBehaviour
 
     private void Start()
     {
+        if (_dontMove) {
+            enabled = false;
+            return;
+        }
         SnapToState(_state1, true);
         GoToState2();
     }
