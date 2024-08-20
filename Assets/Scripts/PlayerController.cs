@@ -96,6 +96,16 @@ public class PlayerController : MonoBehaviour
         InitializeSounds();
     }
 
+    private void Update()
+    {
+        Rotate();
+        Move();
+        Inventory();
+
+        transform.SetLossyScale(Vector3.one);
+
+    }
+
     public void SetClosestLadder(Ladder ladder)
     {
         if (_currentLadder == null || _currentLadderDist < DistanceTo(ladder.transform.position)) {
@@ -139,12 +149,6 @@ public class PlayerController : MonoBehaviour
         _gliderLand = Instantiate(_gliderLand);
     }
 
-    private void Update()
-    {
-        Rotate();
-        Move();
-        Inventory();
-    }
 
     private void Rotate()
     {
