@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour
     public float GetShortestMaxHeight()
     {
         float height = GetMaxHeight();
-        foreach (var t in Towers) if (t.MaxHeight < height) height = t.MaxHeight;
+        foreach (var t in Towers) if (t.MaxHeight < height-20) height = t.MaxHeight;
         return height;
     }
 

@@ -294,6 +294,7 @@ public class FloorController : MonoBehaviour
         var options = new List<Transform>();
         foreach (Transform child in _bridgePointParent) options.Add(child); 
         options = options.Where(x => x.gameObject.activeInHierarchy).OrderBy(x => Vector3.Distance(x.position, pos)).ToList();
+        if (options.Count == 0) return null;
         return options[0];
     }
 
@@ -332,12 +333,27 @@ public class FloorController : MonoBehaviour
     [ButtonMethod]
     public void BuildBridge()
     {
-        if (HasBridge) return;
+        if (HasBridge) {
+            print("cannot build, already has");
+            return;
+        }
+
         var end = GameManager.i.GetFloorAtY(_connectedTowers, transform.position.y);
-        if (end == null) return;
+        if (end == null) {
+            print("cannot build, no valid end found");
+            return;
+        }
+        end.GetComponentInChildren<Lever>().gameObject.SetActive(false);
+        Destroy(end.GetComponentInChildren<InterestPoint>().gameObject);
         _connectedTowers.Add(end.GetComponentInParent<TowerController>());
+        HasBridge = end.HasBridge = true;
+        StartCoroutine(WaitThenBuildBridge(end));
+    }
+
+    private IEnumerator WaitThenBuildBridge(FloorController end)
+    {
+        yield return new WaitForSeconds(1);
         var bridge = Instantiate(_bridgePrefab).GetComponent<BridgeController>();
         bridge.Initialize(GetClosestBridgePoint(end.transform.position), end.GetClosestBridgePoint(transform.position));
-        HasBridge = end.HasBridge = true;
     }
 }

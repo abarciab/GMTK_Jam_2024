@@ -102,6 +102,7 @@ public class DoorController : MonoBehaviour
     {
         DoorState startState = new DoorState(transform.localPosition, transform.localRotation);
 
+        if (_openSound) _openSound.Play(transform);
         float timePassed = 0;
         while (timePassed <  _animateTime) {
             float progress = timePassed / _animateTime;
@@ -115,7 +116,6 @@ public class DoorController : MonoBehaviour
         }
 
         SnapToState(target, targetStateOpen);
-        if (_openSound) _openSound.Play(transform);
 
         if (_open) _OnOpen.Invoke();
         else _OnClose.Invoke();
