@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Small Tree Mat
-  m_Shader: {fileID: -6465566751694194690, guid: 3835ae500eb57b841acc939da867a9cc, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 7c0a5ed29c3fc504884ed59e37520601, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -17,7 +17,8 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -25,6 +26,18 @@ Material:
     m_TexEnvs:
     - _Curve_Map:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_Map:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_164535e94d43435e93f8127dfdc6c624_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: cec02dbc0f6c0f24ba8c0177f730912a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_1afbbfbd2f994e52bc0504d730af99ef_Texture_1_Texture2D:
@@ -59,6 +72,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Triplanar_25182b2bdb2e4a8c8be04ea90958f40c_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 66ecaaa74446dd649b823324b988eef8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Triplanar_4ce303b01112411e838593532a1c67f8_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: 66ecaaa74446dd649b823324b988eef8, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -77,22 +94,37 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaClip: 0
+    - _AlphaToMask: 0
+    - _Blend: 0
+    - _CastShadows: 1
+    - _Cull: 2
+    - _DstBlend: 0
     - _Float: 0
     - _Float_1: 0.57
+    - _Hightlights: 1
     - _Light_Sorting_Str: 0
     - _Normal_Offset: 1.5
     - _Particle_Scale: 500
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Random_Offset_Str: 1
+    - _SrcBlend: 1
+    - _Surface: 0
+    - _Wind_SWing_Multi: 0
+    - _ZTest: 4
+    - _ZWrite: 1
+    - _ZWriteControl: 0
     - _animation_offset_STR: 1
     m_Colors:
     - _Base_Leaves_Color: {r: 0.003921569, g: 0.11372549, b: 0.023529412, a: 0}
     - _Color: {r: 0.0037379863, g: 0.11320752, b: 0.022189077, a: 0}
     - _Color_1: {r: 0.0063793138, g: 0.185, b: 0.03827587, a: 0}
     - _Secondary_Color: {r: 0.0063793138, g: 0.185, b: 0.03827587, a: 0}
+    - _Tiling: {r: 0, g: 0, b: 0, a: 0}
     - _Trunk_Color: {r: 0.6226415, g: 0.34115946, b: 0.11454255, a: 0}
     - _Trunk_Color_1: {r: 0.007843138, g: 0.18431373, b: 0.039215688, a: 0}
+    - _Wood_COlor: {r: 0.31132078, g: 0.06934279, b: 0.0014684978, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &3562830732707021811
 MonoBehaviour:
