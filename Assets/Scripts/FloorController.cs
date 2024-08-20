@@ -214,6 +214,7 @@ public class FloorController : MonoBehaviour
         float quarterProgress = Mathf.InverseLerp(0f, 0.25f, _expansionProgress);
         float secondCurrentOffset = Ease(_compressedOffsets[1], _expandedOffsets[1], quarterProgress);
         _floorSections[1].localPosition = Vector3.up * secondCurrentOffset;
+        _floorSections[1].GetComponent<Renderer>().enabled = quarterProgress > 0.05f;
 
         float extras1Progress = Mathf.InverseLerp(0.25f, 0.5f, _expansionProgress);
         var extra1Scale = new Vector3(extras1Progress, 1, extras1Progress);
@@ -226,6 +227,7 @@ public class FloorController : MonoBehaviour
         float thirdQuarterProgress = Mathf.InverseLerp(0.5f, 0.75f, _expansionProgress);
         float fourthCurrentOffset = Ease(_compressedOffsets[3], _expandedOffsets[3], thirdQuarterProgress);
         _floorSections[3].localPosition = Vector3.up * fourthCurrentOffset;
+        _floorSections[3].GetComponent<Renderer>().enabled = thirdQuarterProgress > 0.05f;
 
         float extras2Progress = Mathf.InverseLerp(0.75f, 1f, _expansionProgress);
         var extra2Scale = new Vector3(extras2Progress, 1, extras2Progress);

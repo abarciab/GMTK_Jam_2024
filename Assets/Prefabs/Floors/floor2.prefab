@@ -51,7 +51,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 470057347904753296}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -298,7 +298,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2803211372338439866}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1059,7 +1059,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6818093814648455095}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1234,6 +1234,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c98dbe243ed8f54996e44ac2ec6f353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _maxLength: 0
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  IsRope: 0
+  _solidCollider: {fileID: 0}
+  _OnUncoil:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1567588182873363672
 PrefabInstance:
   m_ObjectHideFlags: 0

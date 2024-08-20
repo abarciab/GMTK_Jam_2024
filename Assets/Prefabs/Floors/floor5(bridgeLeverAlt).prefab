@@ -328,7 +328,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1412038247006377513}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -523,7 +523,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2266784787494522737}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3683,6 +3683,9 @@ MonoBehaviour:
     m_Bits: 0
   IsRope: 0
   _solidCollider: {fileID: 0}
+  _OnUncoil:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &8949536834751717549 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 852960652744452355, guid: 5adb08d539ff14c439d97519cd83a39d, type: 3}
