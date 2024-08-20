@@ -39,9 +39,9 @@ public class GameManager : MonoBehaviour
     {
         Settings.Initialize(); 
         _fade.Disappear();
-        SetMouseState(false);
         _towersLeft = _totalTowerCount;
         _flood.SetActive(false);
+        SetMouseState(false);
     }
 
     public void RegisterTower(TowerController _tower)

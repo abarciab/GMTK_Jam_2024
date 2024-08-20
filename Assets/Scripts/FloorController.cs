@@ -63,7 +63,7 @@ public class FloorController : MonoBehaviour
     {
         if (PreviousFloor) transform.position = PreviousFloor.TopPos;
         _expansionProgress = Mathf.Lerp(_expansionProgress, TargetExpansion, 2 * Time.deltaTime);
-        _slidingSound.SetPercentVolume(TargetExpansion - _expansionProgress > 0.1f ? 1 : 0, 0.05f);
+        _slidingSound.SetPercentVolume(Mathf.Abs(TargetExpansion - _expansionProgress) > 0.1f ? 1 : 0, 0.05f);
         UpdateModel();
     }
 
@@ -75,6 +75,28 @@ public class FloorController : MonoBehaviour
         if (PreviousFloor) transform.position = PreviousFloor.TopPos;
         _expansionProgress = 0;
         UpdateModel();
+    }
+
+    public void ExtendToFull()
+    {
+        StopAllCoroutines();
+        StartCoroutine(AnimateToFull());
+    }
+
+    private IEnumerator AnimateToFull(bool reverse = false)
+    {
+        _expansionProgress = reverse ? 1 : 0;
+        for (int i = 0; i < 4; i++) {
+            if (reverse) DecrementTargetExpansion();
+            else IncrementTargetExpansion();
+            yield return new WaitForSeconds(1);
+        }
+    }
+
+    public void Collapse()
+    {
+        StopAllCoroutines();
+        StartCoroutine(AnimateToFull(true));
     }
 
     public void Initialize(Dictionary<Material, Material> matDict)
@@ -148,10 +170,10 @@ public class FloorController : MonoBehaviour
         if (_floorSections.Count != 5) return;
 
         float particlesY = 0;
-        if (progress < 0.25f) particlesY = _floorSections[1].transform.position.y;
-        else if (progress < 0.5f) particlesY = _floorSections[2].transform.position.y;
-        else if (progress < 0.5f) particlesY = _floorSections[3].transform.position.y;
-        else if (progress < 0.5f) particlesY = _floorSections[4].transform.position.y;
+        if (progress <= 0.25f) particlesY = _floorSections[1].transform.position.y;
+        else if (progress <= 0.5f) particlesY = _floorSections[2].transform.position.y;
+        else if (progress <= 0.75f) particlesY = _floorSections[3].transform.position.y;
+        else if (progress <= 1f) particlesY = _floorSections[4].transform.position.y;
         var pos = _dustParticles.transform.position;
         pos.y = particlesY;
         _dustParticles.transform.position = pos;
@@ -280,10 +302,17 @@ public class FloorController : MonoBehaviour
     }
 
     [ButtonMethod]
+    private void DecrementTargetExpansion()
+    {
+        if (_floorSections.Count != 5) return;
+        if (TargetExpansion > 0) SetTargetExpansion(TargetExpansion - 0.25f);
+    }
+
+    [ButtonMethod]
     public void IncrementTargetExpansion()
     {
         if (_floorSections.Count != 5) return;
-        if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion += 0.25f);
+        if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion + 0.25f);
         if (TargetExpansion > 0.5f && (Random.Range(0, 1f) < _bridgeChance)) BuildBridge();
     }
 

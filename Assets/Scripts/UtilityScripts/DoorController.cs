@@ -2,6 +2,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public struct DoorState
@@ -34,6 +35,10 @@ public class DoorController : MonoBehaviour
     [SerializeField] private bool _openAutomatically;
     [SerializeField, ConditionalField(nameof(_openAutomatically))] private float _automaticDetectionRange = 3;
 
+    [Header("Events")]
+    [SerializeField] private UnityEvent _OnOpen;
+    [SerializeField] private UnityEvent _OnClose;
+
     [ButtonMethod]
     private void SetClosed()
     {
@@ -46,6 +51,12 @@ public class DoorController : MonoBehaviour
     {
         _openState.Pos = transform.localPosition;
         _openState.Rot = transform.localRotation;
+    }
+
+    public void Toggle()
+    {
+        if (_open) Close();
+        else Open();
     }
 
     [ButtonMethod]
@@ -66,7 +77,7 @@ public class DoorController : MonoBehaviour
 
     private void Start()
     {
-        _openSound = Instantiate(_openSound);
+        if (_openSound) _openSound = Instantiate(_openSound);
     }
 
     private void Update()
@@ -104,7 +115,10 @@ public class DoorController : MonoBehaviour
         }
 
         SnapToState(target, targetStateOpen);
-        _openSound.Play(transform);
+        if (_openSound) _openSound.Play(transform);
+
+        if (_open) _OnOpen.Invoke();
+        else _OnClose.Invoke();
     }
 
     private void OnDrawGizmosSelected()

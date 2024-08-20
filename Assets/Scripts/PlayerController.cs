@@ -78,11 +78,14 @@ public class PlayerController : MonoBehaviour
     private InventoryItem[] _inventoryItems = {null, null, null, null, null, null, null, null, null, null};
     private int _currentItemIndex = 0;
 
+    private void Awake()
+    {
+        FindObjectOfType<GameManager>().Player = this;
+    }
 
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
-        GameManager.i.Player = this;
         _lastJumpTime = Time.time;
         _isGrounded = true;
         _cam = GameManager.i.Camera.GetComponent<CameraController>();
@@ -328,6 +331,7 @@ public class PlayerController : MonoBehaviour
     {
         bool oldState = _isGrounded;
         var colliders = Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius, _groundLayermask);
+        colliders = colliders.Where(x => !x.isTrigger).ToArray();
         _isGrounded = colliders.Length > 0;
 
         if (_isGrounded) {
