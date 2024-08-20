@@ -148,7 +148,7 @@ public class FloorController : MonoBehaviour
         if (renderer) {
             var updatedMats = new List<Material>();
             for (int i = 0; i < renderer.sharedMaterials.Length; i++) {
-                updatedMats.Add(matDict[renderer.sharedMaterials[i]]);
+                if (matDict.ContainsKey(renderer.sharedMaterials[i])) updatedMats.Add(matDict[renderer.sharedMaterials[i]]);
             }
             renderer.sharedMaterials = updatedMats.ToArray();
         }
