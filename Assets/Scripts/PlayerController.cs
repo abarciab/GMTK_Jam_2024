@@ -344,7 +344,8 @@ public class PlayerController : MonoBehaviour
         if (_isGrounded) {
             var collider = colliders[0];
 
-            GameManager.i.UpdateCurrentTower(collider.GetComponentInParent<TowerController>());
+            bool onBridge = collider.GetComponentInParent<BridgeController>() != null;
+            if (!onBridge) GameManager.i.UpdateCurrentTower(collider.GetComponentInParent<TowerController>());
             
             var movingPlatform = collider.GetComponentInParent<MovingPlatform>();
             if (movingPlatform) transform.SetParent(movingPlatform.transform);
