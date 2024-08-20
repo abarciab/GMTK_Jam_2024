@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         Settings.Initialize(); 
         _fade.Disappear();
         _towersLeft = _totalTowerCount;
-        _flood.SetActive(false);
+        //_flood.SetActive(false);
         SetMouseState(false);
     }
 

@@ -139,7 +139,7 @@ public class FloorController : MonoBehaviour
             for (int i = 1; i < bridgePoints.Count; i++) bridgePoints[i].gameObject.SetActive(false);
         }
 
-        //if (_rootParent) ReplaceMaterials(_rootParent, matDict);
+        if (_rootParent) ReplaceMaterials(_rootParent, matDict);
     }
 
     private void ReplaceMaterials(Transform current,  Dictionary<Material, Material> matDict)
