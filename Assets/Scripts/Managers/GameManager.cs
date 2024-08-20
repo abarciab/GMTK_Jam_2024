@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
             UIManager.i.ShowCurrentTowerProgress(_towerProgress);
             if (_currentTower.Complete) UIManager.i.CompleteTower(_currentTower.Index);
         }
-        _music.CurrentSong =  Mathf.FloorToInt((_towerProgress+0.1f) * 4);
+        _music.CurrentSong =  Mathf.FloorToInt((_towerProgress+0.2f) * 4);
     }
 
     private void SetMouseState(bool visible)
