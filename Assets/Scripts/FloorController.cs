@@ -49,6 +49,9 @@ public class FloorController : MonoBehaviour
 
     private List<TowerController> _connectedTowers = new List<TowerController>();
 
+    [Header("LOD")]
+    [SerializeField] private List<Renderer> _allRenderers = new List<Renderer>();
+
     private void OnValidate()
     {
         if (_floorSections.Count == 5) UpdateModel();
@@ -70,6 +73,21 @@ public class FloorController : MonoBehaviour
         _slidingSound = Instantiate(_slidingSound);
         _slidingSound.PlaySilent(transform);
         _connectedTowers.Add(GetComponentInParent<TowerController>());
+
+        //if (_rootParent) HideRenderers(_rootParent);
+    }
+
+    [ButtonMethod]
+    private void FindAllRends()
+    {
+        FindRenderers(transform);
+    }
+
+    private void FindRenderers(Transform _current)
+    {
+        var rend = _current.GetComponent<Renderer>();
+        if (rend && !_allRenderers.Contains(rend)) _allRenderers.Add(rend);
+        foreach (Transform child in _current) FindRenderers(child);
     }
 
     private void Update()
@@ -121,7 +139,7 @@ public class FloorController : MonoBehaviour
             for (int i = 1; i < bridgePoints.Count; i++) bridgePoints[i].gameObject.SetActive(false);
         }
 
-        if (_rootParent) ReplaceMaterials(_rootParent, matDict);
+        //if (_rootParent) ReplaceMaterials(_rootParent, matDict);
     }
 
     private void ReplaceMaterials(Transform current,  Dictionary<Material, Material> matDict)

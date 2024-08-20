@@ -19,6 +19,8 @@ public class MovingPlatform : MonoBehaviour
 
     private void Start()
     {
+        return;
+
         if (_dontMove) {
             enabled = false;
             return;
