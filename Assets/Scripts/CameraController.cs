@@ -56,7 +56,7 @@ public class CameraController : MonoBehaviour
 
             var _startRot = transform.rotation;
             transform.LookAt(source);
-            transform.rotation = Quaternion.Lerp(_startRot, transform.rotation, 15 * Time.deltaTime);
+            //transform.rotation = Quaternion.Lerp(_startRot, transform.rotation, 15 * Time.deltaTime);
 
             var rot = _spinner.eulerAngles;
             rot.y = progress * 360;
