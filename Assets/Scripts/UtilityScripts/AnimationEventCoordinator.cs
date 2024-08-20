@@ -23,14 +23,25 @@ public class AnimationEventCoordinator : MonoBehaviour
     public void PlaySound1() => PSound(0);
     public void PlaySound2() => PSound(1);
     public void PlaySound3() => PSound(2);
+    public void PlaySpatialSound1() => PSound(0, this.transform);
+    public void PlaySpatialSound2() => PSound(1, this.transform);
+    public void PlaySpatialSound3() => PSound(2, this.transform);
 
     private void TEvent(int index)
     {
         if (index < _events.Count) _events[index].Invoke();
     }
 
-    private void PSound(int index)
+    private void PSound(int index, Transform transform = null)
     {
-        if (index < _sounds.Count) _sounds[index].Play();
+        if(transform != null)
+        {
+            if (index < _sounds.Count) _sounds[index].Play(transform);
+        }
+        else
+        {
+            if (index < _sounds.Count) _sounds[index].Play();
+        }
+        
     }
 }

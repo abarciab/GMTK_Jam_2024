@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 93e0513045be1974d934eb6431407da8, type: 3}
-  m_Name: goopLoop
+  m_Name: leverPool
   m_EditorClassIdentifier: 
   Type: 0
   Unpauseable: 0
   _clips:
-  - Name: Goop Loop
-    Clip: {fileID: 8300000, guid: 382ff1f06473ca54f957c1d0a6fc21bc, type: 3}
-    Looping: 1
+  - Name: Lever Pull
+    Clip: {fileID: 8300000, guid: 3722b746c4b4d0448ac314cd0de80375, type: 3}
+    Looping: 0
   _volume: 1
-  _pitch: 0.7
+  _pitch: 1
   _randomizePitch: 0
-  _pitchRandomizeAmount: 0.047
-  _custom3DSettings: 1
-  _minDist: 5
-  _maxDist: 300
-  _rolloffMode: 0
+  _pitchRandomizeAmount: 0
+  _custom3DSettings: 0
+  _minDist: 1
+  _maxDist: 150
+  _rolloffMode: 1
   AudioSource: {fileID: 0}
   Instantialized: 0
