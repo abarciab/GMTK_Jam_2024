@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b301676f12f29643b9bcd58fe2b9045, type: 3}
+  m_Name: RedPalette
+  m_EditorClassIdentifier: 
+  _inputData: {fileID: 11400000, guid: 80d19dfb2e36340418079585d4516e85, type: 2}
+  _pairs:
+  - Name: 'Primary1: redBrick1'
+    InputMaterial: {fileID: 2100000, guid: 338244385a5c7da40941d0b4a50f97b6, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: 423828f1c6b944d408bf3b8b7499c621, type: 2}
+  - Name: 'Primary2: redBrick2'
+    InputMaterial: {fileID: 2100000, guid: 7cc60966496baf740920fb41cb25a468, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: 625e85f2923096f41b28af801c5ded9e, type: 2}
+  - Name: 'Primary3: redBrick3'
+    InputMaterial: {fileID: 2100000, guid: 03b5455c9c5b0e14eac75125c6e8eea8, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: 866234485612c824e86e74f9c5970725, type: 2}
+  - Name: 'Secondary1: woodAccent1'
+    InputMaterial: {fileID: 2100000, guid: 4f99ffb783d886e4d81744c3b471d48f, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: 7763bddc0a457df4e884fb20c6d5a596, type: 2}
+  - Name: 'Secondary2: woodAccent2'
+    InputMaterial: {fileID: 2100000, guid: 838d29a92fe9b124e9695a791800701f, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: 6790734017ae0994c9b88c7ed9b1ae94, type: 2}
+  - Name: 'Accent1: metal1'
+    InputMaterial: {fileID: 2100000, guid: 6e3ebd5391d0ead49b4f903d464066bf, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: f14535e7b225c284d93515ad515a50c9, type: 2}
+  - Name: 'Accent2: metal2'
+    InputMaterial: {fileID: 2100000, guid: fb8d4d20b2d30b94e93907aac42e7ab4, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: 2d37de7995c7f7a4a96d08827846d1bb, type: 2}
+  - Name: 'Accent3: windows'
+    InputMaterial: {fileID: 2100000, guid: 770d8d1a152afb145a12c0dd67b9ba3a, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: 043fa92ad978f1f4f8dfb29b6501c199, type: 2}
+  - Name: 'Walk: Walk'
+    InputMaterial: {fileID: 2100000, guid: c69fe1fb5e9a4684bb56d9a0f999a86d, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: 5eaec39acf720c84f88bedace5189635, type: 2}
+  - Name: 'WalkAccent: WalkAccent'
+    InputMaterial: {fileID: 2100000, guid: 1918a5e6fc0565c4586d0bc329503ccb, type: 2}
+    OutputMaterial: {fileID: 2100000, guid: d19fe88109cd3224a817ff2ccd0918d6, type: 2}

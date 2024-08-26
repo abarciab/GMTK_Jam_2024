@@ -10,6 +10,7 @@ public class TowerController : MonoBehaviour
     [Range(0, 3)] public int Index;
     [SerializeField] private float _initialBuildTime = 25;
     [SerializeField] private float _secondToFullExpansion = 60;
+    [SerializeField] private float _individualFloorExpansionTime = 3;
     [SerializeField] private Sound _completeSound;
     [SerializeField] private bool _isCurrentTower;
     [SerializeField] private bool _displayOnly;
@@ -76,8 +77,7 @@ public class TowerController : MonoBehaviour
     private void FinishAllInProgressFloors()
     {
         foreach (var f in _floors) {
-            if (f.TargetExpansion > 0.5f) f.TargetExpansion = 1;
-            if (f.TargetExpansion > 0 && f.TargetExpansion < 0.5f) f.TargetExpansion = 0.5f;
+            f.FinishInteriorProgress();
         }
     }
 
@@ -111,14 +111,19 @@ public class TowerController : MonoBehaviour
         }
 
         List<FloorController> incompleteFloors = new List<FloorController>(_floors);
-        int numSteps = _floors.Count * 4;
+        int numSteps = 0;
+        foreach (var floor in _floors) numSteps += floor.SectionCount;
+
         float step = _secondToFullExpansion / numSteps;
         for (int i = 0; i < numSteps; i++) {
             while (_isCurrentTower) yield return null;
 
             var selected = incompleteFloors[Random.Range(0, incompleteFloors.Count)];
-            if (selected.TargetExpansion > 0.9f) incompleteFloors.Remove(selected);
-            else selected.IncrementTargetExpansion();
+            if (!selected.Complete) selected.IncrementTargetExpansion(_individualFloorExpansionTime);
+            else { 
+                incompleteFloors.Remove(selected);
+                if (incompleteFloors.Count == 0) break;
+            } 
 
             yield return new WaitForSeconds(step);
         }

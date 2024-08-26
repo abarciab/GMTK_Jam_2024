@@ -8,9 +8,10 @@ public class TowerBuilder : MonoBehaviour
 {
     [SerializeField] private GameObject _firstFloorPrefab;
     [SerializeField] private GameObject _lastFloorPrefab;
-    [SerializeField] private List<TowerFloorData> _towerFloorPrefabs = new List<TowerFloorData>();
+    [SerializeField] private List<GameObject> _towerFloorPrefabs = new List<GameObject>();
     [SerializeField, Min(2)] private int _targetHeight = 10;
     [SerializeField] private float _difficultyThreshold;
+    [SerializeField] private ColorPaletteData _palette;
 
     private List<FloorController> _placedFloors = new List<FloorController>();
     private FloorController _currentTopFloor;
@@ -25,7 +26,7 @@ public class TowerBuilder : MonoBehaviour
     public List<FloorController> GetFloorPrefabs()
     {
         var floors = new List<FloorController>();
-        foreach (var item in _towerFloorPrefabs) floors.Add(item.floorPrefab.GetComponent<FloorController>());
+        foreach (var item in _towerFloorPrefabs) floors.Add(item.GetComponent<FloorController>());
         return floors;
     }
 
@@ -33,6 +34,9 @@ public class TowerBuilder : MonoBehaviour
     {
         PlaceFirstFloor();
         for (int i = 0; i < _targetHeight - 1; i++) PlaceNextFloor();
+
+        foreach (var floor in _placedFloors) floor.SetPalette(_palette);
+
         _controller.Initialize(_placedFloors);
     }
 
@@ -85,12 +89,9 @@ public class TowerBuilder : MonoBehaviour
 
         while(validPrefabs.Count == 0)
         {
-            foreach (TowerFloorData floor in _towerFloorPrefabs)
+            foreach (var floor in _towerFloorPrefabs)
             {
-                if(floor.difficulty >= currentDifficulty - tempDifficultyThreshold && floor.difficulty <= currentDifficulty + tempDifficultyThreshold)
-                {
-                    validPrefabs.Add(floor.floorPrefab);
-                }
+                validPrefabs.Add(floor);   
             }
 
             tempDifficultyThreshold += 0.05f;

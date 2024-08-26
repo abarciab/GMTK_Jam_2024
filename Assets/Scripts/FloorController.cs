@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using MyBox;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UIElements;
 
 public enum CardinalDirection { South, East, North, West };
 
@@ -13,17 +15,13 @@ public class FloorController : MonoBehaviour
     [SerializeField] private CardinalDirection _exitSide;
 
     [Header("References")]
-    [SerializeField] private Transform _top;
-    [SerializeField] private Transform _rootParent;
     [SerializeField] private Transform _bridgePointParent;
+    [SerializeField] private List<FloorSection> _sections = new List<FloorSection>();
 
     [Header("expansion")]
     [SerializeField, Range(0, 1)] private float _expansionProgress;
     [SerializeField] private AnimationCurve _expansionCurve;
-    [SerializeField, ReadOnly] private List<Transform> _floorSections = new List<Transform>();
-    [SerializeField, ReadOnly] private List<Transform> _hiddenExtras = new List<Transform>();
-    [SerializeField, ReadOnly] private List<float> _expandedOffsets = new List<float>();
-    [SerializeField, ReadOnly] private List<float> _compressedOffsets = new List<float>(); 
+    [SerializeField] private float _expansionTime = 1;
 
     [Header("Particles")]
     [SerializeField] private ParticleSystem _dustParticles;
@@ -40,52 +38,66 @@ public class FloorController : MonoBehaviour
     [SerializeField] private GameObject _bridgePrefab;
     [SerializeField] private float _bridgeChance;
 
-    [HideInInspector] public bool HasBridge;
-    [HideInInspector] public FloorController PreviousFloor;
-    [HideInInspector] public CardinalDirection ExitSide => _exitSide;
-    [HideInInspector] public Vector3 TopPos => !gameObject.activeInHierarchy && PreviousFloor ? PreviousFloor.TopPos : _top.position;
-
-    [HideInInspector] public float TargetExpansion;
-
-    private List<TowerController> _connectedTowers = new List<TowerController>();
-
     [Header("LOD")]
     [SerializeField] private List<Renderer> _allRenderers = new List<Renderer>();
 
+    [Header("Buttons")]
+    [SerializeField] private bool _findFloorSections;
+
+    [HideInInspector] public CardinalDirection ExitSide => _exitSide;
+    [HideInInspector] public Vector3 TopPos => !gameObject.activeInHierarchy && PreviousFloor ? PreviousFloor.TopPos : _highestActiveSection.TopPos;
+    [HideInInspector] public int SectionCount => _sections.Count;
+    [HideInInspector] public bool Complete => _targetExpansion == 1;
+    [HideInInspector] public bool HasBridge;
+    [HideInInspector] public FloorController PreviousFloor;
+
+    private FloorSection _highestActiveSection => _sections.Where(x => x.gameObject.activeInHierarchy).Last();
+    private List<TowerController> _connectedTowers = new List<TowerController>(); 
+    private float _targetExpansion;
+
+        
     private void OnValidate()
     {
-        if (_floorSections.Count == 5) UpdateModel();
+        if (_findFloorSections) {
+            _findFloorSections = false;
+            FindSections(); 
+        }
+        UpdateModel();
     }
 
     private void Start()
     {
-        if(Random.Range(0, 2) == 0)
-        {
-            _growingSound1 = Instantiate(_growingSound1);
-            _growingSound1.Play(transform);
-        }
-        else
-        {
-            _growingSound2 = Instantiate(_growingSound2);
-            _growingSound2.Play(transform);
-        }
-        
-        _slidingSound = Instantiate(_slidingSound);
-        _slidingSound.PlaySilent(transform);
         _connectedTowers.Add(GetComponentInParent<TowerController>());
+        _targetExpansion = _expansionProgress = 0;
+    }
 
-        //if (_rootParent) HideRenderers(_rootParent);
+    public void SetPalette(ColorPaletteData palette) {
+        foreach (Transform child in transform) SetMaterials(child, palette);
+    }
+
+    private void SetMaterials(Transform obj, ColorPaletteData palette) {
+        var renderer = obj.GetComponent<MeshRenderer>();
+        if (renderer) {
+            var materials = new List<Material>(renderer.sharedMaterials);
+            for (int i = 0; i < materials.Count; i++) {
+                materials[i] = palette.GetMaterial(materials[i]);
+            }
+            renderer.sharedMaterials = materials.ToArray();
+        }
+        foreach (Transform child in obj) SetMaterials(child, palette);
+    }
+
+    private void FindSections() {
+        _sections.Clear();
+        foreach (Transform child in transform) {
+            var section = child.GetComponent<FloorSection>();
+            if (section) _sections.Add(section);
+        }
     }
 
     public void DisableBridgePoints()
     {
         if (_bridgePointParent != null) Destroy(_bridgePointParent.gameObject);
-    }
-
-    [ButtonMethod]
-    private void FindAllRends()
-    {
-        FindRenderers(transform);
     }
 
     private void FindRenderers(Transform _current)
@@ -98,16 +110,13 @@ public class FloorController : MonoBehaviour
     private void Update()
     {
         if (PreviousFloor) transform.position = PreviousFloor.TopPos;
-        _expansionProgress = Mathf.Lerp(_expansionProgress, TargetExpansion, 2 * Time.deltaTime);
-        _slidingSound.SetPercentVolume(Mathf.Abs(TargetExpansion - _expansionProgress) > 0.1f ? 1 : 0, 0.05f);
+        _expansionProgress = Mathf.Lerp(_expansionProgress, _targetExpansion, 2 * Time.deltaTime);
+        _slidingSound.SetPercentVolume(Mathf.Abs(_targetExpansion - _expansionProgress) > 0.1f ? 1 : 0, 0.05f);
         UpdateModel();
     }
 
     private void OnEnable()
     {
-        //InitializeScale(_dustParticles.transform);
-        //InitializeScale(_brickParticles.transform);
-
         if (PreviousFloor) transform.position = PreviousFloor.TopPos;
         _expansionProgress = 0;
         UpdateModel();
@@ -122,12 +131,13 @@ public class FloorController : MonoBehaviour
 
     private IEnumerator AnimateToFull(bool reverse = false)
     {
-        _expansionProgress = reverse ? 1 : 0;
+        yield return new WaitForSeconds(1);
+        /*_expansionProgress = reverse ? 1 : 0;
         for (int i = 0; i < 4; i++) {
             if (reverse) DecrementTargetExpansion();
             else IncrementTargetExpansion();
             yield return new WaitForSeconds(1);
-        }
+        }*/
     }
 
     public void Collapse()
@@ -145,7 +155,7 @@ public class FloorController : MonoBehaviour
             for (int i = 1; i < bridgePoints.Count; i++) bridgePoints[i].gameObject.SetActive(false);
         }
 
-        if (_rootParent) ReplaceMaterials(_rootParent, matDict);
+        //if (_rootParent) ReplaceMaterials(_rootParent, matDict);
     }
 
     private void ReplaceMaterials(Transform current,  Dictionary<Material, Material> matDict)
@@ -165,9 +175,8 @@ public class FloorController : MonoBehaviour
 
     public List<Material> GetUniqueMaterials()
     {
-        
         List<Material> mats = new List<Material>();
-        if (_rootParent) SearchForUniqueMaterial(_rootParent, mats);
+        //if (_rootParent) SearchForUniqueMaterial(_rootParent, mats);
         return new List<Material>(mats);
     }
 
@@ -180,18 +189,9 @@ public class FloorController : MonoBehaviour
         foreach (Transform child in current) SearchForUniqueMaterial(child, mats);
     }
 
-    private void InitializeScale(Transform transform)
-    {
-        var originalParent = transform.parent;
-        transform.SetParent(null);
-        transform.localScale = Vector3.one;
-        transform.SetParent(originalParent);
-    }
-
-
     public void SetTargetExpansion(float newTarget)
     {
-        TargetExpansion = newTarget;
+        _targetExpansion = newTarget;
 
         PositionParticlesByProgress(newTarget);
         EmitParticles();
@@ -206,13 +206,9 @@ public class FloorController : MonoBehaviour
 
     private void PositionParticlesByProgress(float progress)
     {
-        if (_floorSections.Count != 5) return;
+        var index = Mathf.RoundToInt(progress * _sections.Count);
+        var particlesY = _sections[index].transform.position.y;
 
-        float particlesY = 0;
-        if (progress <= 0.25f) particlesY = _floorSections[1].transform.position.y;
-        else if (progress <= 0.5f) particlesY = _floorSections[2].transform.position.y;
-        else if (progress <= 0.75f) particlesY = _floorSections[3].transform.position.y;
-        else if (progress <= 1f) particlesY = _floorSections[4].transform.position.y;
         var pos = _dustParticles.transform.position;
         pos.y = particlesY;
         _dustParticles.transform.position = pos;
@@ -225,79 +221,49 @@ public class FloorController : MonoBehaviour
         _brickParticles.Emit(_brickBurstCount);
     }
 
-    [ButtonMethod]
-    private void InitializeFromRoot()
-    {
-        if (_rootParent.childCount == 14) {
-            var children = new List<Transform>();
-            for (int i = 0; i < _rootParent.childCount; i++) {
-                children.Add(_rootParent.GetChild(i));
-            }
-            for (int i = 0; i < children.Count; i++) {
-                var child = children[i];
-                if (child.gameObject.name.Contains("Decor")) child.SetParent(children[i + 1]);
-            }
-        }
-
-        if (_rootParent.childCount != 9) {
-            Debug.LogError("Incorrect number of children in heirarchy. Consult template");
-            return;
-        }
-
-        _hiddenExtras.Clear();
-        _floorSections.Clear();
-
-        _floorSections.Add(_rootParent);
-        _floorSections.Add(_rootParent.GetChild(1));
-        _floorSections.Add(_rootParent.GetChild(3));
-        _floorSections.Add(_rootParent.GetChild(5));
-        _floorSections.Add(_rootParent.GetChild(7));
-
-        _hiddenExtras.Add(_rootParent.GetChild(2));
-        _hiddenExtras.Add(_rootParent.GetChild(6));
-
-        var objects = new List<Transform>();
-        foreach (Transform child in _rootParent) objects.Add(child);
-
-        for (int i = 0; i < objects.Count; i++) {
-            if (i % 2 != 0 && i > 1) objects[i].SetParent(objects[i - 2]);
-            if (i % 2 == 0 && i > 0) objects[i].SetParent(objects[i - 1]);
-        }
-        _top.SetParent(objects[objects.Count - 2]);
-
-        print("heirarchy successfully rearranged. Next, set the compressed and expanded positions of the sections.");
-    }
-
     private void UpdateModel()
     {
-        if (_floorSections.Count != 5 || _hiddenExtras.Count != 2 || _compressedOffsets.Count + _expandedOffsets.Count != 10) return;
 
-        float quarterProgress = Mathf.InverseLerp(0f, 0.25f, _expansionProgress);
-        float secondCurrentOffset = Ease(_compressedOffsets[1], _expandedOffsets[1], quarterProgress);
-        _floorSections[1].localPosition = Vector3.up * secondCurrentOffset;
-        _floorSections[1].GetComponent<Renderer>().enabled = quarterProgress > 0.05f;
+        foreach (var section in _sections) {
+            if (!section) {
+                FindSections();
+                UpdateModel();
+                return;
+            }
+            section.transform.position = transform.position;
+        }
 
-        float extras1Progress = Mathf.InverseLerp(0.25f, 0.5f, _expansionProgress);
-        var extra1Scale = new Vector3(extras1Progress, 1, extras1Progress);
-        _hiddenExtras[0].localScale = extra1Scale;
+        var minScale = new Vector3(0, 1, 0);
+        for (int i = 1; i < _sections.Count; i++) {
+            var max = i / (float) _sections.Count;
+            var min = (i-1) / (float) _sections.Count;
+            var progress = Mathf.InverseLerp(min, max, _expansionProgress);
 
-        float halfProgress = Mathf.InverseLerp(0f, 0.5f, _expansionProgress);
-        float thirdCurrentOffset = Ease(_compressedOffsets[2], _expandedOffsets[2], halfProgress);
-        _floorSections[2].localPosition = Vector3.up * thirdCurrentOffset;
+            bool isOuter = i % 2 == 0;
+            var section = _sections[i];
+            var previous = _sections[i - 1];
+            var next = i < _sections.Count-1 ? _sections[i + 1] : null;
+            if (!section) continue;
 
-        float thirdQuarterProgress = Mathf.InverseLerp(0.5f, 0.75f, _expansionProgress);
-        float fourthCurrentOffset = Ease(_compressedOffsets[3], _expandedOffsets[3], thirdQuarterProgress);
-        _floorSections[3].localPosition = Vector3.up * fourthCurrentOffset;
-        _floorSections[3].GetComponent<Renderer>().enabled = thirdQuarterProgress > 0.05f;
+            var highPos = previous.TopPos;
+            var lowPos = isOuter ? _sections[i - 2].TopPos : transform.position;
+            if (!isOuter) {
+                var height = section.TopPos.y - section.BottomPos.y;
+                lowPos = previous.TopPos + Vector3.down * height;
+            }
 
-        float extras2Progress = Mathf.InverseLerp(0.75f, 1f, _expansionProgress);
-        var extra2Scale = new Vector3(extras2Progress, 1, extras2Progress);
-        _hiddenExtras[1].localScale = extra2Scale;
+            //section.gameObject.SetActive(progress > 0.1f || isOuter);
 
-        float secondHalfProgress = Mathf.InverseLerp(0.5f, 1f, _expansionProgress);
-        float fifthCurrentOffset = Ease(_compressedOffsets[4], _expandedOffsets[4], secondHalfProgress);
+            section.transform.position = Vector3.Lerp(lowPos, highPos, progress);
+            if (isOuter) section.ScaleExtras(Vector3.one);
+            else section.ScaleExtras(Vector3.Lerp(minScale, Vector3.one, progress)); 
 
-        _floorSections[4].localPosition = Vector3.up * fifthCurrentOffset;
+            if (isOuter && previous.TopPos.y > section.BottomPos.y) {
+                var diff = previous.TopPos.y - section.BottomPos.y;
+                previous.transform.position += Vector3.down * diff;
+            }
+            if (isOuter) previous.gameObject.SetActive(previous.TopPos.y > _sections[i - 2].TopPos.y + 0.5f);
+        }
     }
 
     private float Ease(float a, float b, float progress)
@@ -324,38 +290,47 @@ public class FloorController : MonoBehaviour
         return options[0];
     }
 
-    [ButtonMethod]
-    private void SetExpandedPositions()
-    {
-        _expandedOffsets.Clear();
-
-        for (int i = 0; i < _floorSections.Count; i++) {
-            _expandedOffsets.Add(_floorSections[i].localPosition.y);
-        }
-    }
-
-    [ButtonMethod]
-    private void SetCompressedPositions()
-    {
-        _compressedOffsets.Clear();
-        foreach (var s in _floorSections) _compressedOffsets.Add(s.localPosition.y);
-    }
-
+    /*
     [ButtonMethod]
     private void DecrementTargetExpansion()
     {
         if (_floorSections.Count != 5) return;
         if (TargetExpansion > 0) SetTargetExpansion(TargetExpansion - 0.25f);
     }
+    */
 
-    [ButtonMethod]
-    public void IncrementTargetExpansion()
-    {
-        if (_floorSections.Count != 5) return;
-        if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion + 0.25f);
-        if (TargetExpansion > 0.5f && (Random.Range(0, 1f) < _bridgeChance)) BuildBridge();
+    public void FinishInteriorProgress() {
+        
     }
 
+    [ButtonMethod]
+    public void IncrementTargetExpansion(float time = -1)
+    {
+        if (time < 0) time = _expansionTime;
+        StopAllCoroutines();
+        _targetExpansion += 2 / (float)_sections.Count;
+        _targetExpansion = Mathf.Clamp01(_targetExpansion);
+        StartCoroutine(AnimateExpansion(time));
+        /*if (_floorSections.Count != 5) return;
+        if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion + 0.25f);
+        if (TargetExpansion > 0.5f && (Random.Range(0, 1f) < _bridgeChance)) BuildBridge();*/
+    }
+
+    private IEnumerator AnimateExpansion(float time = -1) {
+        if (time < 0) time = _expansionTime;
+        float startProgress = _expansionProgress;
+        float timePassed = 0;
+        while (timePassed < time) {
+            var progress = _expansionCurve.Evaluate(timePassed / time);
+            _expansionProgress = Mathf.Lerp(startProgress, _targetExpansion, progress);
+            UpdateModel();
+            timePassed += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        _expansionProgress = _targetExpansion;
+        UpdateModel();
+    }
+    
     [ButtonMethod]
     public void BuildBridge()
     {
