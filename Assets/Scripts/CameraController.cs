@@ -23,11 +23,22 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform _spinner;
     [SerializeField] private AnimationCurve _spinAnimateCurve;
 
-    void LateUpdate()
-    {
+    private PlayerController _playerController;
+
+    void LateUpdate() {
+        if (!_playerController) _playerController = GameManager.i.Player;
         if (_cinematic) return;
         SetPosAndRotation();
-        if (!GameManager.i.Player.IsGliding) SetFov();
+        if (_playerController.IsGliding) SetGlideFov();
+        else SetGroundFov();
+    }
+
+    private void SetGlideFov() {
+        var percent = _playerController.GetGlideSpeedPercent(); 
+        var current = _camera.fieldOfView;
+        var target = Mathf.Lerp(_glideMinMaxFovs.x, _glideMinMaxFovs.y, percent);
+        _camera.fieldOfView = Mathf.Lerp(current, target, _fovChangeLerpFator * Time.deltaTime);
+
     }
 
     public void StartCinematicRotation(Vector3 source, float distFromObject, float totalDeltaY, float time)
@@ -75,24 +86,6 @@ public class CameraController : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         UIManager.i.FadeFromBlack(0.1f);
 
-        //_camera.enabled = false;
-        //yield return new WaitForSeconds(1.5f);
-        //_camera.enabled = true;
-
-        //timePassed = 0;
-        //float returnTime = 1.5f;
-        /*Vector3 startPos = transform.position;
-        var startRot = transform.rotation;
-        while (timePassed < returnTime) {
-            float progress = timePassed / returnTime;
-            transform.position = Vector3.Lerp(startPos, _player.TransformPoint(_offset), progress);
-
-            var playerRot = _player.rotation;
-            transform.rotation = Quaternion.Lerp(startRot, Quaternion.Euler(transform.eulerAngles.x, playerRot.y, 0), progress);
-
-            yield return new WaitForEndOfFrame();
-            timePassed += Time.deltaTime;
-        }*/
         _cinematic = false;
     }
 
@@ -109,18 +102,11 @@ public class CameraController : MonoBehaviour
 
         var mouseY = Input.GetAxis("Mouse Y");
         var rotDelta = mouseY * Time.deltaTime * Settings.MouseSensetivity * 100 * _verticalRotSpeed * -1;
-        rotDelta = Mathf.Clamp(rotDelta, -5, 5);
+        //rotDelta = Mathf.Clamp(rotDelta, -5, 5);
         transform.localEulerAngles += Vector3.right * rotDelta;
     }
 
-    public void SetGlideFovPercent(float percent)
-    {
-        var current = _camera.fieldOfView;
-        var target = Mathf.Lerp(_glideMinMaxFovs.x, _glideMinMaxFovs.y, percent);
-        _camera.fieldOfView = Mathf.Lerp(current, target, _fovChangeLerpFator * Time.deltaTime);
-    }
-
-    private void SetFov()
+    private void SetGroundFov()
     {
         var current = _camera.fieldOfView;
         var target = GameManager.i.Player.IsRunning ? _walkRunFovs.y : _walkRunFovs.x;

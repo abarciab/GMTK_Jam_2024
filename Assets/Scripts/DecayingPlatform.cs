@@ -38,11 +38,6 @@ public class DecayingPlatform : MonoBehaviour
         myCrackMat.SetFloat("_Crack", 1);
     }
 
-    public void LeavePlatform()
-    {
-        _decaying = false;
-    }
-
     private void Update()
     {
         if (!_decaying) return;

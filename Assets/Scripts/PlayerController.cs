@@ -2,82 +2,36 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
+using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.Rendering;
 
+public enum PlayerState { WALK, CLIMB, GLIDE}
+[RequireComponent(typeof(PlayerRunWalkBehavior))]
+[RequireComponent(typeof(PlayerGlideBehavior))]
+[RequireComponent(typeof(PlayerClimbBehavior))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(PlayerSounds))]
+[RequireComponent(typeof(PlayerInventory))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Walking, running, turning")]
-    [SerializeField] private float _walkSpeed = 5;
-    [SerializeField] private float _runSpeed = 10;
-    [SerializeField, Range(0, 1), Tooltip("What percent of forward speed is used for strafe")] private float _strafeSpeedMod = 0.8f;
-    [SerializeField] private float _rotateSpeed;
-    [SerializeField] private Vector2 _groundedAndUngroundedRbDrag = new Vector2(4, 1);
-    [SerializeField] private float _groundDragNoInputIncrease = 2;
+    [Header("State")]
+    [SerializeField, ReadOnly] private PlayerState _currentState = PlayerState.WALK;
 
-    [Header("Jumping")]
-    [SerializeField] private int _numJumps = 1;
-    [SerializeField] private float _jumpForce;
-    [SerializeField] private float _coyoteTime = 1f;
-    [SerializeField] private float _jumpingUpGravity = 2;
-    [SerializeField] private float _fallingGravity = 5;
-    [SerializeField, Tooltip("Minimum time between jumps")] private float _minimumJumpTime = 0.1f;
-    [SerializeField] private float _groundCheckRadius;
-    [SerializeField] private Vector3 _groundCheckOffset;
-    [SerializeField] private LayerMask _groundLayermask;
+    [HideInInspector] public Rigidbody RB;
 
-    [Header("Gliding")]
-    [SerializeField] private bool _gliderUnlocked;
-    [SerializeField] private float _tempConstFlySpeed = 10;
-    [SerializeField] private float _glideAngleIncreaseFactor = 1;
-    [SerializeField] private float _glideSpeedMax = 10;
-    [SerializeField] private float _glideGravity = 1;
-    [SerializeField] private float _glideLerpFactor = 3;
-    [SerializeField] private float _glideEndBoost = 3;
-    [SerializeField] private float _forwardGlideCheckerRadius;
-    [SerializeField] private Vector3 _forwardGlideCheckerOffset;
+    private PlayerRunWalkBehavior _runWalkBehavior;
+    private PlayerClimbBehavior _climbBehavior;
+    private PlayerGlideBehavior _glideBehavior;
+    private PlayerInventory _inventory;
 
-
-    [Header("Climbing")]
-    [SerializeField] private float _vertClimbSpeed = 3;
-    [SerializeField] private float _climbStrafeSpeed = 1;
-    [SerializeField] private float _ropSpinSpeed = 1;
-
-    [Header("Sounds")]
-    [SerializeField] private Sound _jumpUpSound;
-    [SerializeField] private Sound _landSound;
-    [SerializeField] private Sound _openGliderSound;
-    [SerializeField] private Sound _windLoop;
-    [SerializeField] private Sound _gliderLand;
-
-    [HideInInspector] public bool IsRunning => _isRunning;
-    [HideInInspector] public bool IsGliding => _isGliding;
-    private bool _isCoyoteGrounded => _isGrounded || (_numJumpsLeft > 0 && Time.time - _timeWhenLastGrounded < _coyoteTime);
-
-    private Vector3 _inputDir;
-    private Vector3 oldPos;
-    private Rigidbody _rb;
-    private Ladder _currentLadder;
-    private InventoryItem _currentDroppedItem;
-    private GameObject _currentFloorObj;
-    private CameraController _cam;
-    private bool _isGrounded;
-    private bool _isRunning;
-    private bool _isGliding;
-    private bool _isClimbing;
-    private float _lastJumpTime;
-    private float _glideSpeed;
-    private float _timeWhenLastGrounded;
-    [SerializeField, ReadOnly] private int _numJumpsLeft;
-
-    private float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
-    private float _currentLadderDist => _currentLadder == null ? Mathf.Infinity : DistanceTo(_currentLadder.transform.position);
-    private float _currentItemDist => _currentDroppedItem == null ? Mathf.Infinity : DistanceTo(_currentDroppedItem.transform.position);
-    private bool _onRope => _currentLadder && _currentLadder.IsRope;
-
-    private InventoryItem[] _inventoryItems = {null, null, null, null, null, null, null, null, null, null};
-    private int _currentItemIndex = 0;
+    [HideInInspector] public PlayerSounds Sounds { get; private set; }
+    [HideInInspector] public bool IsRunning => _currentState == PlayerState.WALK && _runWalkBehavior.IsRunning;
+    [HideInInspector] public bool IsGliding => _currentState == PlayerState.GLIDE;
+    [HideInInspector] public float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
+    [HideInInspector] public float GetGlideSpeedPercent() => _glideBehavior.GetGlideSpeedPercent();
+    [HideInInspector] public void SetClosestItem(InventoryItem item) => _inventory.SetClosestItem(item);
+    [HideInInspector] public void ClearItem(InventoryItem item) => _inventory.ClearItem(item);
 
     private void Awake()
     {
@@ -86,329 +40,62 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        _rb = GetComponent<Rigidbody>();
-        _lastJumpTime = Time.time;
-        _isGrounded = true;
-        _cam = GameManager.i.Camera.GetComponent<CameraController>();
-
-        EquipItem(0);
-
-        InitializeSounds();
+        RB = GetComponent<Rigidbody>();
+        Sounds = GetComponent<PlayerSounds>();
+        _runWalkBehavior = GetComponent<PlayerRunWalkBehavior>();
+        _climbBehavior = GetComponent<PlayerClimbBehavior>();
+        _glideBehavior = GetComponent<PlayerGlideBehavior>();
+        _inventory = GetComponent<PlayerInventory>();
     }
 
     private void Update()
     {
-        Rotate();
-        Move();
-        Inventory();
-
+        CheckStateTransitions();
         transform.SetLossyScale(Vector3.one);
-
     }
 
-    public void SetClosestLadder(Ladder ladder)
-    {
-        if (_currentLadder == null || _currentLadderDist < DistanceTo(ladder.transform.position)) {
-            if (ladder.IsRope) {
-                transform.SetParent(ladder.transform);
-                var pos = transform.position;
-                StopGliding(pos);
-                transform.position = pos;
-                _rb.velocity = Vector3.zero;
-            }
-            _currentLadder = ladder;
-        }
+    private void CheckStateTransitions() {
+        if (ShouldStartGliding()) ChangeState(PlayerState.GLIDE);
+        if (ShouldStartClimbing()) ChangeState(PlayerState.CLIMB);
     }
 
-    public void ClearLadder(Ladder ladder)
-    {
-        if (_currentLadder == ladder) {
-            _currentLadder = null;
-            _isClimbing = false;
-            if (ladder.IsRope) transform.SetParent(null);
-        }
+    public void ChangeState(PlayerState newState) {
+        if (_currentState == newState) return;
+        _currentState = newState;
+
+        _runWalkBehavior.enabled = newState == PlayerState.WALK;
+        _climbBehavior.enabled = newState == PlayerState.CLIMB;
+        _glideBehavior.enabled = newState == PlayerState.GLIDE;
     }
 
-    public void SetClosestItem(InventoryItem item)
-    {
-        if (_currentDroppedItem == null || _currentItemDist < DistanceTo(item.transform.position)) _currentDroppedItem = item;
+    private bool ShouldStartGliding() {
+        return (_currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0 && InputController.GetDown(Control.JUMP));
     }
 
-    public void ClearItem(InventoryItem item)
-    {
-        if (_currentDroppedItem == item) _currentDroppedItem = null;
+    public void SetClosestLadder(Ladder ladder) {
+        _climbBehavior.SetClosestLadder(ladder);
+        var pos = transform.position;
+        transform.position = pos;
     }
 
-    private void InitializeSounds() 
-    {
-        _jumpUpSound = Instantiate(_jumpUpSound);
-        _landSound = Instantiate(_landSound);
-        _openGliderSound = Instantiate(_openGliderSound);
-        _windLoop = Instantiate(_windLoop);
-        _windLoop.PlaySilent();
-        _gliderLand = Instantiate(_gliderLand);
+    public void ClearLadder(Ladder ladder) {
+        if (_climbBehavior.CurrentLadder != ladder) return;
+        _climbBehavior.ClearLadder();
+        if (ladder.IsRope) transform.SetParent(null);
+        ChangeState(PlayerState.WALK);
     }
 
-
-    private void Rotate()
-    {
-        var mouseX = Input.GetAxis("Mouse X");
-
-        var rotDelta = _rotateSpeed * 100 * mouseX * Time.deltaTime * Settings.MouseSensetivity;
-
-        rotDelta = Mathf.Clamp(rotDelta, -5, 5);
-        transform.Rotate(rotDelta * Vector3.up);
+    public void JumpOffRope() {
+        ClearLadder(_climbBehavior.CurrentLadder);
+        _runWalkBehavior.Jump(true);
     }
 
-    private void Move()
-    {
-        UpdateIsGrounded();
-
-        if (!_isGliding && !_isCoyoteGrounded && _rb.velocity.y < 0 && InputController.GetDown(Control.JUMP) && _gliderUnlocked) StartGliding();
-        if (_isGliding) {
-            Glide();
-            return;
-        }
-
-        if (_currentLadder && !_isClimbing) _isClimbing = InputController.Get(Control.MOVE_FORWARD);
-        if (_isClimbing) {
-            Climb();
-            return;
-        }
-
-        if (_isCoyoteGrounded && InputController.GetDown(Control.JUMP)) Jump();
-        WalkRun();
-        if (!_isGrounded && _rb.velocity.y > 0.1) ApplyGravity(_jumpingUpGravity);
-        if (!_isGrounded && _rb.velocity.y < 0.1) ApplyGravity(_fallingGravity);
+    private bool ShouldStartClimbing() {
+        return _climbBehavior.ReadyToClimb && InputController.Get(Control.MOVE_FORWARD);
+        //should take into account facing direction and position relative to top of ladder. probaby a raycast
     }
 
-    private void Inventory()
-    {
-        if(InputController.GetDown(Control.INTERACT) && _currentDroppedItem)
-        {
-            _currentDroppedItem.Pickup(transform);
-            _inventoryItems[_currentItemIndex]?.Drop();
-            _inventoryItems[_currentItemIndex] = _currentDroppedItem;
-            UIManager.i.SetInventoryImage(_currentDroppedItem.GetSprite(), _currentItemIndex);
-            EquipItem(_currentItemIndex);
-            _currentDroppedItem = null;
-        }
-
-        else if(InputController.GetDown(Control.DROP) && _inventoryItems[_currentItemIndex])
-        {
-            _inventoryItems[_currentItemIndex].Drop();
-            _inventoryItems[_currentItemIndex] = null;
-            UIManager.i.RemoveInventoryImage(_currentItemIndex);
-        }
-
-        else if(InputController.GetDown(Control.USE_PRIMARY) && _inventoryItems[_currentItemIndex])
-        {
-            _inventoryItems[_currentItemIndex].LeftClick();
-        }
-
-        else if(InputController.GetDown(Control.USE_SECONDARY) && _inventoryItems[_currentItemIndex])
-        {
-            _inventoryItems[_currentItemIndex].RightClick();
-        }
-
-        else if(InputController.GetDown(Control.NEXT_ITEM) || Input.mouseScrollDelta.y > 0f)
-        {
-            EquipNextItem();
-        }
-
-        else if(InputController.GetDown(Control.LAST_ITEM) || Input.mouseScrollDelta.y < 0f)
-        {
-            EquipPreviousItem();
-        }
-    }
-
-    private void StartGliding()
-    {
-        _openGliderSound.Play();
-        _isGliding = true;
-        _rb.isKinematic = true;
-        _glideSpeed = _tempConstFlySpeed;
-    }
-
-    private void Glide()
-    {
-        CheckIfShouldLand();
-        if (!_isGliding) return;
-
-        var currentSpeed = transform.position - oldPos;
-        oldPos = transform.position;
-
-        var dir = Camera.main.transform.forward.normalized;
-        
-        float downAngle = Vector3.Dot(dir, Vector3.down);
-        float targetGlideSpeed = _glideSpeed + _glideAngleIncreaseFactor * downAngle;
-        _glideSpeed = Mathf.Lerp(_glideSpeed, targetGlideSpeed, _glideLerpFactor * Time.deltaTime);
-        _glideSpeed = Mathf.Clamp(_glideSpeed, 0, _glideSpeedMax);
-
-        _windLoop.SetPercentVolume(_glideSpeed / _glideSpeedMax, 0.5f);
-        _cam.SetGlideFovPercent(_glideSpeed / _glideSpeedMax);
-
-        var posDelta = dir * _glideSpeed * Time.deltaTime;
-        posDelta += (currentSpeed.y + _glideGravity) * Time.deltaTime * Vector3.down;
-
-        transform.position += posDelta;
-    }
-
-    private void CheckIfShouldLand()
-    {
-        var camTrans = Camera.main.transform;
-        var all = new List<Collider>();
-        var forwardPoint = camTrans.TransformPoint(_forwardGlideCheckerOffset);
-        var forward = Physics.OverlapSphere(forwardPoint, _forwardGlideCheckerRadius);
-        var forwardList = forward.Where(x => x.GetComponent<PlayerController>() == null && !x.isTrigger).ToList();
-
-        if (forwardList.Count > 0) {
-            StopGliding(forwardPoint);
-            //print("overlapping w: " + all[0].gameObject.name);
-        }
-    }
-
-    private void StopGliding(Vector3 endPoint)
-    {
-        _isGliding = false;
-        _rb.isKinematic = false;
-        transform.position = endPoint + Vector3.up * _glideEndBoost;
-        _windLoop.SetPercentVolume(0);
-        _gliderLand.Play();
-    }
-
-    private void Climb()
-    {
-        if (!_currentLadder) {
-            ClearLadder(_currentLadder);
-            return;
-        }
-
-        var inputDir = GetInputDir();
-        var climbDir = Vector3.zero;
-        if (inputDir.y > 0) climbDir += Vector3.up;
-        if (inputDir.x > 0) climbDir += transform.right;
-        if (inputDir.y < 0) climbDir -= Vector3.up;
-        if (inputDir.x < 0) climbDir -= transform.right;
-        if (_onRope) {
-            if (InputController.GetDown(Control.JUMP)) {
-                Jump(true);
-                ClearLadder(_currentLadder);
-                return;
-            }
-        }
-        else if (climbDir == Vector3.zero) {
-            ClearLadder(_currentLadder);
-            return;
-        }
-
-        if (_currentLadder.IsRope) {
-            var rot = Vector3.up * inputDir.x * -_ropSpinSpeed * Time.deltaTime;
-            transform.parent.Rotate(rot);
-            climbDir.x = 0;
-        }
-
-        GameManager.i.UpdateCurrentTower(_currentLadder.GetComponentInParent<TowerController>());
-        climbDir.y *= _vertClimbSpeed;
-        climbDir.x *= _climbStrafeSpeed;
-        _rb.velocity = climbDir;
-    }
-
-    private void ApplyGravity(float amount)
-    {
-        _rb.velocity += Vector3.down * amount * Time.deltaTime * 10;
-    }
-
-    private void Jump(bool overrideConditions = false)
-    {
-        if (!overrideConditions) {
-            float timeSinceLastJump = Time.time - _lastJumpTime;
-            if (_numJumpsLeft <= 0 || timeSinceLastJump < _minimumJumpTime) return;
-        }
-
-        _numJumpsLeft -= 1;
-        _jumpUpSound.Play(restart:false);
-        var vel = _rb.velocity;
-        vel.y = _jumpForce;
-        _rb.velocity = vel;
-        _lastJumpTime = Time.time;
-    }
-
-    private void UpdateIsGrounded()
-    {
-        bool oldState = _isGrounded;
-        var colliders = Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius, _groundLayermask);
-        colliders = colliders.Where(x => !x.isTrigger).ToArray();
-        _isGrounded = colliders.Length > 0;
-
-        if (_isGrounded) {
-            var collider = colliders[0];
-
-            bool onBridge = collider.GetComponentInParent<BridgeController>() != null;
-            if (!onBridge) GameManager.i.UpdateCurrentTower(collider.GetComponentInParent<TowerController>());
-            
-            var movingPlatform = collider.GetComponentInParent<MovingPlatform>();
-            if (movingPlatform) transform.SetParent(movingPlatform.transform);
-            else if (!_onRope)transform.SetParent(null);
-
-            var decayingPlatform = collider.GetComponentInParent<DecayingPlatform>();
-            decayingPlatform?.StartStandingOnPlatform();
-            
-            if (!oldState) Land();
-
-            if (_currentFloorObj) {
-                var oldDecay = _currentFloorObj.GetComponent<DecayingPlatform>();
-                if (oldDecay && oldDecay != decayingPlatform) oldDecay.LeavePlatform();
-            } 
-            if (movingPlatform) _currentFloorObj = movingPlatform.gameObject;
-            if (decayingPlatform) _currentFloorObj = decayingPlatform.gameObject;
-            else _currentFloorObj = collider.gameObject;
-        }
-        else {
-            if (oldState) _timeWhenLastGrounded = Time.time;
-            if (!_onRope)transform.SetParent(null);
-            if (_currentFloorObj) {
-                //_currentFloorObj.GetComponent<DecayingPlatform>()?.LeavePlatform();
-            }
-            _currentFloorObj = null;
-        }
-
-        _rb.drag = _isGrounded ? _groundedAndUngroundedRbDrag.x + (GetInputDir().magnitude > 0 ? 0 : _groundDragNoInputIncrease) : _groundedAndUngroundedRbDrag.y;
-    }
-
-    private void Land()
-    {
-        _numJumpsLeft = _numJumps;
-        _landSound.Play();
-        //GameManager.i.Camera.GetComponent<CameraShake>().ShakeManual(3, 0.1f, 0.05f);
-    }
-
-    private void WalkRun()
-    {
-        Vector3 inputDir = GetInputDir().normalized;
-
-        _isRunning = InputController.Get(Control.RUN) && inputDir != Vector3.zero;
-        var speed = _isRunning ? _runSpeed : _walkSpeed;
-        if (inputDir != Vector3.zero) {
-            if (!_isGrounded) inputDir *= 0.5f;
-            var current = _rb.velocity;
-            float speedForward = Vector3.Dot(current, transform.forward);
-            float speedRight = Vector3.Dot(current, transform.right);
-
-            float acceleration = speed * 10f * Time.deltaTime;
-
-            var moveDir = current;
-            if (Mathf.Sign(inputDir.x) != Mathf.Sign(speedRight) || Mathf.Abs(speedRight) < speed) moveDir += inputDir.x * acceleration * transform.right; 
-            if (Mathf.Sign(inputDir.y) != Mathf.Sign(speedForward) || Mathf.Abs(speedForward) < speed) moveDir += inputDir.y * acceleration * transform.forward;
-
-            //if (_oldMoveDir.magnitude < moveDir.magnitude) moveDir /= 2;
-            //_oldMoveDir = moveDir;            
-
-            _rb.velocity = moveDir;
-        }
-    }
-
-    private Vector2 GetInputDir()
+    public Vector2 GetInputDir()
     {
         var inputDir = Vector2.zero;
         if (InputController.Get(Control.MOVE_FORWARD)) inputDir += Vector2.up;
@@ -418,46 +105,11 @@ public class PlayerController : MonoBehaviour
         return inputDir;
     }
 
+    public void Rotate(float rotateSpeed) {
+        var mouseX = Input.GetAxis("Mouse X");
 
-    private Vector3 GetMoveDir()
-    {
-        this._inputDir = Vector3.zero;
-        var inputDir = GetInputDir();
-        if (inputDir.y > 0) this._inputDir += transform.forward;
-        if (inputDir.x > 0) this._inputDir += transform.right * _strafeSpeedMod;
-        if (inputDir.y < 0) this._inputDir -= transform.forward;
-        if (inputDir.x < 0) this._inputDir -= transform.right * _strafeSpeedMod;
-        this._inputDir = this._inputDir.normalized;
-        return this._inputDir;
-    }
+        var rotDelta = rotateSpeed * 100 * mouseX * Time.deltaTime * Settings.MouseSensetivity;
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
-    }
-
-    private void EquipItem(int index)
-    {
-        if (_currentItemIndex != index) _inventoryItems[_currentItemIndex]?.Unequip();
-        _currentItemIndex = index;
-        _inventoryItems[_currentItemIndex]?.Equip();
-        UIManager.i.SelectInventoryImage(index);
-    }
-
-    private void EquipNextItem()
-    {
-        var nextIndex = _currentItemIndex + 1;
-        if (nextIndex >= _inventoryItems.Length) nextIndex = 0;
-        EquipItem(nextIndex);
-    }
-
-    private void EquipPreviousItem()
-    {
-        var previousIndex = _currentItemIndex - 1;
-        if (previousIndex < 0) previousIndex = _inventoryItems.Length - 1;
-        EquipItem(previousIndex);
+        transform.Rotate(rotDelta * Vector3.up);
     }
 }
