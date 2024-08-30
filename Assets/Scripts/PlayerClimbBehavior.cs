@@ -5,7 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerClimbBehavior : MonoBehaviour
 {
-    [SerializeField] private float _rotateSpeed = 8;
     [SerializeField] private float _vertClimbSpeed = 8;
     [SerializeField] private float _climbStrafeSpeed = 6;
     [SerializeField] private float _ropSpinSpeed = 25;
@@ -37,7 +36,7 @@ public class PlayerClimbBehavior : MonoBehaviour
     }
 
     private void Update() {
-        _controller.Rotate(_rotateSpeed);
+        _controller.Rotate();
 
 
         var inputDir = _controller.GetInputDir();

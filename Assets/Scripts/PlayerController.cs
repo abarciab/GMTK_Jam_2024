@@ -18,6 +18,11 @@ public class PlayerController : MonoBehaviour
     [Header("State")]
     [SerializeField, ReadOnly] private PlayerState _currentState = PlayerState.WALK;
 
+    [Header("Shared")]
+    [SerializeField] private float _rotateSpeed = 8;
+    [SerializeField] private float _groundCheckRadius;
+    [SerializeField] private Vector3 _groundCheckOffset;
+
     [HideInInspector] public Rigidbody RB;
 
     private PlayerRunWalkBehavior _runWalkBehavior;
@@ -28,10 +33,11 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public PlayerSounds Sounds { get; private set; }
     [HideInInspector] public bool IsRunning => _currentState == PlayerState.WALK && _runWalkBehavior.IsRunning;
     [HideInInspector] public bool IsGliding => _currentState == PlayerState.GLIDE;
-    [HideInInspector] public float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
-    [HideInInspector] public float GetGlideSpeedPercent() => _glideBehavior.GetGlideSpeedPercent();
-    [HideInInspector] public void SetClosestItem(InventoryItem item) => _inventory.SetClosestItem(item);
-    [HideInInspector] public void ClearItem(InventoryItem item) => _inventory.ClearItem(item);
+    [HideInInspector] public float GlideSpeedPercent => _glideBehavior.GlideSpeedPercent;
+    [HideInInspector] public bool CanGlide => _runWalkBehavior.HasBeenGrounded && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0;
+    public void SetClosestItem(InventoryItem item) => _inventory.SetClosestItem(item);
+    public void ClearItem(InventoryItem item) => _inventory.ClearItem(item);
+    public float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
 
     private void Awake()
     {
@@ -54,6 +60,8 @@ public class PlayerController : MonoBehaviour
         transform.SetLossyScale(Vector3.one);
     }
 
+    public Collider[] GetCollidersBelow() => Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
+
     private void CheckStateTransitions() {
         if (ShouldStartGliding()) ChangeState(PlayerState.GLIDE);
         if (ShouldStartClimbing()) ChangeState(PlayerState.CLIMB);
@@ -61,15 +69,23 @@ public class PlayerController : MonoBehaviour
 
     public void ChangeState(PlayerState newState) {
         if (_currentState == newState) return;
+        var oldstate = _currentState;
         _currentState = newState;
 
         _runWalkBehavior.enabled = newState == PlayerState.WALK;
         _climbBehavior.enabled = newState == PlayerState.CLIMB;
         _glideBehavior.enabled = newState == PlayerState.GLIDE;
+
+        if (oldstate == PlayerState.CLIMB && newState == PlayerState.WALK) _runWalkBehavior.HasBeenGrounded = true;
     }
 
     private bool ShouldStartGliding() {
-        return (_currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0 && InputController.GetDown(Control.JUMP));
+        return (CanGlide && InputController.GetDown(Control.JUMP));
+    }
+
+    private bool ShouldStartClimbing() {
+        return _climbBehavior.ReadyToClimb && InputController.Get(Control.MOVE_FORWARD);
+        //should take into account facing direction and position relative to top of ladder. probaby a raycast
     }
 
     public void SetClosestLadder(Ladder ladder) {
@@ -90,11 +106,6 @@ public class PlayerController : MonoBehaviour
         _runWalkBehavior.Jump(true);
     }
 
-    private bool ShouldStartClimbing() {
-        return _climbBehavior.ReadyToClimb && InputController.Get(Control.MOVE_FORWARD);
-        //should take into account facing direction and position relative to top of ladder. probaby a raycast
-    }
-
     public Vector2 GetInputDir()
     {
         var inputDir = Vector2.zero;
@@ -105,11 +116,16 @@ public class PlayerController : MonoBehaviour
         return inputDir;
     }
 
-    public void Rotate(float rotateSpeed) {
+    public void Rotate(float speedMod = 1) {
         var mouseX = Input.GetAxis("Mouse X");
 
-        var rotDelta = rotateSpeed * 100 * mouseX * Time.deltaTime * Settings.MouseSensetivity;
+        var rotDelta = (_rotateSpeed * speedMod) * 100 * mouseX * Time.deltaTime * Settings.MouseSensetivity;
 
         transform.Rotate(rotDelta * Vector3.up);
+    }
+
+    private void OnDrawGizmosSelected() {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
     }
 }

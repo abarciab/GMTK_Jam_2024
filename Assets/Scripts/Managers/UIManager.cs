@@ -33,6 +33,7 @@ public class UIManager : MonoBehaviour
     public DialogueController _dialogue;
     [SerializeField] private GameObject _interactPrompt;
     [SerializeField] private GameObject _blackBlocker;
+    [SerializeField] private SelectableItem _canGlideIndicator;
     
     [Header("Points Of Interest")]
     [SerializeField] private GameObject _interestIndicator;
@@ -74,6 +75,7 @@ public class UIManager : MonoBehaviour
             _detailedInterest.SetActive(detailed);
             _simpleInterest.SetActive(!detailed);
         }
+        _canGlideIndicator.SetState(GameManager.i.Player.CanGlide);
     }
 
     private void LateUpdate()

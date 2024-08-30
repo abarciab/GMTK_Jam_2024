@@ -19,17 +19,15 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     [SerializeField] private float _coyoteTime = 1f;
     [SerializeField] private float _jumpingUpGravity = 2;
     [SerializeField] private float _fallingGravity = 5;
-    [SerializeField] private float _groundCheckRadius;
-    [SerializeField] private Vector3 _groundCheckOffset;
-    [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private int _groundLayer;
 
     [Header("Misc")]
     [SerializeField] private Vector2 _groundedAndUngroundedDrag = new Vector2(4, 1);
     [SerializeField] private float _groundDragNoInputIncrease = 2;
-    [SerializeField] private float _rotateSpeed;
     [SerializeField] private bool _debug;
     [SerializeField, ReadOnly, ConditionalField(nameof(_debug))] private GameObject _currentGroundObj;
 
+    [HideInInspector] public bool HasBeenGrounded;
     [HideInInspector] public bool IsRunning => _isRunning;
     [HideInInspector] public bool IsCoyoteGrounded => _isCoyoteGrounded;
 
@@ -45,7 +43,11 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     private PlayerSounds _sounds => _controller.Sounds; 
     private bool _isCoyoteGrounded => _isGrounded || (_numJumpsLeft > 0 && Time.time - _timeWhenLastGrounded < _coyoteTime);
     private void ApplyGravity(float amount) => _rb.velocity += 10 * amount * Time.deltaTime * Vector3.down;
-    
+
+    private void OnEnable() {
+        HasBeenGrounded = false;
+    }
+
     private void Start() {
         _controller = GetComponent<PlayerController>();
         _lastJumpTime = Time.time;
@@ -53,7 +55,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     }
 
     private void Update() {
-        _controller.Rotate(_rotateSpeed);
+        _controller.Rotate();
         UpdateIsGrounded();
 
         if (_isCoyoteGrounded && InputController.GetDown(Control.JUMP)) Jump();
@@ -65,12 +67,14 @@ public class PlayerRunWalkBehavior : MonoBehaviour
 
     public void UpdateIsGrounded(bool canLand = true) {
         bool WasGrounded = _isGrounded;
-        var colliders = Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius, _groundLayer, QueryTriggerInteraction.Ignore);
-        _currentGroundObj = colliders.Length > 0 ? colliders[0].gameObject : null;
+        var colliders = _controller.GetCollidersBelow().Where(x => !x.isTrigger && !x.GetComponent<PlayerController>() && x.gameObject.layer == _groundLayer).ToList();
+        //foreach (var col in colliders) print("col: " + col.gameObject.name + ", layer: " + col.gameObject.layer + ", groundLayer: " + _groundLayer);
+        _currentGroundObj = colliders.Count > 0 ? colliders[0].gameObject : null;
         if (!_isGrounded) {
             _onMovingPlatform = false;
             return;
         }
+        else HasBeenGrounded = true;
 
         bool onBridge = _currentGroundObj.GetComponentInParent<BridgeController>() != null; 
         _onMovingPlatform = _currentGroundObj.GetComponentInParent<MovingPlatform>() != null;
@@ -143,10 +147,5 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         _rb.velocity = vel;
         _lastJumpTime = Time.time;
         _timeWhenLastGrounded = Time.time;
-    }
-
-    private void OnDrawGizmosSelected() {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
     }
 }

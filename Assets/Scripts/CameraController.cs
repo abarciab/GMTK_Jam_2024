@@ -1,3 +1,4 @@
+using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform _player;
     [SerializeField] private Vector3 _offset;
     [SerializeField] private float _verticalRotSpeed;
+    [SerializeField] private float _yOffsetLerpFactor = 10;
     //[SerializeField] private float _maxCameraTpDist = 2;
 
     [Header("FOV")]
@@ -17,24 +19,29 @@ public class CameraController : MonoBehaviour
 
     [Header("Misc")]
     [SerializeField] private Camera _camera;
-    private bool _cinematic;
 
     [Header("Cinematics")]
     [SerializeField] private Transform _spinner;
     [SerializeField] private AnimationCurve _spinAnimateCurve;
 
     private PlayerController _playerController;
+    [SerializeField, ReadOnly] private float _yOffset;
+    private bool _cinematic;
+
+    public void SetOffset(float newOffset) => _yOffset = newOffset;
 
     void LateUpdate() {
         if (!_playerController) _playerController = GameManager.i.Player;
         if (_cinematic) return;
+        if (_yOffset > 0.05f) _yOffset = Mathf.Lerp(_yOffset, 0, _yOffsetLerpFactor * Time.deltaTime);
         SetPosAndRotation();
         if (_playerController.IsGliding) SetGlideFov();
         else SetGroundFov();
     }
 
+
     private void SetGlideFov() {
-        var percent = _playerController.GetGlideSpeedPercent(); 
+        var percent = _playerController.GlideSpeedPercent; 
         var current = _camera.fieldOfView;
         var target = Mathf.Lerp(_glideMinMaxFovs.x, _glideMinMaxFovs.y, percent);
         _camera.fieldOfView = Mathf.Lerp(current, target, _fovChangeLerpFator * Time.deltaTime);
@@ -91,7 +98,7 @@ public class CameraController : MonoBehaviour
 
     private void SetPosAndRotation()
     {
-        var targetPos = _player.TransformPoint(_offset);
+        var targetPos = _player.TransformPoint(_offset) + Vector3.down * _yOffset;
         var delta = targetPos - transform.position;
         //if (delta.magnitude > _maxCameraTpDist) transform.position = Vector3.Lerp(transform.position, targetPos, 10 * Time.deltaTime);
         transform.position = targetPos;

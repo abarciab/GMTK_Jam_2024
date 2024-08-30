@@ -1,3 +1,4 @@
+using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,6 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerGlideBehavior : MonoBehaviour
 {
-    [SerializeField] private float _rotateSpeed;
     [SerializeField] private float _tempConstFlySpeed = 10;
     [SerializeField] private float _glideAngleIncreaseFactor = 1;
     [SerializeField] private float _glideSpeedMax = 10;
@@ -17,7 +17,7 @@ public class PlayerGlideBehavior : MonoBehaviour
     [SerializeField] private float _forwardGlideCheckerRadius;
     [SerializeField] private Vector3 _forwardGlideCheckerOffset;
 
-    [HideInInspector] public float GetGlideSpeedPercent() => _glideSpeed / _glideSpeedMax;
+    [HideInInspector] public float GlideSpeedPercent => _glideSpeed / _glideSpeedMax;
 
     private PlayerController _controller;
     private float _glideSpeed;
@@ -39,7 +39,7 @@ public class PlayerGlideBehavior : MonoBehaviour
         if (!enabled) return;
 
 
-        _controller.Rotate(_rotateSpeed); 
+        _controller.Rotate(); 
         Glide();
     }
 
@@ -68,9 +68,14 @@ public class PlayerGlideBehavior : MonoBehaviour
         var forwardPoint = camTrans.TransformPoint(_forwardGlideCheckerOffset);
         var forward = Physics.OverlapSphere(forwardPoint, _forwardGlideCheckerRadius);
         var forwardList = forward.Where(x => x.GetComponent<PlayerController>() == null && !x.isTrigger).ToList();
+        var belowList = _controller.GetCollidersBelow();
 
         if (forwardList.Count > 0) {
-            transform.position = forwardPoint + Vector3.up * _glideEndBoost;
+            var y = forwardPoint.y + _glideEndBoost;
+            GameManager.i.Camera.GetComponent<CameraController>().SetOffset(y - transform.position.y);
+            var pos = transform.position;
+            pos.y = y;
+            transform.position = pos;
             StopGliding();
             _controller.ChangeState(PlayerState.WALK);
         }
