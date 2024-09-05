@@ -22,9 +22,7 @@ public class DecayingPlatform : MonoBehaviour
 
     public void Start()
     {
-        myCrackMat = new Material(CrackMat);
-
-        rend.material = myCrackMat;
+        myCrackMat = CrackMat;
     }
 
 
@@ -35,7 +33,15 @@ public class DecayingPlatform : MonoBehaviour
         _timeLeft = _decayTime;
         _decaying = true;
         //crackSounds.Play();
-        myCrackMat.SetFloat("_Crack", 1);
+
+        if (myCrackMat == CrackMat)
+        {
+            myCrackMat = new Material(CrackMat);
+
+            rend.material = myCrackMat;
+        }
+
+        myCrackMat.SetFloat("_Cracks", 1);
     }
 
     private void Update()
@@ -57,6 +63,6 @@ public class DecayingPlatform : MonoBehaviour
     {
         yield return new WaitForSeconds(_delayTime);
         _collider.SetActive(true);
-        myCrackMat.SetFloat("_Crack", 0);
+        myCrackMat.SetFloat("_Cracks", 0);
     }
 }

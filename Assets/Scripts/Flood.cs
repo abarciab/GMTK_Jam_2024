@@ -9,12 +9,14 @@ public class Flood : MonoBehaviour
     [SerializeField] private float _offset = 90;
     [SerializeField] private float _topOffset = 25;
 
-    [SerializeField] private Material slimePipeMat;
+    [SerializeField] private Material slimePipeMat, refMat;
 
     private float _timePassed;
 
     private void OnEnable()
     {
+        refMat = new Material(slimePipeMat);
+
         slimePipeMat.SetFloat("_Ping", Time.time);
     }
 
@@ -31,4 +33,12 @@ public class Flood : MonoBehaviour
         transform.position = pos;
         if (GameManager.i.Player.transform.position.y < transform.position.y) GameManager.i.LoseGame();
     }
+
+
+#if UNITY_EDITOR
+    void OnApplicationQuit()
+    {
+        slimePipeMat.CopyPropertiesFromMaterial(refMat);
+    }
+#endif
 }
