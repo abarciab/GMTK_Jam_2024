@@ -50,6 +50,9 @@
         },
         {
             "m_Id": "bd8685ed57d946d3a5cf45268e3a41d9"
+        },
+        {
+            "m_Id": "dd604ee35d394138a02964fe570b24e2"
         }
     ],
     "m_Keywords": [],
@@ -788,6 +791,9 @@
         },
         {
             "m_Id": "446710dee90747b5be9122ede0fd49f1"
+        },
+        {
+            "m_Id": "2ce836c7a03949a5a65d1efcc2076a18"
         }
     ],
     "m_GroupDatas": [],
@@ -1253,6 +1259,20 @@
                     "m_Id": "d0c9b698e48f4e659541381b9e3e5e78"
                 },
                 "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "2ce836c7a03949a5a65d1efcc2076a18"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "57193daff65040cba156c6ac6e542974"
+                },
+                "m_SlotId": 433097889
             }
         },
         {
@@ -6372,6 +6392,9 @@
         },
         {
             "m_Id": "bd8685ed57d946d3a5cf45268e3a41d9"
+        },
+        {
+            "m_Id": "dd604ee35d394138a02964fe570b24e2"
         }
     ]
 }
@@ -7121,9 +7144,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -2744.0,
-            "y": 1313.0,
-            "width": 148.0,
+            "x": -2712.0,
+            "y": 1324.0,
+            "width": 147.999755859375,
             "height": 34.0
         }
     },
@@ -10308,6 +10331,42 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "2ce836c7a03949a5a65d1efcc2076a18",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1868.6956787109375,
+            "y": -456.5217590332031,
+            "width": 0.0,
+            "height": 0.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "39f6d93d02be4aad9ac1930cfdc37a92"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "dd604ee35d394138a02964fe570b24e2"
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "2d3e125c4efe43d79799c1c8b8124198",
     "m_Id": 0,
@@ -11662,6 +11721,21 @@
         "z": 0.0,
         "w": 0.0
     }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "39f6d93d02be4aad9ac1930cfdc37a92",
+    "m_Id": 0,
+    "m_DisplayName": "Wind",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
 }
 
 {
@@ -15234,10 +15308,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -2057.0,
-            "y": -1314.9998779296875,
-            "width": 392.0001220703125,
-            "height": 350.99993896484377
+            "x": -1643.0001220703125,
+            "y": -810.0000610351563,
+            "width": 392.0003662109375,
+            "height": 375.0000915527344
         }
     },
     "m_Slots": [
@@ -25138,7 +25212,7 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
-    "m_Value": 0.0,
+    "m_Value": 1.0,
     "m_FloatType": 0,
     "m_RangeValues": {
         "x": 0.0,
@@ -30694,6 +30768,34 @@
         "w": 0.0
     },
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "dd604ee35d394138a02964fe570b24e2",
+    "m_Guid": {
+        "m_GuidSerialized": "9c777c5b-fada-4401-b909-1f776ae8cd17"
+    },
+    "m_Name": "Wind",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Wind",
+    "m_DefaultReferenceName": "_Wind",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
 }
 
 {

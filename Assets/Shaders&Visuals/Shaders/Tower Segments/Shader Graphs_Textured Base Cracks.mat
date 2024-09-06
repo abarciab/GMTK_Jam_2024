@@ -42,11 +42,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c36e94b6153448a4794c3c07f7319036, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal_Map:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_ec10d3e4673c4906b10e8526c7d692c1_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: ffb19dcc2f999474d9a3b06e067669dc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_164535e94d43435e93f8127dfdc6c624_Texture_1_Texture2D:
@@ -80,6 +84,7 @@ Material:
     - _Detail_FallOff: 0.1
     - _Detail_Tiling: 0.15
     - _DstBlend: 0
+    - _Fill: 0
     - _Hightlights: 1
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -89,7 +94,8 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:
-    - _Color: {r: 0.735849, g: 0.06615038, b: 0.024296915, a: 0.4392157}
+    - _Color: {r: 0.49056602, g: 0.0485938, b: 0.14319597, a: 0.4392157}
+    - _Fill_Color: {r: 1, g: 1, b: 1, a: 0}
     - _Position_Multi: {r: 1, g: 1, b: 1, a: 0}
-    - _Tiling: {r: 0, g: 0, b: 0, a: 0}
+    - _Tiling: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []

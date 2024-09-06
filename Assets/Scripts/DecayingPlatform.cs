@@ -12,6 +12,9 @@ public class DecayingPlatform : MonoBehaviour
     [SerializeField, ReadOnly] private float _timeLeft;
     [SerializeField, ReadOnly] private bool _decaying;
 
+    [SerializeField] private ParticleSystem particleSys;
+
+
     [SerializeField] private AudioSource crackSounds, decaySound;
 
     public Renderer rend;
@@ -42,12 +45,17 @@ public class DecayingPlatform : MonoBehaviour
         }
 
         myCrackMat.SetFloat("_Cracks", 1);
+
+
     }
 
     private void Update()
     {
         if (!_decaying) return;
         _timeLeft -= Time.deltaTime;
+
+        myCrackMat.SetFloat("_Fill", 1 - (_timeLeft / _decayTime));
+
         if (_timeLeft <= 0) BreakPlatform();
     }
 
@@ -55,6 +63,8 @@ public class DecayingPlatform : MonoBehaviour
     {
         _decaying = false;
         _collider.SetActive(false);
+        particleSys.Stop();
+        particleSys.Play();
         //decaySound.Play();
         StartCoroutine(WaitThenReset());
     }
@@ -64,5 +74,6 @@ public class DecayingPlatform : MonoBehaviour
         yield return new WaitForSeconds(_delayTime);
         _collider.SetActive(true);
         myCrackMat.SetFloat("_Cracks", 0);
+        myCrackMat.SetFloat("_Fill", 0);
     }
 }
