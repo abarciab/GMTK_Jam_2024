@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum PlayerSoundKey { JUMP, JUMP_LAND, OPEN_GLIDER, WIND_LOOP, GLIDER_LAND}
+public enum PlayerSoundKey { JUMP, JUMP_LAND, OPEN_GLIDER, WIND_LOOP, GLIDER_LAND, STUNNED_BUZZ, BOUNCE}
 
 [System.Serializable]
 public class PlayerSoundData
@@ -21,12 +21,10 @@ public class PlayerSounds : MonoBehaviour
         foreach (var s in _sounds) if (s.Sound) s.Name = s.Key.ToString().ToLower().Replace("_", " ")   ;
     }
 
-
     private void Start() {
         _sounds = _sounds.Where(x => x.Sound != null).ToList();
         foreach (var s in _sounds) s.Sound = Instantiate(s.Sound);
     }
-
 
     public Sound Get(PlayerSoundKey key) {
         foreach (var s in _sounds) if (s.Key == key) return s.Sound;

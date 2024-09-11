@@ -2,14 +2,16 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public enum PlayerState { WALK, CLIMB, GLIDE}
+public enum PlayerState { WALK, CLIMB, GLIDE, STUNNED}
 [RequireComponent(typeof(PlayerRunWalkBehavior))]
 [RequireComponent(typeof(PlayerGlideBehavior))]
 [RequireComponent(typeof(PlayerClimbBehavior))]
+[RequireComponent(typeof(PlayerStunnedBehavior))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerSounds))]
 [RequireComponent(typeof(PlayerInventory))]
@@ -28,16 +30,21 @@ public class PlayerController : MonoBehaviour
     private PlayerRunWalkBehavior _runWalkBehavior;
     private PlayerClimbBehavior _climbBehavior;
     private PlayerGlideBehavior _glideBehavior;
+    private PlayerStunnedBehavior _stunBehavior;
     private PlayerInventory _inventory;
 
     [HideInInspector] public PlayerSounds Sounds { get; private set; }
     [HideInInspector] public bool IsRunning => _currentState == PlayerState.WALK && _runWalkBehavior.IsRunning;
+    [HideInInspector] public bool IsStunned => _currentState == PlayerState.STUNNED;
     [HideInInspector] public bool IsGliding => _currentState == PlayerState.GLIDE;
     [HideInInspector] public float GlideSpeedPercent => _glideBehavior.GlideSpeedPercent;
     [HideInInspector] public bool CanGlide => _runWalkBehavior.HasBeenGrounded && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0;
+    public void ApplyFallingGravity() => _runWalkBehavior.ApplyFallingGravity();
     public void SetClosestItem(InventoryItem item) => _inventory.SetClosestItem(item);
     public void ClearItem(InventoryItem item) => _inventory.ClearItem(item);
     public float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
+    public void Shock() => ChangeState(PlayerState.STUNNED);
+    public Collider[] GetCollidersBelow() => Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
 
     private void Awake()
     {
@@ -52,6 +59,7 @@ public class PlayerController : MonoBehaviour
         _climbBehavior = GetComponent<PlayerClimbBehavior>();
         _glideBehavior = GetComponent<PlayerGlideBehavior>();
         _inventory = GetComponent<PlayerInventory>();
+        _stunBehavior = GetComponent<PlayerStunnedBehavior>();
     }
 
     private void Update()
@@ -60,7 +68,11 @@ public class PlayerController : MonoBehaviour
         transform.SetLossyScale(Vector3.one);
     }
 
-    public Collider[] GetCollidersBelow() => Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
+    public void PassiveBounce(float mult = 1)
+    {
+        ChangeState(PlayerState.WALK);
+        _runWalkBehavior.Bouce(mult);
+    }
 
     private void CheckStateTransitions() {
         if (ShouldStartGliding()) ChangeState(PlayerState.GLIDE);
@@ -72,6 +84,7 @@ public class PlayerController : MonoBehaviour
         var oldstate = _currentState;
         _currentState = newState;
 
+        _stunBehavior.enabled = newState == PlayerState.STUNNED;
         _runWalkBehavior.enabled = newState == PlayerState.WALK;
         _climbBehavior.enabled = newState == PlayerState.CLIMB;
         _glideBehavior.enabled = newState == PlayerState.GLIDE;

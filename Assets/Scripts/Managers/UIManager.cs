@@ -32,8 +32,10 @@ public class UIManager : MonoBehaviour
     [Header("Misc")]
     public DialogueController _dialogue;
     [SerializeField] private GameObject _interactPrompt;
+    [SerializeField] private TextMeshProUGUI _interactText;
     [SerializeField] private GameObject _blackBlocker;
     [SerializeField] private SelectableItem _canGlideIndicator;
+    [SerializeField] private GameObject _stunFlash;
     
     [Header("Points Of Interest")]
     [SerializeField] private GameObject _interestIndicator;
@@ -55,6 +57,7 @@ public class UIManager : MonoBehaviour
     public void ShowCurrentTowerProgress(float progress) => _targetTowerProgress = progress;
     public void HideTowerProgress() => _towerProgressParent.SetActive(false);
     public void CompleteTower(int index) => _completedTowerIcons[index].SetEnabled(true);
+    public void SetStunFlashVisbility(bool visible) => _stunFlash.SetActive(visible);
 
     private void Awake() { i = this; }
 
@@ -116,12 +119,16 @@ public class UIManager : MonoBehaviour
         //_interestDistanceText.text = closestDistance.ToString(screenPos.ToString());
     }
 
-    public void SetInteractPromptEnabled(bool enabled, GameObject source)
+    public void SetInteractPromptEnabled(bool enable, GameObject source, string verb = "")
     {
-        if (!enabled && source != _promptSource) return;
+        if (!enable && source != _promptSource) return;
+        if (enable && source == _promptSource) return;
+        if (string.IsNullOrWhiteSpace(verb)) verb = "interact";
 
-        _interactPrompt.SetActive(enabled);
-        _promptSource = source;
+        _interactText.text = "Press E to " + verb;
+        _interactPrompt.SetActive(enable);
+        if (enable)_promptSource = source;
+        else _promptSource = null;
     }
 
     public void StartNewTower(string towerName, float progress)

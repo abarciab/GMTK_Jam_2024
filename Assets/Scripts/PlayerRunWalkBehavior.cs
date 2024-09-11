@@ -2,6 +2,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerController))]
@@ -17,9 +18,14 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     [SerializeField] private int _numJumps = 1;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _coyoteTime = 1f;
-    [SerializeField] private float _jumpingUpGravity = 2;
-    [SerializeField] private float _fallingGravity = 5;
     [SerializeField] private int _groundLayer;
+
+    [Header("gravity")]
+    [SerializeField] private float _topOfJumpThreshold = 0.1f;
+    [SerializeField] private float _jumpingUpGravity = 2;
+    [SerializeField] private Vector2 _fallingGravityMinMax = new Vector2(15, 25);
+    [SerializeField] private float _minFallAccelerationTime = 1;
+    [SerializeField] private float _timeToMaxFallGravity = 2f;
 
     [Header("Misc")]
     [SerializeField] private Vector2 _groundedAndUngroundedDrag = new Vector2(4, 1);
@@ -37,12 +43,14 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     private float _timeWhenLastGrounded;
     private int _numJumpsLeft;
     private bool _onMovingPlatform;
+    private float _timeWhenTopOfJump;
 
     private bool _isGrounded => _currentGroundObj != null;
     private Rigidbody _rb => _controller.RB;
     private PlayerSounds _sounds => _controller.Sounds; 
     private bool _isCoyoteGrounded => _isGrounded || (_numJumpsLeft > 0 && Time.time - _timeWhenLastGrounded < _coyoteTime);
-    private void ApplyGravity(float amount) => _rb.velocity += 10 * amount * Time.deltaTime * Vector3.down;
+    private void ApplySpecificGravity(float amount) => _rb.velocity += 10 * amount * Time.deltaTime * Vector3.down;
+    public void ApplyFallingGravity() => ApplySpecificGravity(_fallingGravityMinMax.x);
 
     private void OnEnable() {
         HasBeenGrounded = false;
@@ -60,15 +68,38 @@ public class PlayerRunWalkBehavior : MonoBehaviour
 
         if (_isCoyoteGrounded && InputController.GetDown(Control.JUMP)) Jump();
         WalkRun();
-        if (!_isGrounded) ApplyGravity(_rb.velocity.y > 0.1f ? _jumpingUpGravity : (_rb.velocity.y < 0.1f ? _fallingGravity : 0));
+        if (!_isGrounded) ApplyGravity();
     }
 
-    
+    private void ApplyGravity()
+    {
+        if (Mathf.Abs(_rb.velocity.y) < _topOfJumpThreshold) _timeWhenTopOfJump = Time.time;
+
+        if (_rb.velocity.y > _topOfJumpThreshold) {
+            ApplySpecificGravity(_jumpingUpGravity);
+        }
+        else if (_rb.velocity.y < -_topOfJumpThreshold) {
+            float timeSinceTopOfJump = Time.time - _timeWhenTopOfJump;
+            float progress = Mathf.InverseLerp(_minFallAccelerationTime, _timeToMaxFallGravity, timeSinceTopOfJump);
+            ApplySpecificGravity(Mathf.Lerp(_fallingGravityMinMax.x, _fallingGravityMinMax.y, progress));
+        }
+    }
+
+    public async void Bouce(float speed)
+    {
+        if (speed < 0.5f) return;
+        _sounds.Get(PlayerSoundKey.BOUNCE).Play();
+        _numJumpsLeft = 0;
+        var vel = _rb.velocity;
+        vel.y = speed;
+        _rb.velocity = vel;
+        await Task.Delay(10);
+        _rb.velocity = vel;
+    }
 
     public void UpdateIsGrounded(bool canLand = true) {
         bool WasGrounded = _isGrounded;
         var colliders = _controller.GetCollidersBelow().Where(x => !x.isTrigger && !x.GetComponent<PlayerController>() && x.gameObject.layer == _groundLayer).ToList();
-        //foreach (var col in colliders) print("col: " + col.gameObject.name + ", layer: " + col.gameObject.layer + ", groundLayer: " + _groundLayer);
         _currentGroundObj = colliders.Count > 0 ? colliders[0].gameObject : null;
         if (!_isGrounded) {
             _onMovingPlatform = false;

@@ -39,13 +39,11 @@ public class CameraController : MonoBehaviour
         else SetGroundFov();
     }
 
-
     private void SetGlideFov() {
         var percent = _playerController.GlideSpeedPercent; 
         var current = _camera.fieldOfView;
         var target = Mathf.Lerp(_glideMinMaxFovs.x, _glideMinMaxFovs.y, percent);
         _camera.fieldOfView = Mathf.Lerp(current, target, _fovChangeLerpFator * Time.deltaTime);
-
     }
 
     public void StartCinematicRotation(Vector3 source, float distFromObject, float totalDeltaY, float time)
@@ -98,18 +96,27 @@ public class CameraController : MonoBehaviour
 
     private void SetPosAndRotation()
     {
+        SetPosition();
+        SetRotation();
+
+    }
+
+    private void SetPosition()
+    {
         var targetPos = _player.TransformPoint(_offset) + Vector3.down * _yOffset;
         var delta = targetPos - transform.position;
-        //if (delta.magnitude > _maxCameraTpDist) transform.position = Vector3.Lerp(transform.position, targetPos, 10 * Time.deltaTime);
         transform.position = targetPos;
+    }
 
+    private void SetRotation()
+    {
         var playerRot = _player.eulerAngles;
         var targetRot = new Vector3(transform.eulerAngles.x, playerRot.y, 0);
         transform.eulerAngles = targetRot;
+        if (GameManager.i.Player.IsStunned) return;
 
         var mouseY = Input.GetAxis("Mouse Y");
         var rotDelta = mouseY * Time.deltaTime * Settings.MouseSensetivity * 100 * _verticalRotSpeed * -1;
-        //rotDelta = Mathf.Clamp(rotDelta, -5, 5);
         transform.localEulerAngles += Vector3.right * rotDelta;
     }
 

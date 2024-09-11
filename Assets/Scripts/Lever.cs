@@ -19,11 +19,11 @@ public class Lever : MonoBehaviour
         if (UIManager.i._dialogue.gameObject.activeInHierarchy) return;
 
         var dist = Vector3.Distance(transform.position, _player.position);
-        UIManager.i.SetInteractPromptEnabled(dist < _activationDistance, gameObject);
+        UIManager.i.SetInteractPromptEnabled(dist < _activationDistance, gameObject, "pull");
 
         if (dist > _activationDistance) return;
         else if (InputController.GetDown(Control.INTERACT)) {
-            UIManager.i.SetInteractPromptEnabled(false, gameObject);
+            UIManager.i.SetInteractPromptEnabled(false, gameObject, "pull");
             _OnActivate.Invoke();
             if (_autoDeactivate) enabled = false;
         }

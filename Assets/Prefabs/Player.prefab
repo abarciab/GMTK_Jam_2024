@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8280265114450605824}
   - component: {fileID: 1082897131884413796}
   - component: {fileID: 241028366166274649}
+  - component: {fileID: 4064974228699014209}
   - component: {fileID: 1502638429541603820}
   - component: {fileID: 7572130662075315208}
   - component: {fileID: 3062164361182654132}
@@ -120,6 +121,19 @@ MonoBehaviour:
   _vertClimbSpeed: 8
   _climbStrafeSpeed: 6
   _ropSpinSpeed: 25
+--- !u!114 &4064974228699014209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8580997805359560301}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61ca462cd64af0d40a579467cc536dc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stunTime: 2
 --- !u!114 &1502638429541603820
 MonoBehaviour:
   m_ObjectHideFlags: 0

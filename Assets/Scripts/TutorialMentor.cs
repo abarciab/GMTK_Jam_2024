@@ -17,7 +17,7 @@ public class TutorialMentor : MonoBehaviour
         if (UIManager.i._dialogue.gameObject.activeInHierarchy) return;
 
         var dist = Vector3.Distance(transform.position, _player.position);
-        UIManager.i.SetInteractPromptEnabled(dist < _activationDistance, gameObject);
+        UIManager.i.SetInteractPromptEnabled(dist < _activationDistance, gameObject, "Listen");
 
         if (dist > _activationDistance) return;
         else if (InputController.GetDown(Control.INTERACT)){

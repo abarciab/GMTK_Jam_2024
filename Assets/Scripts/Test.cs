@@ -14,5 +14,4 @@ public class Test : MonoBehaviour
     {
         UIManager.i._dialogue.StartDialogue(lines);
     }
-    
 }
