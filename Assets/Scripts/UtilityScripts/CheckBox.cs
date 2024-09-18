@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 public class CheckBox : MonoBehaviour
 {
-    [SerializeField] private Sprite _uncheckedSprite;
-    [SerializeField] private Sprite _checkedSprite;
+    [SerializeField] private GameObject _check;
     [SerializeField] private Image _checkboxImg;
     [SerializeField] private bool _checked = false;
 
@@ -16,7 +15,7 @@ public class CheckBox : MonoBehaviour
 
     private void Start()
     {
-        _checkboxImg.sprite = _checked ? _checkedSprite : _uncheckedSprite;
+        _check.SetActive(_checked);
     }
 
     public void Toggle()
@@ -29,14 +28,14 @@ public class CheckBox : MonoBehaviour
     {
         _checked = true;
         OnToggleOn.Invoke();
-        _checkboxImg.sprite = _checkedSprite;
+        _check.SetActive(true);
     }
 
     private void ToggleOff()
     {
         _checked = false;
         OnToggleOff.Invoke();
-        _checkboxImg.sprite = _uncheckedSprite;
+        _check.SetActive(false);
     }
 
 }

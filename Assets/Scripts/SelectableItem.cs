@@ -117,6 +117,7 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField, ConditionalField(nameof(_hasHoverCooldown))] private float _hoverCooldown = 0.05f;
     [SerializeField] private bool _deselectOnStart = true;
     [SerializeField] private bool _autoDehover = true;
+    [SerializeField] private bool _sliderMode; //for use with sliders && hoverBehaviors
 
     [Header("data")]
     [SerializeField] private List<SelectableItemData> _data = new List<SelectableItemData>();
@@ -144,6 +145,8 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public bool Disabled { get; private set; }
 
     private float _lastHoverTime = 0;
+    private bool _waitingToExit;
+    private bool _clickedWhileHover;
 
     private void OnValidate()
     {
@@ -163,6 +166,8 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private void Update()
     {
         _disabled = Disabled;
+        if (Hovered && Input.GetMouseButtonDown(0)) _clickedWhileHover = true;
+        if (_waitingToExit && Input.GetMouseButtonUp(0)) EndHover();
     }
 
     [ButtonMethod]
@@ -185,6 +190,13 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (Disabled) return;
         Selected = !Selected;
         UpdateVisuals();
+    }
+
+    public void SelectSilent ()
+    {
+        if (_printSelections) print(gameObject.name + " selected");
+        OnSelect.Invoke();
+        SetState(true);
     }
 
     public void Select()
@@ -228,6 +240,7 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (Disabled) return;
         if (Selected && (!_toggleOnClick || !_deselectOnClick)) return;
         OnHover.Invoke();
+        _waitingToExit = false;
 
         if (_hasHoverCooldown) {
             var timeSinceLastHover = Time.time - _lastHoverTime;
@@ -243,7 +256,17 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (Disabled) return;
+        if (Disabled || _waitingToExit) return;
+        if (_clickedWhileHover && _sliderMode && Hovered && Input.GetMouseButton(0)) {
+            _waitingToExit = true;
+            return;
+        }
+        EndHover();
+    }
+
+    private void EndHover()
+    {
+        _clickedWhileHover = false;
         if (Hovered) OnEndHover.Invoke();
 
         Hovered = false;

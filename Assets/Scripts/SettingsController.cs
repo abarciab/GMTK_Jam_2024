@@ -1,14 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SettingsController : MonoBehaviour
 {
+    [Header("Volume sliders")]
     [SerializeField] private Slider _masterVolume;
     [SerializeField] private Slider _musicVolume;
     [SerializeField] private Slider _ambientVolume;
     [SerializeField] private Slider _sfxVolume;
+
+    [Header("sections")]
+    [SerializeField] private List<GameObject> _sections = new List<GameObject>();
+    [SerializeField] private List<SelectableItem> _tabButtons = new List<SelectableItem>();
+
+    [Header("Misc")]
     [SerializeField] private Slider _sensitivitySlider;
 
     private void Start()
@@ -25,9 +35,16 @@ public class SettingsController : MonoBehaviour
         Settings.SetSensetivity(value);
     }
 
-    private void OnEnable()
+    private async void OnEnable()
     {
+        if (!AudioManager.i) return;
         SetSliderValuesToCurrentSettings();
+
+        await Task.Delay(100);
+        foreach (var button in _tabButtons) button.Deselect();
+        for (int i = 0; i < _sections.Count; i++) {
+            if (_sections[i].activeInHierarchy) _tabButtons[i].SelectSilent();
+        }
     }
 
     void SetSliderValuesToCurrentSettings()
@@ -38,6 +55,12 @@ public class SettingsController : MonoBehaviour
         _ambientVolume.value = volumes[2];
         _sfxVolume.value = volumes[3];
         _sensitivitySlider.value = Settings.MouseSensetivity;
+    }
+
+    public void SwitchTo(int index)
+    {
+        for (int i = 0; i < _sections.Count; i++) _sections[i].SetActive(i == index);
+        for (int i = 0; i < _tabButtons.Count; i++) if (i != index) _tabButtons[i].Deselect();
     }
 
 }

@@ -5,20 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
-    [SerializeField] private Sound _clickSound;
     [SerializeField] private Fade _fade;
     [SerializeField] private MusicPlayer _music;
+    [SerializeField] private GameObject _creditsParent;
+    [SerializeField] private GameObject _settingsParent;
+
 
     private void Start()
     {
-        _clickSound = Instantiate(_clickSound);
         _fade.Disappear();
         Settings.Initialize();
-    }
-
-    public void Click()
-    {
-        _clickSound.Play();
     }
 
     public void StartGame()
@@ -28,12 +24,21 @@ public class MainMenuController : MonoBehaviour
 
     public void Quit()
     {
-        Click();
         _music.FadeOutCurrent(_fade.FadeTime);
         _fade.Appear();
 #if !UNITY_EDITOR
         Invoke(nameof(Application.Quit), _fade.FadeTime);
 #endif
+    }
+
+    public void SetCredits(bool state)
+    {
+        _creditsParent.SetActive(state);
+    }
+
+    public void SetSettings(bool state)
+    {
+        _settingsParent.SetActive(state);
     }
 
     IEnumerator TransitionToGame()

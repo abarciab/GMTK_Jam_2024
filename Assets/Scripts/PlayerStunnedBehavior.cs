@@ -25,7 +25,6 @@ public class PlayerStunnedBehavior : MonoBehaviour
     {
         _controller.Sounds.Get(PlayerSoundKey.STUNNED_BUZZ).SetPercentVolume(1, 0.5f);
         _controller.ApplyFallingGravity();
-        print("stunned");
         _stunTimeLeft -= Time.deltaTime;
         if (_stunTimeLeft < 0) _controller.ChangeState(PlayerState.WALK);
     }
