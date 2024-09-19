@@ -67,13 +67,42 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1452209447905212906, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
       insertIndex: 0
       addedObject: {fileID: 9209918049895905223}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6249155370735267900, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1995390227968144457}
   m_SourcePrefab: {fileID: 100100000, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
 --- !u!4 &1655608426936231800 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1452209447905212906, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
   m_PrefabInstance: {fileID: 206795991653179026}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6082069964507852462 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6249155370735267900, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
+  m_PrefabInstance: {fileID: 206795991653179026}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1995390227968144457
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6082069964507852462}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.029251, y: 0.80598557, z: 2.0122337}
+  m_Center: {x: 0, y: 0.3585046, z: 0}
 --- !u!1001 &8672396688213512236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -130,9 +159,17 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 338244385a5c7da40941d0b4a50f97b6, type: 2}
+    - target: {fileID: -6355597980315003310, guid: e0a81dc49ac53f740bd01063f34c781e, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e0a81dc49ac53f740bd01063f34c781e, type: 3}
       propertyPath: m_Name
       value: model
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e0a81dc49ac53f740bd01063f34c781e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5690989279222321230, guid: e0a81dc49ac53f740bd01063f34c781e, type: 3}
       propertyPath: m_Materials.Array.data[0]

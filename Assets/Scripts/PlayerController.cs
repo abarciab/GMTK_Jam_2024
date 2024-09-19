@@ -49,13 +49,14 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         FindObjectOfType<GameManager>().Player = this;
+        _runWalkBehavior = GetComponent<PlayerRunWalkBehavior>();
+        _runWalkBehavior.HasBeenGrounded = true;
     }
 
     private void Start()
     {
         RB = GetComponent<Rigidbody>();
         Sounds = GetComponent<PlayerSounds>();
-        _runWalkBehavior = GetComponent<PlayerRunWalkBehavior>();
         _climbBehavior = GetComponent<PlayerClimbBehavior>();
         _glideBehavior = GetComponent<PlayerGlideBehavior>();
         _inventory = GetComponent<PlayerInventory>();

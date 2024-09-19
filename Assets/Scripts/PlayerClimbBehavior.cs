@@ -14,7 +14,7 @@ public class PlayerClimbBehavior : MonoBehaviour
 
     private PlayerController _controller;
     private Ladder _currentLadder;
-    private float _currentLadderDist => _currentLadder == null ? Mathf.Infinity : _controller.DistanceTo(_currentLadder.transform.position);
+    private float _currentLadderDist => _currentLadder == null || _controller == null ? Mathf.Infinity : _controller.DistanceTo(_currentLadder.transform.position);
     private bool _onRope => _currentLadder && _currentLadder.IsRope;
     private Rigidbody _rb => _controller.RB;
 

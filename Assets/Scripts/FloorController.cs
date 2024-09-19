@@ -252,8 +252,6 @@ public class FloorController : MonoBehaviour
                 lowPos = previous.TopPos + Vector3.down * height;
             }
 
-            //section.gameObject.SetActive(progress > 0.1f || isOuter);
-
             section.transform.position = Vector3.Lerp(lowPos, highPos, progress);
             if (isOuter) section.ScaleExtras(Vector3.one);
             else section.ScaleExtras(Vector3.Lerp(minScale, Vector3.one, progress)); 

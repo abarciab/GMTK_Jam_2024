@@ -1,13 +1,17 @@
 using MyBox;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal;
 using UnityEngine;
 
 public class FloorSection : MonoBehaviour
 {
     [SerializeField] private Transform _top;
     [SerializeField] private Transform _model;
+    [SerializeField] private Transform _platforms;
     [SerializeField] private bool _save;
+    [SerializeField] private float _extrasScaleTime = 1;
+    [SerializeField] private AnimationCurve _scaleCurve;
 
     [Header("Materials")]
     [SerializeField] private MaterialListData _generics;
@@ -20,6 +24,26 @@ public class FloorSection : MonoBehaviour
         if (_save) _save = false;
     }
 
+    private void OnEnable()
+    {
+        if (Application.isPlaying) StartCoroutine(LerpExtrasScale());
+    }
+
+    private IEnumerator LerpExtrasScale()
+    {
+        ScaleExtras(Vector3.zero);
+        float timePassed = 0;
+        while (timePassed < _extrasScaleTime) {
+            float progress = _scaleCurve.Evaluate(timePassed / _extrasScaleTime);
+            ScaleExtras(progress * Vector3.one);
+
+            timePassed += Time.deltaTime;
+            yield return new WaitForEndOfFrame();  
+        }
+        ScaleExtras(Vector3.one);
+    }
+
+
     [ButtonMethod]
     public void Setup() {
         if (Application.isPlaying) return;
@@ -29,6 +53,10 @@ public class FloorSection : MonoBehaviour
 #if UNITY_EDITOR
             UnityEditor.Selection.activeGameObject = _top.gameObject;
 #endif
+        }
+        if (!_platforms) {
+            _platforms = Instantiate(new GameObject(), transform).transform;
+            _platforms.gameObject.name = "platforms";
         }
         if (!_model) 
             _model = transform.childCount > 0 ? transform.GetChild(0) : null;
@@ -56,10 +84,7 @@ public class FloorSection : MonoBehaviour
         foreach (Transform child in obj) CheckForNonConformingMaterials(child);
     }
 
-
-
     public void ScaleExtras(Vector3 localScale) {
-        if (!_model || _model.childCount == 0) return;
-        foreach (Transform child in _model) child.localScale = localScale;
+        if (_platforms) _platforms.localScale = localScale;
     }
 }

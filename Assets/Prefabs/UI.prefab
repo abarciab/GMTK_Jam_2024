@@ -199,18 +199,20 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: While gliding, aim down for more speed and up to slow down. Running into
+  m_text: 'While gliding, aim down for more speed and up to slow down. Running into
     anything will end your glide.
+
+    asdasdasdasd'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a83e32916edc25646a68bb30ddfb36b2, type: 2}
-  m_sharedMaterial: {fileID: 4135473377589065722, guid: a83e32916edc25646a68bb30ddfb36b2, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 37b45f2eccd37954dad1f63369659977, type: 2}
+  m_sharedMaterial: {fileID: -688394039944684822, guid: 37b45f2eccd37954dad1f63369659977, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4289505427
-  m_fontColor: {r: 0.5764706, g: 0.65882355, b: 0.6745098, a: 1}
+    rgba: 4282528812
+  m_fontColor: {r: 0.17254902, g: 0.20392159, b: 0.25882354, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -795,9 +797,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5483153383404444081}
+  - {fileID: 4886860854212698920}
   - {fileID: 3252430218980410888}
   - {fileID: 4382753131078273744}
-  - {fileID: 4886860854212698920}
   - {fileID: 7210557500075866195}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1345,12 +1347,13 @@ MonoBehaviour:
   _hoverCooldown: 0.05
   _deselectOnStart: 0
   _autoDehover: 1
+  _sliderMode: 0
   _data:
   - Name: canGlide
     _type: 0
     _target: {fileID: 7448521315479879975}
-    _normalColor: {r: 1, g: 1, b: 1, a: 0.45490196}
-    _hoveredColor: {r: 1, g: 1, b: 1, a: 0.45490196}
+    _normalColor: {r: 1, g: 1, b: 1, a: 0.101960786}
+    _hoveredColor: {r: 1, g: 1, b: 1, a: 0.101960786}
     _selectedColor: {r: 1, g: 1, b: 1, a: 1}
     _disabledColor: {r: 1, g: 1, b: 1, a: 1}
     _obj: {fileID: 0}
@@ -2759,7 +2762,6 @@ GameObject:
   - component: {fileID: 660909008198478353}
   - component: {fileID: 2457158474615131918}
   - component: {fileID: 6749314014344351440}
-  - component: {fileID: 4637664043298095898}
   m_Layer: 5
   m_Name: backing
   m_TagString: Untagged
@@ -2807,14 +2809,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.25882354, g: 0.29411766, b: 0.32941177, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 6d00ddaac49c3914f8bf1ec1703dd3d1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2824,21 +2826,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4637664043298095898
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6509906537983079958}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0.5764706, g: 0.65882355, b: 0.6745098, a: 1}
-  m_EffectDistance: {x: 4, y: 4}
-  m_UseGraphicAlpha: 1
 --- !u!1 &6682057969171156844
 GameObject:
   m_ObjectHideFlags: 0

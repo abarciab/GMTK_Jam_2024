@@ -17,14 +17,24 @@ public class MovingPlatform : MonoBehaviour
 
     private bool _inState1;
 
+    private void OnEnable()
+    {
+        StartMotion();
+    }
+
     private void Start()
     {
         if (_dontMove) {
             enabled = false;
             return;
         }
+    }
+
+    private void StartMotion()
+    {
         SnapToState(_state1, true);
         GoToState2();
+
     }
 
     [ButtonMethod]
@@ -32,6 +42,9 @@ public class MovingPlatform : MonoBehaviour
     {
         _state1.Pos = transform.localPosition;
         _state1.Rot = transform.localRotation;
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(this);
+#endif
     }
 
     [ButtonMethod]
@@ -39,6 +52,9 @@ public class MovingPlatform : MonoBehaviour
     {
         _state2.Pos = transform.localPosition;
         _state2.Rot = transform.localRotation;
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.SetDirty(this);
+#endif
     }
 
 

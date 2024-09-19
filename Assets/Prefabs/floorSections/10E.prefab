@@ -65,6 +65,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8299859015234796375}
     - target: {fileID: 7877492472137783866, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
+      propertyPath: _platforms
+      value: 
+      objectReference: {fileID: 3375894142134380609}
+    - target: {fileID: 7877492472137783866, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
       propertyPath: _nonConformingRenderers.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -79,13 +83,47 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1452209447905212906, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
       insertIndex: 0
       addedObject: {fileID: 8299859015234796375}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6249155370735267900, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 179366994744531537}
   m_SourcePrefab: {fileID: 100100000, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
+--- !u!4 &3375894142134380609 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 687979608400034536, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
+  m_PrefabInstance: {fileID: 2834351968021418665}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3707285844856646467 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1452209447905212906, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
   m_PrefabInstance: {fileID: 2834351968021418665}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8209166750151795349 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6249155370735267900, guid: b7550ec1353506c4fb38d3464f2fa999, type: 3}
+  m_PrefabInstance: {fileID: 2834351968021418665}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &179366994744531537
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8209166750151795349}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.1783023, y: 1.209132, z: 2.164263}
+  m_Center: {x: 0, y: 0.6002854, z: 0}
 --- !u!1001 &8405331751145692348
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -157,6 +195,18 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 440d550f9331ea145a8a98cf3c33b97c, type: 3}
       propertyPath: m_Name
       value: model
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 440d550f9331ea145a8a98cf3c33b97c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2046821492970932707, guid: 440d550f9331ea145a8a98cf3c33b97c, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5741821612367303964, guid: 440d550f9331ea145a8a98cf3c33b97c, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8378486570429848112, guid: 440d550f9331ea145a8a98cf3c33b97c, type: 3}
       propertyPath: m_Materials.Array.data[0]
