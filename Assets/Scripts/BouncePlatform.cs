@@ -10,6 +10,7 @@ public class BouncePlatform : MonoBehaviour
     [SerializeField] private bool _activeBounce;
     [SerializeField, ConditionalField(nameof(_activeBounce))] private float _cooldown;
     [SerializeField, ConditionalField(nameof(_activeBounce))] private float _activeForce;
+    [SerializeField] private BouncerAnimator _bouncerAnimator;
 
     private float _currentCooldown;
     private float _storedVel;
@@ -52,7 +53,10 @@ public class BouncePlatform : MonoBehaviour
     {
         var vel = _storedVel;
         if (active) vel = -_activeForce;
-        if (vel > 0) return;
+        if (vel > 0.01f) return;
+
+        _bouncerAnimator.PlayBounce();
+
         GameManager.i.Player.PassiveBounce(_bounceMult * Mathf.Abs(vel));
     }
 }
