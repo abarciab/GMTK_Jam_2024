@@ -66,6 +66,7 @@ public class TeleportPlatform : MonoBehaviour
         _playerInRange = false;
         _currentCooldown = _cooldown;
         GameManager.i.Player.transform.position = _target.TeleportPoint;
+        GameManager.i.Player._teleportParticles.Play();
     }
 
     private void OnDrawGizmosSelected()
