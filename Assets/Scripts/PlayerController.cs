@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _groundCheckRadius;
     [SerializeField] private Vector3 _groundCheckOffset;
 
+    public ParticleSystem _teleportParticles;
+
     [HideInInspector] public Rigidbody RB;
 
     private PlayerRunWalkBehavior _runWalkBehavior;

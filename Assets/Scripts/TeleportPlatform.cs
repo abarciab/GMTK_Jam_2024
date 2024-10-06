@@ -14,6 +14,8 @@ public class TeleportPlatform : MonoBehaviour
     [SerializeField] private bool _2Way;
     [SerializeField] private Sound _sound;
 
+    [SerializeField] private Transform _particles;
+
     private float _currentCooldown;
     private Collider _collider;
     private bool _playerInRange;
@@ -30,6 +32,11 @@ public class TeleportPlatform : MonoBehaviour
     private void Start()
     {
         _sound = Instantiate(_sound);
+
+        if (_target)
+        {
+            _particles.LookAt(_target.transform);
+        }
     }
 
     private void Update()
@@ -59,6 +66,7 @@ public class TeleportPlatform : MonoBehaviour
         _playerInRange = false;
         _currentCooldown = _cooldown;
         GameManager.i.Player.transform.position = _target.TeleportPoint;
+        GameManager.i.Player._teleportParticles.Play();
     }
 
     private void OnDrawGizmosSelected()
