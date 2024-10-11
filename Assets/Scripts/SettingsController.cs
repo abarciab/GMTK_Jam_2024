@@ -59,7 +59,12 @@ public class SettingsController : MonoBehaviour
 
     public void SwitchTo(int index)
     {
-        for (int i = 0; i < _sections.Count; i++) _sections[i].SetActive(i == index);
+        for (int i = 0; i < _sections.Count; i++) {
+            if (i == index) _sections[i].SetActive(true);
+            else if (_sections[i].activeInHierarchy) {
+                _sections[i].GetComponent<Animator>().SetTrigger("Exit");
+            }
+        }
         for (int i = 0; i < _tabButtons.Count; i++) if (i != index) _tabButtons[i].Deselect();
     }
 

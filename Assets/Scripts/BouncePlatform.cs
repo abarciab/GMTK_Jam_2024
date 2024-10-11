@@ -53,7 +53,7 @@ public class BouncePlatform : MonoBehaviour
     {
         var vel = _storedVel;
         if (active) vel = -_activeForce;
-        if (vel > 0.01f) return;
+        if (vel > -1) return;
 
         _bouncerAnimator.PlayBounce();
 

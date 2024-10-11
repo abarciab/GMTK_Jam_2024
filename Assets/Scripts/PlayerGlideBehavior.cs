@@ -43,6 +43,11 @@ public class PlayerGlideBehavior : MonoBehaviour
         Glide();
     }
 
+    private void OnDisable()
+    {
+        Sounds.Get(PlayerSoundKey.WIND_LOOP).SetPercentVolume(0);
+    }
+
     private void Glide() {
         var currentSpeed = transform.position - _oldPos;
         _oldPos = transform.position;

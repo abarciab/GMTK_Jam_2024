@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _totalTowerCount = 4;
 
 
-    [SerializeField] GameObject _pauseMenu;
+    [SerializeField] pauseMenuController _pauseMenu;
     [SerializeField] Fade _fade;
     [SerializeField] MusicPlayer _music;
     [SerializeField] private GameObject _flood;
@@ -158,7 +158,7 @@ public class GameManager : MonoBehaviour
 
     public void Resume()
     {
-        _pauseMenu.SetActive(false);
+        _pauseMenu.Hide();
         Time.timeScale = 1;
         AudioManager.i.Resume();
         SetMouseState(false);
@@ -166,7 +166,7 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
-        _pauseMenu.SetActive(true);
+        _pauseMenu.gameObject.SetActive(true);
         Time.timeScale = 0;
         AudioManager.i.Pause();
         SetMouseState(true);
