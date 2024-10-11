@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerGlideBehavior : MonoBehaviour
 {
+    [SerializeField] private int _groundLayer = 8;
     [SerializeField] private float _tempConstFlySpeed = 10;
     [SerializeField] private float _glideAngleIncreaseFactor = 1;
     [SerializeField] private float _glideSpeedMax = 10;
@@ -16,6 +17,10 @@ public class PlayerGlideBehavior : MonoBehaviour
     [SerializeField] private float _glideEndBoost = 3;
     [SerializeField] private float _forwardGlideCheckerRadius;
     [SerializeField] private Vector3 _forwardGlideCheckerOffset;
+    [SerializeField] private float _downGlideCheckerRadius;
+    [SerializeField] private Vector3 _downGlideCheckerOffset;
+    public float MinGlideTimeReq = 0.5f;
+    public float MinGlideDistReq = 5f;
 
     [HideInInspector] public float GlideSpeedPercent => _glideSpeed / _glideSpeedMax;
 
@@ -36,6 +41,10 @@ public class PlayerGlideBehavior : MonoBehaviour
 
     private void Update() {
         CheckIfShouldLand();
+        /*if (InputController.GetDown(Control.JUMP)) {
+            StopGliding();
+            GetComponent<PlayerRunWalkBehavior>().HasBeenGrounded = true;
+        }*/
         if (!enabled) return;
 
 
@@ -70,10 +79,15 @@ public class PlayerGlideBehavior : MonoBehaviour
     private void CheckIfShouldLand() {
         var camTrans = Camera.main.transform;
         var all = new List<Collider>();
+
         var forwardPoint = camTrans.TransformPoint(_forwardGlideCheckerOffset);
         var forward = Physics.OverlapSphere(forwardPoint, _forwardGlideCheckerRadius);
         var forwardList = forward.Where(x => x.GetComponent<PlayerController>() == null && !x.isTrigger).ToList();
-        var belowList = _controller.GetCollidersBelow();
+        var belowList = _controller.GetCollidersBelow().Where(x => x.gameObject.layer == _groundLayer);
+
+        all.AddRange(forwardList);
+        all.AddRange(belowList);
+        if (all.Count == 0) return;
 
         if (forwardList.Count > 0) {
             var y = forwardPoint.y + _glideEndBoost;
@@ -81,19 +95,26 @@ public class PlayerGlideBehavior : MonoBehaviour
             var pos = transform.position;
             pos.y = y;
             transform.position = pos;
-            StopGliding();
-            _controller.ChangeState(PlayerState.WALK);
         }
+        else {
+            transform.position += Vector3.up * 0.5f;
+        }
+
+        StopGliding();
     }
+
 
     private void StopGliding() {
         _rb.isKinematic = false;
         Sounds.Get(PlayerSoundKey.WIND_LOOP).SetPercentVolume(0);
         Sounds.Get(PlayerSoundKey.GLIDER_LAND).Play();
+        _controller.ChangeState(PlayerState.WALK);
     }
 
     private void OnDrawGizmosSelected() {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.TransformPoint(_forwardGlideCheckerOffset), _forwardGlideCheckerRadius);
+        Gizmos.DrawWireSphere(transform.TransformPoint(_downGlideCheckerOffset), _downGlideCheckerRadius);
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * MinGlideDistReq);
     }
 }

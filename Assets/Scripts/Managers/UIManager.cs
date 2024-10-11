@@ -34,9 +34,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _interactPrompt;
     [SerializeField] private TextMeshProUGUI _interactText;
     [SerializeField] private GameObject _blackBlocker;
-    [SerializeField] private SelectableItem _canGlideIndicator;
     [SerializeField] private GameObject _stunFlash;
-    
+
+    [Header("crosshair")]
+    [SerializeField] private Animator _crosshairImg;
+
     [Header("Points Of Interest")]
     [SerializeField] private GameObject _interestIndicator;
     [SerializeField] private GameObject _detailedInterest;
@@ -78,7 +80,7 @@ public class UIManager : MonoBehaviour
             _detailedInterest.SetActive(detailed);
             _simpleInterest.SetActive(!detailed);
         }
-        _canGlideIndicator.SetState(GameManager.i.Player.CanGlide);
+        _crosshairImg.SetBool("Glide", GameManager.i.Player.CanGlide || GameManager.i.Player.IsGliding);
     }
 
     private void LateUpdate()

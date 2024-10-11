@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _rotateSpeed = 8;
     [SerializeField] private float _groundCheckRadius;
     [SerializeField] private Vector3 _groundCheckOffset;
+    [SerializeField] private LayerMask _nonPlayerLayers;
 
     public ParticleSystem _teleportParticles;
 
@@ -35,18 +36,22 @@ public class PlayerController : MonoBehaviour
     private PlayerStunnedBehavior _stunBehavior;
     private PlayerInventory _inventory;
 
-    [HideInInspector] public PlayerSounds Sounds { get; private set; }
-    [HideInInspector] public bool IsRunning => _currentState == PlayerState.WALK && _runWalkBehavior.IsRunning;
-    [HideInInspector] public bool IsStunned => _currentState == PlayerState.STUNNED;
-    [HideInInspector] public bool IsGliding => _currentState == PlayerState.GLIDE;
-    [HideInInspector] public float GlideSpeedPercent => _glideBehavior.GlideSpeedPercent;
-    [HideInInspector] public bool CanGlide => _runWalkBehavior.HasBeenGrounded && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0;
+    public PlayerSounds Sounds { get; private set; }
+    public bool IsRunning => _currentState == PlayerState.WALK && _runWalkBehavior.IsRunning;
+    public bool IsStunned => _currentState == PlayerState.STUNNED;
+    public bool IsGliding => _currentState == PlayerState.GLIDE;
+    public float GlideSpeedPercent => _glideBehavior.GlideSpeedPercent;
+    private bool _canGlideCurrent => _runWalkBehavior.HasBeenGrounded && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0;
     public void ApplyFallingGravity() => _runWalkBehavior.ApplyFallingGravity();
     public void SetClosestItem(InventoryItem item) => _inventory.SetClosestItem(item);
     public void ClearItem(InventoryItem item) => _inventory.ClearItem(item);
     public float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     public void Shock() => ChangeState(PlayerState.STUNNED);
     public Collider[] GetCollidersBelow() => Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
+    public bool CanGlide => _canGlideCurrent && Time.time - _timeWhenCantGlide > _glideBehavior.MinGlideTimeReq && DistanceDown() > _glideBehavior.MinGlideDistReq;
+
+    private float _timeWhenCantGlide;
+    
 
     private void Awake()
     {
@@ -69,6 +74,15 @@ public class PlayerController : MonoBehaviour
     {
         CheckStateTransitions();
         transform.SetLossyScale(Vector3.one);
+        if (!_canGlideCurrent) _timeWhenCantGlide = Time.time;
+    }
+
+    private float DistanceDown()
+    {
+        bool hit = Physics.Raycast(transform.position, Vector3.down, out var hitData, 100, _nonPlayerLayers);
+        if (!hit) return Mathf.Infinity;
+
+        return transform.position.y - hitData.point.y;
     }
 
     public void PassiveBounce(float mult = 1)
