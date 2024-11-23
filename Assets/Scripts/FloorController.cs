@@ -12,6 +12,7 @@ public enum CardinalDirection { South, East, North, West };
 [SelectionBase]
 public class FloorController : MonoBehaviour
 {
+    public string Name;
     [SerializeField] private CardinalDirection _exitSide;
 
     [Header("References")]
@@ -54,7 +55,7 @@ public class FloorController : MonoBehaviour
     private FloorSection _highestActiveSection => _sections.Where(x => x.gameObject.activeInHierarchy).Last();
     private List<TowerController> _connectedTowers = new List<TowerController>(); 
     private float _targetExpansion;
-
+    private bool _manuallyExtended;
         
     private void OnValidate()
     {
@@ -68,7 +69,7 @@ public class FloorController : MonoBehaviour
     private void Start()
     {
         _connectedTowers.Add(GetComponentInParent<TowerController>());
-        _targetExpansion = _expansionProgress = 0;
+        if (!_manuallyExtended) _targetExpansion = _expansionProgress = 0;
     }
 
     public void SetPalette(ColorPaletteData palette) {
@@ -126,24 +127,23 @@ public class FloorController : MonoBehaviour
     public void ExtendToFull()
     {
         StopAllCoroutines();
-        StartCoroutine(AnimateToFull());
+        gameObject.SetActive(true);
+        AnimateToFull();
+        _manuallyExtended = true;
     }
 
-    private IEnumerator AnimateToFull(bool reverse = false)
+    private void AnimateToFull()
     {
-        yield return new WaitForSeconds(1);
-        /*_expansionProgress = reverse ? 1 : 0;
-        for (int i = 0; i < 4; i++) {
-            if (reverse) DecrementTargetExpansion();
-            else IncrementTargetExpansion();
-            yield return new WaitForSeconds(1);
-        }*/
+        StopAllCoroutines();
+        _expansionProgress = _targetExpansion = 1;
+        UpdateModel();
     }
 
     public void Collapse()
     {
         StopAllCoroutines();
-        StartCoroutine(AnimateToFull(true));
+        _expansionProgress = _targetExpansion = 0;
+        UpdateModel();
     }
 
     public void Initialize(Dictionary<Material, Material> matDict)
@@ -309,6 +309,7 @@ public class FloorController : MonoBehaviour
         _targetExpansion += 2 / (float)_sections.Count;
         _targetExpansion = Mathf.Clamp01(_targetExpansion);
         StartCoroutine(AnimateExpansion(time));
+
         /*if (_floorSections.Count != 5) return;
         if (TargetExpansion < 1f) SetTargetExpansion(TargetExpansion + 0.25f);
         if (TargetExpansion > 0.5f && (Random.Range(0, 1f) < _bridgeChance)) BuildBridge();*/

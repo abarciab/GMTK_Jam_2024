@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 3864692808609203780}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.48, y: 3.25, z: -3.42}
-  m_LocalScale: {x: 1, y: 10.250072, z: 4.4700003}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.11612, y: 0.6172338, z: 0.4543301}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1691735849388930617}
@@ -54,8 +54,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3840789, y: 1, z: 1.3840789}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.6835915, y: 1, z: 1.3126545}
+  m_Center: {x: -0.35024473, y: 0, z: 4.1400853e-16}
 --- !u!114 &4597090454269889519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,6 +68,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c98dbe243ed8f54996e44ac2ec6f353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsRope: 0
+  _maxLength: 0
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _solidCollider: {fileID: 0}
+  _OnUncoil:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5045497488434516966
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +139,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 1918a5e6fc0565c4586d0bc329503ccb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -235,7 +244,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: def82e1d768017743a399461c7063512, type: 2}
+  - {fileID: 2100000, guid: c69fe1fb5e9a4684bb56d9a0f999a86d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

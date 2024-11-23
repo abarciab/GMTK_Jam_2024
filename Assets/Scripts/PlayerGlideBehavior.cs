@@ -22,7 +22,8 @@ public class PlayerGlideBehavior : MonoBehaviour
     public float MinGlideTimeReq = 0.5f;
     public float MinGlideDistReq = 5f;
 
-    [HideInInspector] public float GlideSpeedPercent => _glideSpeed / _glideSpeedMax;
+    [HideInInspector] public Vector3 InturruptPoint;
+    public float GlideSpeedPercent => _glideSpeed / _glideSpeedMax;
 
     private PlayerController _controller;
     private float _glideSpeed;
@@ -41,10 +42,6 @@ public class PlayerGlideBehavior : MonoBehaviour
 
     private void Update() {
         CheckIfShouldLand();
-        /*if (InputController.GetDown(Control.JUMP)) {
-            StopGliding();
-            GetComponent<PlayerRunWalkBehavior>().HasBeenGrounded = true;
-        }*/
         if (!enabled) return;
 
 
@@ -108,6 +105,7 @@ public class PlayerGlideBehavior : MonoBehaviour
         _rb.isKinematic = false;
         Sounds.Get(PlayerSoundKey.WIND_LOOP).SetPercentVolume(0);
         Sounds.Get(PlayerSoundKey.GLIDER_LAND).Play();
+        InturruptPoint = transform.position;
         _controller.ChangeState(PlayerState.WALK);
     }
 

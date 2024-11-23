@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[RequireComponent (typeof (TowerController))]
+[RequireComponent(typeof(TowerController))]
 public class TowerBuilder : MonoBehaviour
 {
     [SerializeField] private GameObject _firstFloorPrefab;
@@ -12,6 +13,7 @@ public class TowerBuilder : MonoBehaviour
     [SerializeField, Min(2)] private int _targetHeight = 10;
     [SerializeField] private float _difficultyThreshold;
     [SerializeField] private ColorPaletteData _palette;
+    public bool _testTower;
 
     private List<FloorController> _placedFloors = new List<FloorController>();
     private FloorController _currentTopFloor;
@@ -20,7 +22,24 @@ public class TowerBuilder : MonoBehaviour
     private void Start()
     {
         _controller = GetComponent<TowerController>();
-        GenerateTower(); 
+        if (!_testTower) GenerateTower();
+    }
+
+    public void TestBuild(List<FloorController> floors, string newName = "")
+    {
+        if (newName != "") GetComponent<TowerController>().Name = newName;
+
+        _targetHeight = floors.Count;
+        name = string.Join(" ", floors.Select(x => x.Name)); 
+        _controller = GetComponent<TowerController>();
+
+        _firstFloorPrefab = floors[0].gameObject;
+        floors.RemoveAt(0);
+        _lastFloorPrefab = floors[^1].gameObject;
+        floors.RemoveAt(floors.Count - 1);
+
+        _towerFloorPrefabs = floors.Select(x => x.gameObject).ToList();
+        GenerateTower();
     }
 
     public List<FloorController> GetFloorPrefabs()
@@ -32,71 +51,40 @@ public class TowerBuilder : MonoBehaviour
 
     private void GenerateTower()
     {
-        PlaceFirstFloor();
-        for (int i = 0; i < _targetHeight - 1; i++) PlaceNextFloor();
-
-        foreach (var floor in _placedFloors) floor.SetPalette(_palette);
-
+        for (int i = 0; i < _targetHeight; i++) PlaceNextFloor();
         _controller.Initialize(_placedFloors);
-    }
-
-    private void PlaceFirstFloor()
-    {
-        _currentTopFloor = Instantiate(_firstFloorPrefab, transform.position, transform.rotation, transform).GetComponent<FloorController>();
-        _currentTopFloor.gameObject.name = "floor 1";
-        _placedFloors.Add(_currentTopFloor);
     }
 
     private void PlaceNextFloor()
     {
-        Vector3 newFloorRotation = Vector3.zero;
+        GameObject floorPrefab = _towerFloorPrefabs[Random.Range(0, _towerFloorPrefabs.Count)];
+        if (_placedFloors.Count == _targetHeight - 1) floorPrefab = _lastFloorPrefab;
+        if (_placedFloors.Count == 0) floorPrefab = _firstFloorPrefab;
+        PlaceFloor(floorPrefab);
+    }
 
-        if(_currentTopFloor.ExitSide == CardinalDirection.North)
-        {
-            newFloorRotation =  new Vector3(0f, 180f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
-        }
-        else if(_currentTopFloor.ExitSide == CardinalDirection.South)
-        {
-             newFloorRotation =  new Vector3(0f, _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
-        }
-        else if(_currentTopFloor.ExitSide == CardinalDirection.East)
-        {
-             newFloorRotation =  new Vector3(0f, 270f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
-        }
-        else if(_currentTopFloor.ExitSide == CardinalDirection.West)
-        {
-             newFloorRotation =  new Vector3(0f, 90f + _currentTopFloor.transform.localEulerAngles.y + 90f, 0f);
+    private void PlaceFloor(GameObject floorPrefab)
+    {
+        var y = 0;
+        var newFloorRot = Vector3.zero;
+        var newFloorPos = transform.position;
+        if (_currentTopFloor) {
+            var dir = _currentTopFloor.ExitSide;
+            if (dir == CardinalDirection.South) y = 360;
+            if (dir == CardinalDirection.East) y = 270;
+            if (dir == CardinalDirection.North) y = 180;
+            if (dir == CardinalDirection.West) y = 90;
+            newFloorRot = new Vector3(0, y + _currentTopFloor.transform.localEulerAngles.y, 0);
+            newFloorPos = _currentTopFloor.TopPos;
         }
 
-        float currentDifficulty = (float)_placedFloors.Count / _targetHeight;
+        GameObject newFloorObj = Instantiate(floorPrefab, newFloorPos, Quaternion.Euler(newFloorRot), transform);
+        FloorController newFloor = newFloorObj.GetComponent<FloorController>(); 
+        if (_placedFloors.Count > 0) newFloor.PreviousFloor = _placedFloors[^1];
 
-        GameObject selectedPrefab = GetRandomFloorPrefabWithinDifficultyRange(currentDifficulty);
-        if (_placedFloors.Count == _targetHeight - 1) selectedPrefab = _lastFloorPrefab;
-
-        GameObject newFloorObj = Instantiate(selectedPrefab, _currentTopFloor.TopPos, Quaternion.Euler(newFloorRotation), transform);
-        FloorController newFloor = newFloorObj.GetComponent<FloorController>();
         _placedFloors.Add(newFloor);
         newFloorObj.name = "floor " + _placedFloors.Count;
         _currentTopFloor = newFloor;
-        if (_placedFloors.Count > 1) newFloor.PreviousFloor = _placedFloors[_placedFloors.Count-2];
-    }
-
-    private GameObject GetRandomFloorPrefabWithinDifficultyRange(float currentDifficulty)
-    {
-        List<GameObject> validPrefabs = new List<GameObject>();
-
-        float tempDifficultyThreshold = _difficultyThreshold;
-
-        while(validPrefabs.Count == 0)
-        {
-            foreach (var floor in _towerFloorPrefabs)
-            {
-                validPrefabs.Add(floor);   
-            }
-
-            tempDifficultyThreshold += 0.05f;
-        }
-
-        return validPrefabs[Random.Range(0, validPrefabs.Count)];
+        newFloor.SetPalette(_palette);
     }
 }

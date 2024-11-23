@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(TowerBuilder))]
 public class TowerController : MonoBehaviour
 {
     public string Name;
@@ -25,16 +26,16 @@ public class TowerController : MonoBehaviour
 
     private List<FloorController> _floors = new List<FloorController>();
     private Dictionary<Material, Material> _matDict = new Dictionary<Material, Material>();
-
+    private TowerBuilder _builder;
 
     private void Start()
     {
-
+        _builder = GetComponent<TowerBuilder>();
         _initialBuildTime *= Random.Range(0.8f, 1.2f);
         _startOffsetTime *= Random.Range(0.8f, 1.2f);
         _secondToFullExpansion *= Random.Range(0.8f, 1.2f);
         _completeSound = Instantiate(_completeSound);
-        if (GameManager.i) GameManager.i.RegisterTower(this);
+        if (!_builder._testTower && GameManager.i) GameManager.i.RegisterTower(this);
     }
 
     public FloorController GetFloorAtY(float y)
@@ -83,17 +84,27 @@ public class TowerController : MonoBehaviour
 
     public void Initialize(List<FloorController> floors)
     {
+        if (!_builder) _builder = GetComponent<TowerBuilder>();
         BuildMatDict();
         _floors = floors;
         foreach (var f in _floors) f.gameObject.SetActive(false);
-        if (!_displayOnly)_floors[0].gameObject.SetActive(true);
-        //_floors[_floors.Count-1].gameObject.SetActive(true);
+
         if (_displayOnly) StartGrowing();
+        if (_builder._testTower) StartGrowing();
+        //if (_builder._testTower) SnapToFull();
+        // else _floors[0].gameObject.SetActive(true);
     }
 
     public void StartGrowing()
     {
         StartCoroutine(GrowTower());
+    }
+
+    private void SnapToFull()
+    {
+        foreach (var f in _floors) {
+            f.ExtendToFull();
+        }
     }
 
     private IEnumerator GrowTower()
@@ -114,6 +125,16 @@ public class TowerController : MonoBehaviour
         int numSteps = 0;
         foreach (var floor in _floors) numSteps += floor.SectionCount;
 
+        if (_builder._testTower) {
+            foreach (var f in _floors) {
+                //f.IncrementTargetExpansion(0f);
+                //f.IncrementTargetExpansion(0f);
+                if (Random.Range(0f, 1) > 0.5f) f.IncrementTargetExpansion(0f);
+                if (Random.Range(0f, 1) >0.5f) f.IncrementTargetExpansion(0f);
+            }
+            yield break;
+        }
+        
         float step = _secondToFullExpansion / numSteps;
         for (int i = 0; i < numSteps; i++) {
             while (_isCurrentTower) yield return null;

@@ -24,6 +24,7 @@ public class PlayerClimbBehavior : MonoBehaviour
     }
 
     public void SetClosestLadder(Ladder ladder) {
+        if (ladder == null) return;
         if (_currentLadder != null && _currentLadderDist < _controller.DistanceTo(ladder.transform.position)) return;
 
         transform.SetParent(ladder.transform);

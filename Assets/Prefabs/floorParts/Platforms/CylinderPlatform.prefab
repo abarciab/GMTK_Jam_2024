@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8833380457696144444}
   - component: {fileID: 1248867758631695582}
   m_Layer: 3
-  m_Name: CylinderPlatform
+  m_Name: mantle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 8173308644384567987}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.87, z: 0}
-  m_LocalScale: {x: 1.0972, y: 1.0972, z: 1.0972}
+  m_LocalPosition: {x: 0, y: 0.049, z: 0}
+  m_LocalScale: {x: 1.0406942, y: 0.16868134, z: 1.0406942}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7350803419326683948}
@@ -51,7 +51,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8173308644384567987}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 2c84875772d71534c9fa318ed3ca34d6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -132,11 +132,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c98dbe243ed8f54996e44ac2ec6f353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsRope: 0
   _maxLength: 0
   _groundLayer:
     serializedVersion: 2
     m_Bits: 0
-  IsRope: 0
   _solidCollider: {fileID: 0}
   _OnUncoil:
     m_PersistentCalls:
@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 2806620917997341139}
   - component: {fileID: 731336527843935682}
   - component: {fileID: 4601586981164756931}
+  - component: {fileID: 3286544807102107084}
   m_Layer: 3
   m_Name: CylinderPlatform
   m_TagString: Untagged
@@ -170,8 +171,8 @@ Transform:
   m_GameObject: {fileID: 9028651658596908475}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.526, y: -0.327, z: -1.648}
-  m_LocalScale: {x: 0.8098379, y: 0.044728454, z: 0.8098379}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.8098379, y: 0.065, z: 0.8098379}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 149452670373226445}
@@ -261,3 +262,16 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &3286544807102107084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028651658596908475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e1262f518b93a043b81a8f18f25b567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _y: 0.065

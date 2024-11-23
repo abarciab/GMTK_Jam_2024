@@ -14,6 +14,7 @@ public class MovingPlatform : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private float _animateTime = 1.2f;
     [SerializeField] private AnimationCurve _curve;
+    [SerializeField, Range(1, 2)] private int _startState = 1;
 
     private bool _inState1;
 
@@ -32,9 +33,14 @@ public class MovingPlatform : MonoBehaviour
 
     private void StartMotion()
     {
-        SnapToState(_state1, true);
-        GoToState2();
-
+        if (_startState == 1) {
+            SnapToState(_state1, true);
+            GoToState2();
+        }
+        else {
+            SnapToState(_state2, false);
+            GoToState1();
+        }
     }
 
     [ButtonMethod]
@@ -103,5 +109,18 @@ public class MovingPlatform : MonoBehaviour
             if (_inState1) GoToState2();
             else GoToState1();
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        var pos1 = transform.parent.TransformPoint(_state1.Pos);
+        var pos2 = transform.parent.TransformPoint(_state2.Pos);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(pos1, 0.1f);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(pos2, 0.1f);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(pos1, pos2);
     }
 }

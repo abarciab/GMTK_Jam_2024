@@ -4956,6 +4956,9 @@ MonoBehaviour:
   _rotateSpeed: 8
   _groundCheckRadius: 0.2
   _groundCheckOffset: {x: 0, y: -0.4, z: 0}
+  _nonPlayerLayers:
+    serializedVersion: 2
+    m_Bits: 0
   _teleportParticles: {fileID: 4663754653246331038}
   RB: {fileID: 0}
 --- !u!114 &8280265114450605824
@@ -4976,7 +4979,7 @@ MonoBehaviour:
   _strafeSpeedMod: 1
   _numJumps: 1
   _jumpForce: 25
-  _coyoteTime: 1.2
+  _coyoteTime: 1.5
   _groundLayer: 3
   _topOfJumpThreshold: 0.1
   _jumpingUpGravity: 0.8
@@ -5000,6 +5003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4158649b98f8d642a231cf6d153233d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _groundLayer: 8
   _tempConstFlySpeed: 10
   _glideAngleIncreaseFactor: 1.8
   _glideSpeedMax: 40
@@ -5008,6 +5012,11 @@ MonoBehaviour:
   _glideEndBoost: 0.5
   _forwardGlideCheckerRadius: 0.36
   _forwardGlideCheckerOffset: {x: 0, y: 0, z: 0.6}
+  _downGlideCheckerRadius: 0
+  _downGlideCheckerOffset: {x: 0, y: 0, z: 0}
+  MinGlideTimeReq: 0.5
+  MinGlideDistReq: 5
+  InturruptPoint: {x: 0, y: 0, z: 0}
 --- !u!114 &241028366166274649
 MonoBehaviour:
   m_ObjectHideFlags: 0

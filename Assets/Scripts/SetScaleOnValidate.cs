@@ -6,9 +6,15 @@ using UnityEngine;
 [ExecuteAlways]
 public class SetScaleOnValidate : MonoBehaviour
 {
-    [SerializeField] private Vector3 _scale = Vector3.one;
+    private void OnValidate()
+    {
+        Update();
+    }
 
     private void Update() {
-        if (transform.lossyScale != _scale) transform.SetLossyScale(_scale);
+        var scale = transform.lossyScale;
+        scale.x = scale.z = scale.y;
+        if (transform.lossyScale != scale) transform.SetLossyScale(scale);
     }
+
 }

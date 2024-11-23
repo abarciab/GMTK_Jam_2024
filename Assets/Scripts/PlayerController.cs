@@ -41,7 +41,8 @@ public class PlayerController : MonoBehaviour
     public bool IsStunned => _currentState == PlayerState.STUNNED;
     public bool IsGliding => _currentState == PlayerState.GLIDE;
     public float GlideSpeedPercent => _glideBehavior.GlideSpeedPercent;
-    private bool _canGlideCurrent => _runWalkBehavior.HasBeenGrounded && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0;
+    private bool _resetFromGlideInturrupt => _runWalkBehavior.HasBeenGrounded || _glideBehavior.InturruptPoint.y - transform.position.y > 1f;
+    private bool _canGlideCurrent => _resetFromGlideInturrupt && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0;
     public void ApplyFallingGravity() => _runWalkBehavior.ApplyFallingGravity();
     public void SetClosestItem(InventoryItem item) => _inventory.SetClosestItem(item);
     public void ClearItem(InventoryItem item) => _inventory.ClearItem(item);
@@ -51,7 +52,7 @@ public class PlayerController : MonoBehaviour
     public bool CanGlide => _canGlideCurrent && Time.time - _timeWhenCantGlide > _glideBehavior.MinGlideTimeReq && DistanceDown() > _glideBehavior.MinGlideDistReq;
 
     private float _timeWhenCantGlide;
-    
+
 
     private void Awake()
     {

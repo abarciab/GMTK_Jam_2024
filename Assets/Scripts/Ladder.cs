@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[SelectionBase]
 public class Ladder : MonoBehaviour
 {
-    [SerializeField] private float _maxLength;
-    [SerializeField] private LayerMask _groundLayer;
     public bool IsRope;
+    [SerializeField, ConditionalField(nameof(IsRope))] private float _maxLength;
+    [SerializeField, ConditionalField(nameof(IsRope))] private LayerMask _groundLayer;
     [SerializeField, ConditionalField(nameof(IsRope))] private Collider _solidCollider;
+    [SerializeField, ConditionalField(nameof(IsRope))] private UnityEvent _OnUncoil;
+
     private bool _isCoiled = true;
     private bool _playerClimbing;
-    [SerializeField] private UnityEvent _OnUncoil;
 
     public void Uncoil()
     {
