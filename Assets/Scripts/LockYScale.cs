@@ -6,6 +6,7 @@ using UnityEngine;
 public class LockYScale : MonoBehaviour
 {
     [SerializeField] private float _y;
+    [SerializeField] private bool _ignoreParent;
 
     private void OnValidate()
     {
@@ -14,10 +15,22 @@ public class LockYScale : MonoBehaviour
 
     private void Update()
     {
-        if (transform.localScale.y == _y) return;
+        if (_ignoreParent) LockAgainstGrandparent();
+        else Lock(_y);
+    }
+
+    private void Lock(float y)
+    {
+        if (transform.localScale.y == y) return;
         var scale = transform.localScale;
-        scale.y = _y;
+        scale.y = y;
         transform.localScale = scale;
+    }
+
+    private void LockAgainstGrandparent()
+    {
+        if (transform.parent == null) Lock(_y);
+        else Lock(_y / transform.parent.localScale.y);
     }
 
 }
