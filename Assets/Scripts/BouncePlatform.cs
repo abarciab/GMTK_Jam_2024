@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[SelectionBase]
 public class BouncePlatform : MonoBehaviour
 {
     [SerializeField] private bool _passiveBounce;

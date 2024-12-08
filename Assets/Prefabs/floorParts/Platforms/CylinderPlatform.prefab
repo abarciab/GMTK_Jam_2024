@@ -155,6 +155,7 @@ GameObject:
   - component: {fileID: 731336527843935682}
   - component: {fileID: 4601586981164756931}
   - component: {fileID: 3286544807102107084}
+  - component: {fileID: 2757469133701497874}
   m_Layer: 3
   m_Name: CylinderPlatform
   m_TagString: Untagged
@@ -275,3 +276,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _y: 0.065
+  _ignoreParent: 0
+--- !u!205 &2757469133701497874
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9028651658596908475}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0.000000059604645, y: 0, z: -0.000000059604645}
+  m_Size: 3
+  m_FadeMode: 1
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.050727513
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 2806620917997341139}
+  m_Enabled: 1

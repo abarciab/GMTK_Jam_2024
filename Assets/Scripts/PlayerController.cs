@@ -2,6 +2,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
@@ -77,6 +78,17 @@ public class PlayerController : MonoBehaviour
         transform.SetLossyScale(Vector3.one);
         if (!_canGlideCurrent) _timeWhenCantGlide = Time.time;
     }
+
+    private async void OnDisable()
+    {
+        if (GetComponentInParent<MovingPlatform>()) {
+            await Task.Delay(100);
+
+            transform.SetParent(null);
+            gameObject.SetActive(true);
+        }
+    }
+
 
     private float DistanceDown()
     {

@@ -93,6 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7205633160042887896}
   - component: {fileID: 7378255109510728852}
+  - component: {fileID: 7332468751016829499}
   m_Layer: 3
   m_Name: rectSidingCorner
   m_TagString: Untagged
@@ -135,3 +136,22 @@ MonoBehaviour:
   _z: 1
   _zVal: 1
   _referenceParent: {fileID: 0}
+--- !u!205 &7332468751016829499
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992347176387734943}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0.000000029802322, y: -0.004000008, z: -0.000000029802322}
+  m_Size: 3
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.11662176
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 1707391207182720123}
+  m_Enabled: 1

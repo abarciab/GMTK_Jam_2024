@@ -82,6 +82,7 @@ GameObject:
   - component: {fileID: 6534747040179261528}
   - component: {fileID: 190672213037335684}
   - component: {fileID: 627688395496529090}
+  - component: {fileID: 6930206328359698748}
   m_Layer: 3
   m_Name: movingPlatform
   m_TagString: Untagged
@@ -168,6 +169,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _y: 0.18
+  _ignoreParent: 0
+--- !u!205 &6930206328359698748
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7710838302525379132}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: -0.20038426, z: 0}
+  m_Size: 5
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.04030073
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 3376046055271590150}
+  m_Enabled: 1
 --- !u!1001 &480478369629531396
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -533,6 +554,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8291050638073978398}
   m_SourcePrefab: {fileID: 100100000, guid: 36584f0c35ae31148afd3215afe442dd, type: 3}
+--- !u!23 &3376046055271590150 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 36584f0c35ae31148afd3215afe442dd, type: 3}
+  m_PrefabInstance: {fileID: 4115082391376164226}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3880656403525650643 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 36584f0c35ae31148afd3215afe442dd, type: 3}

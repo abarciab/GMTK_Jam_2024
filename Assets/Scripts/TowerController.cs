@@ -127,14 +127,14 @@ public class TowerController : MonoBehaviour
 
         if (_builder._testTower) {
             foreach (var f in _floors) {
-                //f.IncrementTargetExpansion(0f);
-                //f.IncrementTargetExpansion(0f);
-                if (Random.Range(0f, 1) > 0.5f) f.IncrementTargetExpansion(0f);
-                if (Random.Range(0f, 1) >0.5f) f.IncrementTargetExpansion(0f);
+                f.IncrementTargetExpansion(0f);
+                f.IncrementTargetExpansion(0f);
+                //if (Random.Range(0f, 1) > 0.5f) f.IncrementTargetExpansion(0f);
+                //if (Random.Range(0f, 1) >0.5f) f.IncrementTargetExpansion(0f);
             }
             yield break;
         }
-        
+
         float step = _secondToFullExpansion / numSteps;
         for (int i = 0; i < numSteps; i++) {
             while (_isCurrentTower) yield return null;

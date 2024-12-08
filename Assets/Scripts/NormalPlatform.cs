@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[SelectionBase]
 public class NormalPlatform : MonoBehaviour
 {
     [SerializeField] private bool _climable = true;

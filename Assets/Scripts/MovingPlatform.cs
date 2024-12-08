@@ -113,6 +113,8 @@ public class MovingPlatform : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        if (transform.parent == null) return;
+
         var pos1 = transform.parent.TransformPoint(_state1.Pos);
         var pos2 = transform.parent.TransformPoint(_state2.Pos);
 

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7301937150744558831}
   - component: {fileID: 5355117583999972751}
   - component: {fileID: 709447480985993646}
+  - component: {fileID: 5341254682509636150}
   m_Layer: 3
   m_Name: teleportPlatform
   m_TagString: Untagged
@@ -74,6 +75,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 1.5459901, z: 2}
   m_Center: {x: 0, y: 0.5513677, z: 0}
+--- !u!205 &5341254682509636150
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819709219575409300}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: -0.012484312, y: 0.1484636, z: 0}
+  m_Size: 3
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.080338225
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 8459322236751207050}
+    - renderer: {fileID: 1972765306582505063}
+    - renderer: {fileID: 5078030461788831732}
+    - renderer: {fileID: 6212759927944857873}
+  m_Enabled: 1
 --- !u!1 &1343275473189057355
 GameObject:
   m_ObjectHideFlags: 0
