@@ -10,17 +10,9 @@ public class pauseMenuController : MonoBehaviour
     [SerializeField] private Sound _closeSound;
     private Animator _animator;
 
-    private void Start()
-    {
-        _openSound = Instantiate(_openSound);
-        _closeSound = Instantiate(_closeSound);
-        _settings.SetActive(false);
-        _animator = GetComponent<Animator>();
-    }
-
     private void OnEnable()
     {
-        if (!_openSound.Instantialized) _openSound = Instantiate(_openSound);
+        if (!_openSound.Instantialized) Initialize();
         _openSound.Play();
     }
 
@@ -29,9 +21,21 @@ public class pauseMenuController : MonoBehaviour
         _closeSound.Play();
     }
 
+    private void Initialize()
+    {
+        _openSound = Instantiate(_openSound);
+        _closeSound = Instantiate(_closeSound);
+        _settings.SetActive(false);
+        _animator = GetComponent<Animator>();
+        _openSound = Instantiate(_openSound);
+    }
+
     public void Hide()
     {
-        if (_settings.activeInHierarchy) _settings.GetComponent<Animator>().SetTrigger("Exit");    
+        if (!gameObject.activeInHierarchy) return;
+
+        if (_settings.activeInHierarchy) _settings.GetComponent<Animator>().SetTrigger("Exit");
+        if (!_animator) Initialize();
         _animator.SetTrigger("Exit");
     }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum PlayerSoundKey { JUMP, JUMP_LAND, OPEN_GLIDER, WIND_LOOP, GLIDER_LAND, STUNNED_BUZZ, BOUNCE}
+public enum PlayerSoundKey { JUMP, JUMP_LAND, OPEN_GLIDER, WIND_LOOP, GLIDER_LAND, STUNNED_BUZZ, BOUNCE, WIND_CHARGE}
 
 [System.Serializable]
 public class PlayerSoundData

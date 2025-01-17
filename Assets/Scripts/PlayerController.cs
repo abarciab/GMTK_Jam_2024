@@ -3,10 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public enum PlayerState { WALK, CLIMB, GLIDE, STUNNED}
 [RequireComponent(typeof(PlayerRunWalkBehavior))]
@@ -15,7 +12,6 @@ public enum PlayerState { WALK, CLIMB, GLIDE, STUNNED}
 [RequireComponent(typeof(PlayerStunnedBehavior))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(PlayerSounds))]
-[RequireComponent(typeof(PlayerInventory))]
 public class PlayerController : MonoBehaviour
 {
     [Header("State")]
@@ -35,7 +31,6 @@ public class PlayerController : MonoBehaviour
     private PlayerClimbBehavior _climbBehavior;
     private PlayerGlideBehavior _glideBehavior;
     private PlayerStunnedBehavior _stunBehavior;
-    private PlayerInventory _inventory;
 
     public PlayerSounds Sounds { get; private set; }
     public bool IsRunning => _currentState == PlayerState.WALK && _runWalkBehavior.IsRunning;
@@ -45,15 +40,12 @@ public class PlayerController : MonoBehaviour
     private bool _resetFromGlideInturrupt => _runWalkBehavior.HasBeenGrounded || _glideBehavior.InturruptPoint.y - transform.position.y > 1f;
     private bool _canGlideCurrent => _resetFromGlideInturrupt && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0;
     public void ApplyFallingGravity() => _runWalkBehavior.ApplyFallingGravity();
-    public void SetClosestItem(InventoryItem item) => _inventory.SetClosestItem(item);
-    public void ClearItem(InventoryItem item) => _inventory.ClearItem(item);
     public float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     public void Shock() => ChangeState(PlayerState.STUNNED);
     public Collider[] GetCollidersBelow() => Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
     public bool CanGlide => _canGlideCurrent && Time.time - _timeWhenCantGlide > _glideBehavior.MinGlideTimeReq && DistanceDown() > _glideBehavior.MinGlideDistReq;
 
     private float _timeWhenCantGlide;
-
 
     private void Awake()
     {
@@ -68,7 +60,6 @@ public class PlayerController : MonoBehaviour
         Sounds = GetComponent<PlayerSounds>();
         _climbBehavior = GetComponent<PlayerClimbBehavior>();
         _glideBehavior = GetComponent<PlayerGlideBehavior>();
-        _inventory = GetComponent<PlayerInventory>();
         _stunBehavior = GetComponent<PlayerStunnedBehavior>();
     }
 
@@ -77,6 +68,17 @@ public class PlayerController : MonoBehaviour
         CheckStateTransitions();
         transform.SetLossyScale(Vector3.one);
         if (!_canGlideCurrent) _timeWhenCantGlide = Time.time;
+        if (GameManager.i.WindCharges > 0 && Input.GetMouseButtonDown(0)) UseWindCharge();
+    }
+
+    private void UseWindCharge()
+    {
+        if (_glideBehavior.enabled) _glideBehavior.Boost();
+        else if (_runWalkBehavior.IsCoyoteGrounded) _runWalkBehavior.BoostJump();
+        else return;
+
+        GameManager.i.RemoveCharge();
+        Sounds.Get(PlayerSoundKey.WIND_CHARGE).Play();
     }
 
     private async void OnDisable()
@@ -88,7 +90,6 @@ public class PlayerController : MonoBehaviour
             gameObject.SetActive(true);
         }
     }
-
 
     private float DistanceDown()
     {

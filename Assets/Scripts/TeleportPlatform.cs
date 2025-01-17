@@ -42,10 +42,10 @@ public class TeleportPlatform : MonoBehaviour
     {
         _currentCooldown -= Time.deltaTime;
         if (_ready) {
-            UIManager.i.SetInteractPromptEnabled(true, gameObject, "teleport");
+            UIManager.i.SetInteractPromptState(true, gameObject, "teleport");
             if (InputController.GetDown(Control.INTERACT)) Teleport();
         }
-        else UIManager.i.SetInteractPromptEnabled(false, gameObject);
+        else UIManager.i.SetInteractPromptState(false, gameObject);
     }
 
     private void OnTriggerEnter(Collider other)

@@ -1,76 +1,89 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GemAnimator : MonoBehaviour
 {
-    public Renderer distortionRend, gemRend;
+    [SerializeField] private Transform _model;
 
-    public Material myMat, gemMat;
+    [Header("Rotation")]
+    [SerializeField] private Vector2 _idleRotSpeeds;
+    [SerializeField] private float _flyingRotSpeed;
+    [SerializeField] private float _rotSnappiness = 4;
 
-    public ParticleSystem idlePS1, idlePS2, pickupParticles;
+    [Header("Motion")]
+    [SerializeField] private AnimationCurve _vertCurve;
+    [SerializeField] private AnimationCurve _sizeCurve;
+    [SerializeField] private float _flyAwayTime = 3;
+    [SerializeField] private float _maxVertDist = 20;
+    
 
-    //public AudioSource pickupSound, towerFinishSound;
-    //[SerializeField] private Sound PickupSound, TowerFinishSound
+    public List<ParticleSystem> _idleParticles = new List<ParticleSystem>();
+    public ParticleSystem _pickupParticles;
+    
+    private bool _idleParticlesActive;
+    private bool _flying;
+    private float _currRotSpeed;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Update()
     {
-        myMat = new Material(distortionRend.material);
-
-        distortionRend.material = myMat;
-
-
-
-        gemMat = new Material(gemRend.material);
-
-        gemRend.material = gemMat;
+        Rotate();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Rotate()
     {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
+        var rotSpeed = _idleRotSpeeds.x;
+        if (_idleParticlesActive) rotSpeed = _idleRotSpeeds.y;
+        if (_flying) rotSpeed = _flyingRotSpeed;
+        _currRotSpeed = Mathf.Lerp(_currRotSpeed, rotSpeed, _rotSnappiness * Time.deltaTime);
+        _model.localEulerAngles += Vector3.up * rotSpeed;
+    }
 
-        //}
+    public void SetIdleParticles(bool active)
+    {
+        if (active == _idleParticlesActive) return;
+        _idleParticlesActive = active;
 
-
-        //if (Input.GetKeyDown(KeyCode.N))
-        //{
-
-        //    gemMat.SetFloat("_isActive", 0);
-
-        //    distortionRend.gameObject.SetActive(false);
-
-        //    pickupParticles.gameObject.SetActive(false);
-
-        //    idlePS1.gameObject.SetActive(false);
-
-        //    idlePS2.gameObject.SetActive(false);
-        //}
+        foreach (var part in _idleParticles) {
+            if (active) part.Play();
+            else part.Stop();
+        }
     }
 
     public void PickUpGem()
     {
-        distortionRend.gameObject.SetActive(true);
+        _pickupParticles.Emit(150);
+        SetIdleParticles(false);
+        FlyAway();
+    }
 
-        myMat.SetFloat("_Ping", Time.time);
+    private void OnDestroy()
+    {
+        _flying = false;
+    }
 
-        gemMat.SetFloat("_Ping", Time.time);
+    private async void FlyAway()
+    {
+        _flying = true;
+        var startY = _model.localPosition.y;
+        var targetHeight = startY + _maxVertDist;
+        var startScale = _model.localScale;
 
-        gemMat.SetFloat("_isActive", 1);
+        float timeLeft = _flyAwayTime;
+        while (timeLeft > 0) {
+            if (!_flying) return;
+            float progress = 1 - (timeLeft / _flyAwayTime);
 
-        pickupParticles.gameObject.SetActive(true);
+            var y = Mathf.Lerp(startY, targetHeight, _vertCurve.Evaluate(progress));
+            var pos = _model.transform.localPosition;
+            pos.y = y;
 
-        idlePS1.gameObject.SetActive(true);
+            _model.localPosition = pos;
+            _model.localScale = Vector3.Lerp(startScale, Vector3.zero, _sizeCurve.Evaluate(progress));
 
-        idlePS2.gameObject.SetActive(true);
-
-        GameManager.i.CompleteTower();
-
-        //pickupSound.Play();
-
-        //towerFinishSound.Play();
+            timeLeft -= Time.deltaTime;
+            await Task.Yield();
+        }
     }
 }

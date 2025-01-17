@@ -10,7 +10,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Vector3 _offset;
     [SerializeField] private float _verticalRotSpeed;
     [SerializeField] private float _yOffsetLerpFactor = 10;
-    //[SerializeField] private float _maxCameraTpDist = 2;
 
     [Header("FOV")]
     [SerializeField] private Vector2 _walkRunFovs;
@@ -25,8 +24,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] private AnimationCurve _spinAnimateCurve;
 
     private PlayerController _playerController;
-    [SerializeField, ReadOnly] private float _yOffset;
-    private bool _cinematic;
+    private float _yOffset;
+    [SerializeField, ReadOnly] private bool _cinematic;
 
     public void SetOffset(float newOffset) => _yOffset = newOffset;
 

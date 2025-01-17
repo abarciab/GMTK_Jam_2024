@@ -41,8 +41,8 @@ public class BouncePlatform : MonoBehaviour
     {
         if (!_activeBounce) return;
         _currentCooldown -= Time.deltaTime;
-        if (_currentCooldown < 0 && _playerInRange) UIManager.i.SetInteractPromptEnabled(true, gameObject, "bounce");
-        else UIManager.i.SetInteractPromptEnabled(false, gameObject);
+        if (_currentCooldown < 0 && _playerInRange) UIManager.i.SetInteractPromptState(true, gameObject, "bounce");
+        else UIManager.i.SetInteractPromptState(false, gameObject);
 
         if (_currentCooldown < 0 && _playerInRange && InputController.GetDown(Control.INTERACT)) {
             _currentCooldown = _cooldown;

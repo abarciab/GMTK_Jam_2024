@@ -4912,7 +4912,6 @@ GameObject:
   - component: {fileID: 241028366166274649}
   - component: {fileID: 4064974228699014209}
   - component: {fileID: 1502638429541603820}
-  - component: {fileID: 7572130662075315208}
   - component: {fileID: 3062164361182654132}
   - component: {fileID: 1300155028300136686}
   m_Layer: 0
@@ -4958,7 +4957,7 @@ MonoBehaviour:
   _groundCheckOffset: {x: 0, y: -0.4, z: 0}
   _nonPlayerLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   _teleportParticles: {fileID: 4663754653246331038}
   RB: {fileID: 0}
 --- !u!114 &8280265114450605824
@@ -4979,14 +4978,15 @@ MonoBehaviour:
   _strafeSpeedMod: 1
   _numJumps: 1
   _jumpForce: 25
+  _boostJumpForce: 180
   _coyoteTime: 1.5
   _groundLayer: 3
   _topOfJumpThreshold: 0.1
   _jumpingUpGravity: 0.8
-  _fallingGravityMinMax: {x: 15, y: 25}
-  _minFallAccelerationTime: 1
-  _timeToMaxFallGravity: 2
-  _groundedAndUngroundedDrag: {x: 6.6, y: 2}
+  _fallingGravityMinMax: {x: 15, y: 20}
+  _minFallAccelerationTime: 0.5
+  _timeToMaxFallGravity: 3
+  _groundedAndUngroundedDrag: {x: 6, y: 2}
   _groundDragNoInputIncrease: 2
   _debug: 1
   _currentGroundObj: {fileID: 0}
@@ -5003,7 +5003,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4158649b98f8d642a231cf6d153233d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _groundLayer: 8
+  _windChargeBoostSpeed: 20
+  _groundLayer: 3
   _tempConstFlySpeed: 10
   _glideAngleIncreaseFactor: 1.8
   _glideSpeedMax: 40
@@ -5014,8 +5015,8 @@ MonoBehaviour:
   _forwardGlideCheckerOffset: {x: 0, y: 0, z: 0.6}
   _downGlideCheckerRadius: 0
   _downGlideCheckerOffset: {x: 0, y: 0, z: 0}
-  MinGlideTimeReq: 0.5
-  MinGlideDistReq: 5
+  MinGlideTimeReq: 0.15
+  MinGlideDistReq: 1.79
   InturruptPoint: {x: 0, y: 0, z: 0}
 --- !u!114 &241028366166274649
 MonoBehaviour:
@@ -5044,7 +5045,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ca462cd64af0d40a579467cc536dc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stunTime: 2
+  _stunTime: 1
 --- !u!114 &1502638429541603820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5073,18 +5074,18 @@ MonoBehaviour:
   - Name: glider land
     Sound: {fileID: 11400000, guid: fae245e115687af42bfd25a182282384, type: 2}
     Key: 4
---- !u!114 &7572130662075315208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8580997805359560301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f39310ab00622a4bbe51dabc8d66655, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  - Name: glider land
+    Sound: {fileID: 11400000, guid: fae245e115687af42bfd25a182282384, type: 2}
+    Key: 4
+  - Name: stunned buzz
+    Sound: {fileID: 11400000, guid: 0aecc3dc1e01de04a9d46934fd15169a, type: 2}
+    Key: 5
+  - Name: bounce
+    Sound: {fileID: 11400000, guid: 94f4d74493f38104b845e201da3997d5, type: 2}
+    Key: 6
+  - Name: wind charge
+    Sound: {fileID: 11400000, guid: a4a046ebf70540a47b9d0168e1640194, type: 2}
+    Key: 7
 --- !u!54 &3062164361182654132
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5111,7 +5112,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!136 &1300155028300136686
 CapsuleCollider:
   m_ObjectHideFlags: 0

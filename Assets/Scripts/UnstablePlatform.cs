@@ -14,6 +14,7 @@ public class UnstablePlatform : MonoBehaviour
     [SerializeField] private Sound _appearSound;
     [SerializeField] private Sound _disapearSound;
     [SerializeField] private GameObject _platformParent;
+    [SerializeField] private GameObject _lowOpacityParent;
 
     [SerializeField, ReadOnly] private bool _shown;
     [SerializeField, ReadOnly] private float _currentCountdown;
@@ -49,5 +50,6 @@ public class UnstablePlatform : MonoBehaviour
     private void SetPlatformVisible(bool state)
     {
         _platformParent.SetActive(state);
+        _lowOpacityParent.SetActive(!state);
     }
 }

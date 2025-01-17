@@ -2,6 +2,7 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -15,8 +16,11 @@ public class GameManager : MonoBehaviour
     }
 
     public Transform Camera;
-    [SerializeField] private int _totalTowerCount = 4;
+    public float TowerStunTime = 30;
+    public float AbandonedTowerTimer = 45;
+    [SerializeField] private float _abandonRecoveryStunTime = 30;
 
+    [SerializeField] private int _totalTowerCount = 4;
 
     [SerializeField] pauseMenuController _pauseMenu;
     [SerializeField] Fade _fade;
@@ -24,26 +28,54 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _flood;
     [SerializeField] private float _trigggerFloodStartHeight = 15;
 
-
     [HideInInspector] public PlayerController Player;
-    [HideInInspector] public List<TowerController> Towers { get; private set; } = new List<TowerController>();
     [HideInInspector] public Vector3 MiddlePoint;
 
     private float _highScore;
     private TowerController _currentTower;
     private int _towersLeft;
-
-    private float _playerY => Player.transform.position.y;  
-    private float _towerProgress => _currentTower == null ? 0 : _currentTower.CheckProgress(_playerY);
     private bool _lostGame;
     private bool _startedGame;
+    private bool _fading;
+
+    public int WindCharges { get; private set; }
+    public List<TowerController> Towers { get; private set; } = new List<TowerController>();
+    private float _playerY => Player.transform.position.y;  
+    private float _playerTowerProgress => _currentTower == null ? 0 : _currentTower.CheckProgress(_playerY);
 
     private void Start()
     { 
         _fade.Disappear();
         _towersLeft = _totalTowerCount;
-        //_flood.SetActive(false);
         SetMouseState(false);
+        _flood.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) SetMouseState(false);
+        if (InputController.GetDown(Control.PAUSE)) TogglePause();
+        if (InputController.GetDown(Control.DEBUG)) AddCharge(5);
+
+        CalculateHighScore();
+
+        if (_lostGame && InputController.GetDown(Control.RESPAWN)) {
+            StartCoroutine(FadeThenLoadScene(1));
+        }
+    }
+
+    public void AddSingleCharge() => AddCharge();
+
+    public void AddCharge(int count = 1)
+    {
+        WindCharges += count;
+        UIManager.i.HUD.ShowWindCharges(WindCharges);
+    }
+
+    public void RemoveCharge()
+    {
+        WindCharges -= 1;
+        UIManager.i.HUD.ShowWindCharges(WindCharges);
     }
 
     public void RegisterTower(TowerController _tower)
@@ -57,14 +89,6 @@ public class GameManager : MonoBehaviour
         var total = new Vector3();
         foreach (var t in Towers) total += transform.position;
         MiddlePoint = total/Towers.Count;
-    }
-
-    private void Update()
-    {
-        if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) SetMouseState(false);
-        if (InputController.GetDown(Control.PAUSE)) TogglePause();
-
-        CalculateHighScore();
     }
 
     public FloorController GetFloorAtY(List<TowerController> invalid, float y)
@@ -97,7 +121,11 @@ public class GameManager : MonoBehaviour
 
     public void CompleteTower()
     {
+        if (_currentTower == null) return;
+
         _towersLeft -= 1;
+        _currentTower.Complete();
+        UIManager.i.TowerIndicator.Complete(_currentTower.ID);
         if (_towersLeft == 0) StartCoroutine(WaitThenEndGame());
     }
 
@@ -116,31 +144,36 @@ public class GameManager : MonoBehaviour
             _highScore = currentScore;
             UIManager.i.ShowHighScore(Mathf.FloorToInt(_highScore));
         }
-        if (currentScore > _trigggerFloodStartHeight) _flood.SetActive(true);
+        if (currentScore > _trigggerFloodStartHeight) {
+            print("starting flood");
+            _flood.SetActive(true);
+        }
+    }
+
+    public void StunAllTowers()
+    {
+        foreach (var t in Towers) t.Stun(_abandonRecoveryStunTime);
     }
 
     public void UpdateCurrentTower(TowerController newTower)
     {
         if (newTower == null) {
-            if (_currentTower) _currentTower.SetAsCurrentTower(false);
+            if (_currentTower) _currentTower.SetCurrent(false);
             _currentTower = newTower;
-            if (_currentTower) _currentTower.SetAsCurrentTower(true);
-            UIManager.i.HideTowerProgress();
+            if (_currentTower) _currentTower.SetCurrent(true);
+            UIManager.i.CurrentTower.Set("", 0);
             _music.CurrentSong = 0;
             return;
         }
-        //else if (_currentTower) _currentTower.IsCurrentTower = false;
 
         if (newTower != _currentTower) {
-            if (_currentTower) _currentTower.SetAsCurrentTower(false);
+            if (_currentTower != null) _currentTower.SetCurrent(false);
             _currentTower = newTower;
-            _currentTower.SetAsCurrentTower(true);
-            UIManager.i.StartNewTower(newTower.Name, _towerProgress);
-        }else {
-            UIManager.i.ShowCurrentTowerProgress(_towerProgress);
-            if (_currentTower.Complete) UIManager.i.CompleteTower(_currentTower.Index);
         }
-        _music.CurrentSong =  Mathf.FloorToInt((_towerProgress+0.2f) * 4);
+
+        newTower.SetCurrent(true);
+        UIManager.i.CurrentTower.Set(newTower.Name, _playerTowerProgress);
+        _music.CurrentSong = Mathf.FloorToInt((_playerTowerProgress + 0.2f) * 4);
     }
 
     private void SetMouseState(bool visible)
@@ -183,7 +216,7 @@ public class GameManager : MonoBehaviour
     {
         if (_lostGame) return;
         _lostGame = true;
-        StartCoroutine(FadeThenLoadScene(1));
+        UIManager.i.Die();
     }
 
 
@@ -191,11 +224,14 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         Resume();
-        StartCoroutine(FadeThenLoadScene(0));
+        StartCoroutine(FadeThenLoadScene(3));
     }
 
     IEnumerator FadeThenLoadScene(int num)
     {
+        if (_fading) yield break;
+        _fading = true;
+
         _fade.Appear(); 
         _music.FadeOutCurrent(_fade.FadeTime);
         yield return new WaitForSeconds(_fade.FadeTime + 0.5f);

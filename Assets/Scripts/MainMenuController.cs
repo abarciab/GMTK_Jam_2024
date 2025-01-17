@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,6 +11,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private GameObject _creditsParent;
     [SerializeField] private GameObject _settingsParent;
 
+    private bool _quitting;
 
     private void Start()
     {
@@ -22,13 +24,15 @@ public class MainMenuController : MonoBehaviour
         StartCoroutine(TransitionToGame());
     }
 
-    public void Quit()
+    public async void Quit()
     {
+        if (_quitting) return;
+        _quitting = true;
+
         _music.FadeOutCurrent(_fade.FadeTime);
         _fade.Appear();
-#if !UNITY_EDITOR
-        Invoke(nameof(Application.Quit), _fade.FadeTime);
-#endif
+        await Task.Delay(Mathf.RoundToInt(_fade.FadeTime * 1000));
+        Application.Quit();
     }
 
     public void SetCredits(bool state)

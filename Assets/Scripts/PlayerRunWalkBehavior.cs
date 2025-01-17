@@ -17,6 +17,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     [Header("Jumping")]
     [SerializeField] private int _numJumps = 1;
     [SerializeField] private float _jumpForce;
+    [SerializeField] private float _boostJumpForce = 400;
     [SerializeField] private float _coyoteTime = 1f;
     [SerializeField] private int _groundLayer;
 
@@ -69,6 +70,11 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         if (_isCoyoteGrounded && InputController.GetDown(Control.JUMP)) Jump();
         WalkRun();
         if (!_isGrounded) ApplyGravity();
+    }
+
+    public void BoostJump()
+    {
+        Jump(boost: true);
     }
 
     private void ApplyGravity()
@@ -164,7 +170,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         if (changingDirection || notAtMaxSpeed) currentTotalVel += inputVel * acceleration * Axis;
     }
 
-    public void Jump(bool overrideConditions = false) {
+    public void Jump(bool overrideConditions = false, bool boost = false) {
         if (!overrideConditions) {
             float timeSinceLastJump = Time.time - _lastJumpTime;
             if (_numJumpsLeft <= 0) return;
@@ -174,7 +180,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         _numJumpsLeft -= 1;
         _sounds.Get(PlayerSoundKey.JUMP).Play(restart: false);
         var vel = _rb.velocity;
-        vel.y = _jumpForce;
+        vel.y = boost ? _boostJumpForce : _jumpForce;
         _rb.velocity = vel;
         _lastJumpTime = Time.time;
         _timeWhenLastGrounded = Time.time;

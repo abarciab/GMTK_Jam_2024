@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerController))]
 public class PlayerGlideBehavior : MonoBehaviour
 {
+    [SerializeField] private float _windChargeBoostSpeed = 20;
     [SerializeField] private int _groundLayer = 8;
     [SerializeField] private float _tempConstFlySpeed = 10;
     [SerializeField] private float _glideAngleIncreaseFactor = 1;
@@ -47,6 +48,11 @@ public class PlayerGlideBehavior : MonoBehaviour
 
         _controller.Rotate(); 
         Glide();
+    }
+
+    public void Boost()
+    {
+        _glideSpeed += _windChargeBoostSpeed;
     }
 
     private void OnDisable()

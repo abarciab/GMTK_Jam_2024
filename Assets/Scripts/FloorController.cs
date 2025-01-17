@@ -46,7 +46,7 @@ public class FloorController : MonoBehaviour
     [SerializeField] private bool _findFloorSections;
 
     [HideInInspector] public CardinalDirection ExitSide => _exitSide;
-    [HideInInspector] public Vector3 TopPos => !gameObject.activeInHierarchy && PreviousFloor ? PreviousFloor.TopPos : _highestActiveSection.TopPos;
+    [HideInInspector] public Vector3 TopPos => GetTopPos();
     [HideInInspector] public int SectionCount => _sections.Count;
     [HideInInspector] public bool Complete => _targetExpansion == 1;
     [HideInInspector] public bool HasBridge;
@@ -70,6 +70,13 @@ public class FloorController : MonoBehaviour
     {
         _connectedTowers.Add(GetComponentInParent<TowerController>());
         if (!_manuallyExtended) _targetExpansion = _expansionProgress = 0;
+    }
+
+    private Vector3 GetTopPos()
+    {
+        if (!gameObject.activeInHierarchy && PreviousFloor) return PreviousFloor.TopPos;
+        else if (_sections.Where(x => x.gameObject.activeInHierarchy).ToList().Count > 0) return _highestActiveSection.TopPos;
+        return transform.position;
     }
 
     public void SetPalette(ColorPaletteData palette) {
@@ -146,7 +153,7 @@ public class FloorController : MonoBehaviour
         UpdateModel();
     }
 
-    public void Initialize(Dictionary<Material, Material> matDict)
+    public void Initialize()
     {
         if (GameManager.i && _bridgePointParent && _bridgePointParent.childCount > 1) {
             var bridgePoints = new List<Transform>();
@@ -154,8 +161,6 @@ public class FloorController : MonoBehaviour
             bridgePoints = bridgePoints.OrderBy(x => Vector3.Distance(GameManager.i.MiddlePoint, x.transform.position)).ToList();
             for (int i = 1; i < bridgePoints.Count; i++) bridgePoints[i].gameObject.SetActive(false);
         }
-
-        //if (_rootParent) ReplaceMaterials(_rootParent, matDict);
     }
 
     private void ReplaceMaterials(Transform current,  Dictionary<Material, Material> matDict)

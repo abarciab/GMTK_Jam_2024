@@ -78,7 +78,8 @@ public class TowerBuilder : MonoBehaviour
             newFloorPos = _currentTopFloor.TopPos;
         }
 
-        GameObject newFloorObj = Instantiate(floorPrefab, newFloorPos, Quaternion.Euler(newFloorRot), transform);
+        GameObject newFloorObj = Instantiate(floorPrefab, newFloorPos, Quaternion.identity, transform);
+        newFloorObj.transform.localRotation = Quaternion.Euler(newFloorRot);
         FloorController newFloor = newFloorObj.GetComponent<FloorController>(); 
         if (_placedFloors.Count > 0) newFloor.PreviousFloor = _placedFloors[^1];
 

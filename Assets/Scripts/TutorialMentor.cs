@@ -17,14 +17,14 @@ public class TutorialMentor : MonoBehaviour
         if (UIManager.i._dialogue.gameObject.activeInHierarchy) return;
 
         var dist = Vector3.Distance(transform.position, _player.position);
-        UIManager.i.SetInteractPromptEnabled(dist < _activationDistance, gameObject, "Listen");
+        UIManager.i.SetInteractPromptState(dist < _activationDistance, gameObject, "Listen");
 
         if (dist > _activationDistance) return;
         else if (InputController.GetDown(Control.INTERACT)){
             UIManager.i._dialogue.StartDialogue(_conversations[0].Lines);
             _conversations.RemoveAt(0);
             if (_conversations.Count == 0) gameObject.SetActive(false);
-            UIManager.i.SetInteractPromptEnabled(false, gameObject);
+            UIManager.i.SetInteractPromptState(false, gameObject);
         }
     }
 

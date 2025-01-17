@@ -5,11 +5,12 @@ using UnityEngine;
 public class Flood : MonoBehaviour
 {
     [SerializeField] private float _totalSeconds = 600;
+    [SerializeField] private float _maxHeight = 450;
     [SerializeField] private AnimationCurve _curve;
     [SerializeField] private float _offset = 90;
-    [SerializeField] private float _topOffset = 25;
 
-    [SerializeField] private Material slimePipeMat, refMat;
+    [SerializeField] private Material slimePipeMat;
+    private Material refMat;
 
     private float _timePassed;
 
@@ -25,7 +26,7 @@ public class Flood : MonoBehaviour
         _timePassed += Time.deltaTime;
         float progress = _timePassed / _totalSeconds;
         progress = _curve.Evaluate(progress);
-        float maxHeight = GameManager.i.GetShortestMaxHeight() - _topOffset;
+        float maxHeight = _maxHeight;
         float targetHeight = progress * maxHeight;
 
         var pos = transform.position;

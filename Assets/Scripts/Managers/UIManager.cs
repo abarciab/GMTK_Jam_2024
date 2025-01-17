@@ -15,26 +15,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private string _highScoreTemplateString = "High score: SCOREm";
     [SerializeField] private TextMeshProUGUI _timerText;
 
-    [Header("Tower progress")]
-    [SerializeField] private GameObject _towerProgressParent;
-    [SerializeField] private Slider _towerProgresSlider;
-    [SerializeField] private TextMeshProUGUI _currentTowerText;
-    [SerializeField] private TextMeshProUGUI _towerPercentText;
-    [SerializeField] private string _currentTowerTemplateString = "Current Tower: NAME";
-
-    [Header("Completed Towers")]
-    [SerializeField] private List<SelectableItem> _completedTowerIcons = new List<SelectableItem>();
-
-    [Header("Inventory")]
-    [SerializeField] private List<Image> _inventoryImages;
-    [SerializeField] private Image _inventorySelectionIndicator;
-
     [Header("Misc")]
     public DialogueController _dialogue;
     [SerializeField] private GameObject _interactPrompt;
     [SerializeField] private TextMeshProUGUI _interactText;
     [SerializeField] private GameObject _blackBlocker;
     [SerializeField] private GameObject _stunFlash;
+    [SerializeField] private GameObject _deathScreen;
+    [SerializeField] private Sound _deathSound;
 
     [Header("crosshair")]
     [SerializeField] private Animator _crosshairImg;
@@ -47,33 +35,31 @@ public class UIManager : MonoBehaviour
     [SerializeField] private float _edgeBufferDistance;
     [SerializeField] private float _maxPOIDist = 150;
 
-    private float _targetTowerProgress;
+    [Header("SubScripts")]
+    [SerializeField] private TowerStatusUI _towerIndicator;
+    [SerializeField] private CurrentTowerUI _currentTowerDisplay;
+    [SerializeField] private HUDController _hud;
+
     private GameObject _promptSource;
 
     private List<(Transform, Sprite)> pointsOfInterest = new List<(Transform, Sprite)>();
 
+    public TowerStatusUI TowerIndicator => _towerIndicator; 
+    public CurrentTowerUI CurrentTower => _currentTowerDisplay;
+    public HUDController HUD => _hud;
     public void FadeToBlack(float time) => _blackBlocker.SetActive(true);
     public void FadeFromBlack(float time) => _blackBlocker.SetActive(false);
-
     public void ShowHighScore(int score) => _highScoreText.text = _highScoreTemplateString.Replace("SCORE", (Mathf.Max(0, score - 90)).ToString());
-    public void ShowCurrentTowerProgress(float progress) => _targetTowerProgress = progress;
-    public void HideTowerProgress() => _towerProgressParent.SetActive(false);
-    public void CompleteTower(int index) => _completedTowerIcons[index].SetEnabled(true);
     public void SetStunFlashVisbility(bool visible) => _stunFlash.SetActive(visible);
-
     private void Awake() { i = this; }
 
     private void Start()
     {
-        foreach (var icon in _completedTowerIcons) icon.SetEnabled(false);
-        foreach (var image in _inventoryImages) image.enabled = false;
-        _inventorySelectionIndicator.enabled = false;
+        _deathSound = Instantiate(_deathSound);
     }
 
     private void Update()
     {
-        _towerProgresSlider.value = Mathf.Lerp(_towerProgresSlider.value, _targetTowerProgress, 8 * Time.deltaTime); 
-        _towerPercentText.text = ((int) (_towerProgresSlider.value * 100)) + "%";
         _timerText.text = GetTimeString((int) Time.timeSinceLevelLoad);
         if (InputController.GetDown(Control.DETAILS)) {
             bool detailed = !_detailedInterest.activeInHierarchy;
@@ -86,6 +72,13 @@ public class UIManager : MonoBehaviour
     private void LateUpdate()
     {
         AdjustPointsOfInterest();
+    }
+
+    public void Die()
+    {
+        if (_deathScreen.activeInHierarchy) return;
+        _deathScreen.SetActive(true);
+        _deathSound.Play();
     }
 
     private void AdjustPointsOfInterest()
@@ -102,6 +95,7 @@ public class UIManager : MonoBehaviour
                 closestDistance = thisDistance;
             }
         }
+
         _interestIndicator.SetActive(closestPoint != default);
         if (closestPoint == default) return;
 
@@ -118,10 +112,9 @@ public class UIManager : MonoBehaviour
         _interestIndicator.transform.position = new Vector3(x, y, z);
 
         _interestDistanceText.text = closestDistance.ToString("0") + "m";
-        //_interestDistanceText.text = closestDistance.ToString(screenPos.ToString());
     }
 
-    public void SetInteractPromptEnabled(bool enable, GameObject source, string verb = "")
+    public void SetInteractPromptState(bool enable, GameObject source, string verb = "")
     {
         if (!enable && source != _promptSource) return;
         if (enable && source == _promptSource) return;
@@ -135,9 +128,7 @@ public class UIManager : MonoBehaviour
 
     public void StartNewTower(string towerName, float progress)
     {
-        _towerProgressParent.SetActive(true);
-        ShowCurrentTowerProgress(progress);
-        _currentTowerText.text = _currentTowerTemplateString.Replace("NAME", towerName);
+        _currentTowerDisplay.Set(towerName, progress);
     }
 
     private string GetTimeString(int seconds)
@@ -146,24 +137,6 @@ public class UIManager : MonoBehaviour
         TimeSpan timeSpan = TimeSpan.FromSeconds(seconds);
         string timeString = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
         return timeString;
-    }
-
-    public void SetInventoryImage(Sprite sprite, int index)
-    {
-        _inventoryImages[index].sprite = sprite;
-        _inventoryImages[index].enabled = true;
-    }
-
-    public void RemoveInventoryImage(int index)
-    {
-        _inventoryImages[index].sprite = null;
-        _inventoryImages[index].enabled = false;
-    }
-
-    public void SelectInventoryImage(int index)
-    {
-        _inventorySelectionIndicator.transform.position = _inventoryImages[index].transform.position;
-        _inventorySelectionIndicator.enabled = true;
     }
 
     public void AddPointOfInterest(Transform point, Sprite Icon)
