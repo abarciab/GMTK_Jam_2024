@@ -8,6 +8,7 @@ public class GemController : MonoBehaviour
     [SerializeField] private GemAnimator _animatorScript;
     [SerializeField] private Sound _pickupSound;
 
+    private TowerController _tower;
     private Transform _player;
 
     private void Start()
@@ -19,6 +20,7 @@ public class GemController : MonoBehaviour
 
         _player = GameManager.i.Player.transform;
         _pickupSound = Instantiate(_pickupSound);
+        _tower = GetComponentInParent<TowerController>();
     }
 
     private void Update()
@@ -37,7 +39,7 @@ public class GemController : MonoBehaviour
         enabled = false;
         UIManager.i.SetInteractPromptState(false, gameObject);
         _animatorScript.PickUpGem();
-        GameManager.i.CompleteTower();
+        GameManager.i.CompleteTower(_tower);
         _pickupSound.Play();
     }
 

@@ -24,16 +24,22 @@ public class PlayerGlideBehavior : MonoBehaviour
     public float MinGlideDistReq = 5f;
 
     [HideInInspector] public Vector3 InturruptPoint;
-    public float GlideSpeedPercent => _glideSpeed / _glideSpeedMax;
 
     private PlayerController _controller;
     private float _glideSpeed;
     private Vector3 _oldPos;
+    private CameraController _cam;
+
     private PlayerSounds Sounds => _controller.Sounds;
     private Rigidbody _rb => _controller.RB;
+    public float GlideSpeedPercent => _glideSpeed / _glideSpeedMax;
+
 
     private void OnEnable() {
         if (!_controller) _controller = GetComponent<PlayerController>();
+        if (!_cam) _cam = GameManager.i.Camera.GetComponent<CameraController>();
+
+        transform.SetParent(null);
         Sounds.Get(PlayerSoundKey.WIND_LOOP).PlaySilent();
         Sounds.Get(PlayerSoundKey.OPEN_GLIDER).Play();
         _glideSpeed = _tempConstFlySpeed;
@@ -42,9 +48,10 @@ public class PlayerGlideBehavior : MonoBehaviour
     }
 
     private void Update() {
+        _cam.SetFlyParticles(_glideSpeed / (_glideSpeedMax + 20));
+
         CheckIfShouldLand();
         if (!enabled) return;
-
 
         _controller.Rotate(); 
         Glide();

@@ -372,6 +372,7 @@ GameObject:
   - component: {fileID: 4066462439083221307}
   - component: {fileID: 2355123549386111023}
   - component: {fileID: 907546537777858531}
+  - component: {fileID: 8242388387546206028}
   m_Layer: 3
   m_Name: Decaying platform
   m_TagString: Untagged
@@ -389,7 +390,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.45872158, y: 0.4060625, z: 0.42936078}
+  m_LocalScale: {x: 0.45872158, y: 0.4, z: 0.42936078}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6042997977564840304}
@@ -439,6 +440,20 @@ LODGroup:
     renderers:
     - renderer: {fileID: 7839021391098508036}
   m_Enabled: 1
+--- !u!114 &8242388387546206028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5178620808261057677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e1262f518b93a043b81a8f18f25b567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _y: 0.4
+  _ignoreParent: 0
 --- !u!1 &7282858866257210138
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,11 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using MyBox;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.UIElements;
 
 public enum CardinalDirection { South, East, North, West };
 
@@ -44,6 +41,7 @@ public class FloorController : MonoBehaviour
 
     [Header("Buttons")]
     [SerializeField] private bool _findFloorSections;
+    [SerializeField] private bool _setMaxHeight;
 
     [HideInInspector] public CardinalDirection ExitSide => _exitSide;
     [HideInInspector] public Vector3 TopPos => GetTopPos();
@@ -51,6 +49,7 @@ public class FloorController : MonoBehaviour
     [HideInInspector] public bool Complete => _targetExpansion == 1;
     [HideInInspector] public bool HasBridge;
     [HideInInspector] public FloorController PreviousFloor;
+    [ReadOnly] public float MaxHeight;
 
     private FloorSection _highestActiveSection => _sections.Where(x => x.gameObject.activeInHierarchy).Last();
     private List<TowerController> _connectedTowers = new List<TowerController>(); 
@@ -63,6 +62,11 @@ public class FloorController : MonoBehaviour
             _findFloorSections = false;
             FindSections(); 
         }
+        if (_setMaxHeight) {
+            _setMaxHeight = false;
+            MaxHeight = TopPos.y - transform.position.y;
+        }
+
         UpdateModel();
     }
 
@@ -70,6 +74,14 @@ public class FloorController : MonoBehaviour
     {
         _connectedTowers.Add(GetComponentInParent<TowerController>());
         if (!_manuallyExtended) _targetExpansion = _expansionProgress = 0;
+    }
+
+    public void ResetAndChangePalette(ColorPaletteData originalPalette,  ColorPaletteData newPalette)
+    {
+        foreach (Transform child in transform) {
+            ResetMaterials(child, originalPalette);
+            SetMaterials(child, newPalette);
+        }
     }
 
     private Vector3 GetTopPos()
@@ -93,6 +105,19 @@ public class FloorController : MonoBehaviour
             renderer.sharedMaterials = materials.ToArray();
         }
         foreach (Transform child in obj) SetMaterials(child, palette);
+    }
+
+    private void ResetMaterials(Transform obj, ColorPaletteData palette)
+    {
+        var renderer = obj.GetComponent<MeshRenderer>();
+        if (renderer) {
+            var materials = new List<Material>(renderer.sharedMaterials);
+            for (int i = 0; i < materials.Count; i++) {
+                materials[i] = palette.ReverseMaterial(materials[i]);
+            }
+            renderer.sharedMaterials = materials.ToArray();
+        }
+        foreach (Transform child in obj) ResetMaterials(child, palette);
     }
 
     private void FindSections() {
@@ -306,7 +331,6 @@ public class FloorController : MonoBehaviour
         
     }
 
-    [ButtonMethod]
     public void IncrementTargetExpansion(float time = -1)
     {
         if (time < 0) time = _expansionTime;

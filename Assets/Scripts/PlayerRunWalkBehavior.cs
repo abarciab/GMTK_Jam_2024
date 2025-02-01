@@ -49,7 +49,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     private bool _isGrounded => _currentGroundObj != null;
     private Rigidbody _rb => _controller.RB;
     private PlayerSounds _sounds => _controller.Sounds; 
-    private bool _isCoyoteGrounded => _isGrounded || (_numJumpsLeft > 0 && Time.time - _timeWhenLastGrounded < _coyoteTime);
+    private bool _isCoyoteGrounded => _isGrounded || (_numJumpsLeft > 0 && (Time.time - _timeWhenLastGrounded) < _coyoteTime);
     private void ApplySpecificGravity(float amount) => _rb.velocity += 10 * amount * Time.deltaTime * Vector3.down;
     public void ApplyFallingGravity() => ApplySpecificGravity(_fallingGravityMinMax.x);
 
@@ -107,16 +107,19 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         bool WasGrounded = _isGrounded;
         var colliders = _controller.GetCollidersBelow().Where(x => !x.isTrigger && !x.GetComponent<PlayerController>() && x.gameObject.layer == _groundLayer).ToList();
         _currentGroundObj = colliders.Count > 0 ? colliders[0].gameObject : null;
+
         if (!_isGrounded) {
             _onMovingPlatform = false;
             return;
         }
-        else HasBeenGrounded = true;
+        else {
+            HasBeenGrounded = true;
+            _timeWhenLastGrounded = Time.time;
+        }
 
-        bool onBridge = _currentGroundObj.GetComponentInParent<BridgeController>() != null; 
         _onMovingPlatform = _currentGroundObj.GetComponentInParent<MovingPlatform>() != null;
 
-        if (!onBridge) GameManager.i.UpdateCurrentTower(_currentGroundObj.GetComponentInParent<TowerController>());
+        GameManager.i.UpdateCurrentTower(_currentGroundObj.GetComponentInParent<TowerController>());
         if (!WasGrounded && canLand) Land();
         HandleDecayingPlatform();
         

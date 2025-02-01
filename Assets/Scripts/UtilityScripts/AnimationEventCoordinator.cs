@@ -20,6 +20,7 @@ public class AnimationEventCoordinator : MonoBehaviour
     public void TriggerEvent1() => TEvent(0);
     public void TriggerEvent2() => TEvent(1);
     public void TriggerEvent3() => TEvent(2);
+    public void PlaySound1Local() => PSound(0, transform);
     public void PlaySound1() => PSound(0);
     public void PlaySound2() => PSound(1);
     public void PlaySound3() => PSound(2);

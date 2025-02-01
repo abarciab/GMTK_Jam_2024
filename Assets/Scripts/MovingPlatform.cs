@@ -16,6 +16,11 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private AnimationCurve _curve;
     [SerializeField, Range(1, 2)] private int _startState = 1;
 
+    [Header("Markers")]
+    [SerializeField] private Transform _state1Marker;
+    [SerializeField] private Transform _state2Marker;
+    [SerializeField] private Transform _lineMarker;
+
     private bool _inState1;
 
     private void OnEnable()
@@ -99,6 +104,9 @@ public class MovingPlatform : MonoBehaviour
             var rot = Quaternion.Lerp(startState.Rot, target.Rot, progress);
             transform.SetLocalPositionAndRotation(pos, rot);
 
+            if (_state1Marker) _state1Marker.position = transform.parent.TransformPoint(_state1.Pos);
+            if (_state1Marker) _state2Marker.position = transform.parent.TransformPoint(_state2.Pos);
+
             timePassed += Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
@@ -109,6 +117,11 @@ public class MovingPlatform : MonoBehaviour
             if (_inState1) GoToState2();
             else GoToState1();
         }
+    }
+
+    private bool NoNaNs(Vector3 vector)
+    {
+        return !float.IsNaN(vector.x) && !float.IsNaN(vector.y) && !float.IsNaN(vector.z);
     }
 
     private void OnDrawGizmosSelected()

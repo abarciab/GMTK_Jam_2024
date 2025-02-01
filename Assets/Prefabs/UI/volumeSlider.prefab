@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5882353, g: 0.5176471, b: 0.46666667, a: 1}
+  m_Color: {r: 0.5882353, g: 0.5176471, b: 0.4666667, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -180,21 +180,26 @@ MonoBehaviour:
   _selectOnClick: 0
   _toggleOnClick: 0
   _deselectOnClick: 0
+  _dontHoverWhenSelected: 0
   _selectOnHover: 0
   _deselectOnExit: 1
   _hasHoverCooldown: 0
   _hoverCooldown: 0.05
   _deselectOnStart: 1
   _autoDehover: 0
-  _sliderMode: 1
   _data:
   - Name: highlight
     _type: 1
     _target: {fileID: 6121732674256304814}
+    _useMaterials: 0
     _normalColor: {r: 1, g: 1, b: 1, a: 1}
     _hoveredColor: {r: 1, g: 1, b: 1, a: 1}
     _selectedColor: {r: 1, g: 1, b: 1, a: 1}
     _disabledColor: {r: 1, g: 1, b: 1, a: 1}
+    _normalMat: {fileID: 0}
+    _hoveredMat: {fileID: 0}
+    _selectedMat: {fileID: 0}
+    _disabledMat: {fileID: 0}
     _obj: {fileID: 5683385567943136979}
     _normalState: 0
     _hoveredState: 1
@@ -205,13 +210,28 @@ MonoBehaviour:
     _hoveredAlpha: 0.6
     _selectedAlpha: 1
     _disabledAlpha: 0.2
+    _spriteTarget: {fileID: 0}
+    _normalSprite: {fileID: 0}
+    _hoveredSprite: {fileID: 0}
+    _selectedSprite: {fileID: 0}
+    _disabledSprite: {fileID: 0}
+    _showGraphicSettings: 0
+    _showGraphicColorSettings: 0
+    _showGOSettings: 1
+    _showGroupSettings: 0
+    _showSpriteSettings: 0
   - Name: Label
     _type: 0
     _target: {fileID: 9205703025838726891}
+    _useMaterials: 0
     _normalColor: {r: 0.8705883, g: 0.7294118, b: 0.6039216, a: 0.69803923}
     _hoveredColor: {r: 0.17254902, g: 0.20392159, b: 0.25882354, a: 1}
     _selectedColor: {r: 1, g: 1, b: 1, a: 1}
     _disabledColor: {r: 1, g: 1, b: 1, a: 1}
+    _normalMat: {fileID: 0}
+    _hoveredMat: {fileID: 0}
+    _selectedMat: {fileID: 0}
+    _disabledMat: {fileID: 0}
     _obj: {fileID: 5683385567943136979}
     _normalState: 0
     _hoveredState: 1
@@ -222,13 +242,28 @@ MonoBehaviour:
     _hoveredAlpha: 0.6
     _selectedAlpha: 1
     _disabledAlpha: 0.2
+    _spriteTarget: {fileID: 0}
+    _normalSprite: {fileID: 0}
+    _hoveredSprite: {fileID: 0}
+    _selectedSprite: {fileID: 0}
+    _disabledSprite: {fileID: 0}
+    _showGraphicSettings: 1
+    _showGraphicColorSettings: 1
+    _showGOSettings: 0
+    _showGroupSettings: 0
+    _showSpriteSettings: 0
   - Name: Handle
     _type: 0
     _target: {fileID: 2436787117522938015}
+    _useMaterials: 0
     _normalColor: {r: 0.5882353, g: 0.5176471, b: 0.4666667, a: 1}
     _hoveredColor: {r: 0.87058824, g: 0.7294118, b: 0.6039216, a: 1}
     _selectedColor: {r: 1, g: 1, b: 1, a: 1}
     _disabledColor: {r: 1, g: 1, b: 1, a: 1}
+    _normalMat: {fileID: 0}
+    _hoveredMat: {fileID: 0}
+    _selectedMat: {fileID: 0}
+    _disabledMat: {fileID: 0}
     _obj: {fileID: 5683385567943136979}
     _normalState: 0
     _hoveredState: 1
@@ -239,6 +274,16 @@ MonoBehaviour:
     _hoveredAlpha: 0.6
     _selectedAlpha: 1
     _disabledAlpha: 0.2
+    _spriteTarget: {fileID: 0}
+    _normalSprite: {fileID: 0}
+    _hoveredSprite: {fileID: 0}
+    _selectedSprite: {fileID: 0}
+    _disabledSprite: {fileID: 0}
+    _showGraphicSettings: 1
+    _showGraphicColorSettings: 1
+    _showGOSettings: 0
+    _showGroupSettings: 0
+    _showSpriteSettings: 0
   _hasAnimation: 0
   _animator: {fileID: 0}
   _animationBool: Selected
@@ -482,7 +527,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 95.4028, y: -0.039499283}
-  m_SizeDelta: {x: 140.9956, y: -4.5042}
+  m_SizeDelta: {x: 162.6154, y: -4.5042}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6359617763175395724
 CanvasRenderer:
@@ -514,8 +559,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Master
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 37b45f2eccd37954dad1f63369659977, type: 2}
-  m_sharedMaterial: {fileID: -688394039944684822, guid: 37b45f2eccd37954dad1f63369659977, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1fa3ed9409e156741841edcb7a1ebc6e, type: 2}
+  m_sharedMaterial: {fileID: 2889334899026974687, guid: 1fa3ed9409e156741841edcb7a1ebc6e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

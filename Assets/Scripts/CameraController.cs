@@ -11,6 +11,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float _verticalRotSpeed;
     [SerializeField] private float _yOffsetLerpFactor = 10;
 
+    [Header("Performance")]
+    [SerializeField] private float _maxDelta = 10;
+    [SerializeField] private List<float> _mouseYValues = new List<float>();
+
     [Header("FOV")]
     [SerializeField] private Vector2 _walkRunFovs;
     [SerializeField] private Vector2 _glideMinMaxFovs;
@@ -18,6 +22,10 @@ public class CameraController : MonoBehaviour
 
     [Header("Misc")]
     [SerializeField] private Camera _camera;
+
+    [Header("Particles")]
+    [SerializeField] private ParticleSystem _speedLines;
+    [SerializeField] private float _maxParticles;
 
     [Header("Cinematics")]
     [SerializeField] private Transform _spinner;
@@ -36,6 +44,15 @@ public class CameraController : MonoBehaviour
         SetPosAndRotation();
         if (_playerController.IsGliding) SetGlideFov();
         else SetGroundFov();
+    }
+
+    public void SetFlyParticles(float percentSpeed, bool active = true)
+    {
+        if (active) _speedLines.Play();
+        else _speedLines.Stop();
+
+        var emissionData = _speedLines.emission;
+        emissionData.rateOverTime = Mathf.Lerp(0, _maxParticles, percentSpeed);
     }
 
     private void SetGlideFov() {

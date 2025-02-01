@@ -37,4 +37,13 @@ public class ColorPaletteData : ScriptableObject
         }
         return input;
     }
+
+
+    public Material ReverseMaterial(Material input)
+    {
+        foreach (var pair in _pairs) {
+            if (pair.OutputMaterial == input) return pair.InputMaterial;
+        }
+        return input;
+    }
 }

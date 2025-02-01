@@ -9,24 +9,14 @@ public class Ladder : MonoBehaviour
 {
     public bool IsRope;
     [SerializeField, ConditionalField(nameof(IsRope))] private float _maxLength;
+    [SerializeField, ConditionalField(nameof(IsRope))] private float _startOffset;
     [SerializeField, ConditionalField(nameof(IsRope))] private LayerMask _groundLayer;
     [SerializeField, ConditionalField(nameof(IsRope))] private Collider _solidCollider;
     [SerializeField, ConditionalField(nameof(IsRope))] private UnityEvent _OnUncoil;
+    [SerializeField, ConditionalField(nameof(IsRope))] private DistrubuteModelAlongLength _ropeScript;
 
     private bool _isCoiled = true;
     private bool _playerClimbing;
-
-    public void Uncoil()
-    {
-        bool didHit = Physics.Raycast(transform.position, Vector3.down, out var hitData, _maxLength, _groundLayer);
-        float targetLength = _maxLength;
-        if (didHit) targetLength = hitData.distance - 3;
-        var scale = transform.localScale;
-        scale.y = targetLength;
-        transform.localScale = scale;
-        _isCoiled = false;
-        _OnUncoil.Invoke();
-    }
 
     private void Update()
     {
@@ -37,6 +27,25 @@ public class Ladder : MonoBehaviour
             _solidCollider.enabled = _playerClimbing;
         }
     }
+
+    private void OnDestroy()
+    {
+        if (_ropeScript && _ropeScript.gameObject) Destroy(_ropeScript.gameObject);
+    }
+
+    public void Uncoil()
+    {
+        bool didHit = Physics.Raycast(transform.position + (Vector3.down * _startOffset), Vector3.down, out var hitData, _maxLength, _groundLayer);
+        float targetLength = _maxLength;
+        if (didHit) targetLength = hitData.distance - 1 + _startOffset;
+        var scale = transform.localScale;
+        scale.y = targetLength;
+        transform.localScale = scale;
+        _isCoiled = false;
+        _OnUncoil.Invoke();
+        _ropeScript.AddRope(targetLength);
+    }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -60,6 +69,6 @@ public class Ladder : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _maxLength);
+        Gizmos.DrawLine(transform.position + Vector3.down * _startOffset, transform.position + Vector3.down * _maxLength);
     }
 }

@@ -19,6 +19,8 @@ public class TowerBuilder : MonoBehaviour
     private FloorController _currentTopFloor;
     private TowerController _controller;
 
+    public ColorPaletteData Palette => _palette;
+
     private void Start()
     {
         _controller = GetComponent<TowerController>();
@@ -57,10 +59,15 @@ public class TowerBuilder : MonoBehaviour
 
     private void PlaceNextFloor()
     {
-        GameObject floorPrefab = _towerFloorPrefabs[Random.Range(0, _towerFloorPrefabs.Count)];
-        if (_placedFloors.Count == _targetHeight - 1) floorPrefab = _lastFloorPrefab;
-        if (_placedFloors.Count == 0) floorPrefab = _firstFloorPrefab;
-        PlaceFloor(floorPrefab);
+        var selectedPrefab = _towerFloorPrefabs[Random.Range(0, _towerFloorPrefabs.Count)];
+        if (_currentTopFloor) {
+            var options = _towerFloorPrefabs.Where(x => x.GetComponent<FloorController>().Name != _currentTopFloor.Name).ToList();
+            if (options.Count > 0) selectedPrefab = options[Random.Range(0, options.Count)];
+        }
+
+        if (_placedFloors.Count == _targetHeight - 1) selectedPrefab = _lastFloorPrefab;
+        if (_placedFloors.Count == 0) selectedPrefab = _firstFloorPrefab;
+        PlaceFloor(selectedPrefab);
     }
 
     private void PlaceFloor(GameObject floorPrefab)
@@ -69,12 +76,7 @@ public class TowerBuilder : MonoBehaviour
         var newFloorRot = Vector3.zero;
         var newFloorPos = transform.position;
         if (_currentTopFloor) {
-            var dir = _currentTopFloor.ExitSide;
-            if (dir == CardinalDirection.South) y = 360;
-            if (dir == CardinalDirection.East) y = 270;
-            if (dir == CardinalDirection.North) y = 180;
-            if (dir == CardinalDirection.West) y = 90;
-            newFloorRot = new Vector3(0, y + _currentTopFloor.transform.localEulerAngles.y, 0);
+            newFloorRot = RotFromPrevious(_currentTopFloor.ExitSide, _currentTopFloor.transform.localEulerAngles.y);
             newFloorPos = _currentTopFloor.TopPos;
         }
 
@@ -87,5 +89,15 @@ public class TowerBuilder : MonoBehaviour
         newFloorObj.name = "floor " + _placedFloors.Count;
         _currentTopFloor = newFloor;
         newFloor.SetPalette(_palette);
+    }
+
+    public Vector3 RotFromPrevious(CardinalDirection dir, float _prevLocalY)
+    {
+        var y = 0;
+        if (dir == CardinalDirection.South) y = 360;
+        if (dir == CardinalDirection.East) y = 270;
+        if (dir == CardinalDirection.North) y = 180;
+        if (dir == CardinalDirection.West) y = 90;
+       return new Vector3(0, y + _prevLocalY, 0);
     }
 }

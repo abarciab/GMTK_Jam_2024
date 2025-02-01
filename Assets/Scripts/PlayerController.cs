@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _groundCheckRadius;
     [SerializeField] private Vector3 _groundCheckOffset;
     [SerializeField] private LayerMask _nonPlayerLayers;
+    [SerializeField] private float _chargeCooldown;
+    private float _timeWhenLastBoosted;
 
     public ParticleSystem _teleportParticles;
 
@@ -68,11 +70,18 @@ public class PlayerController : MonoBehaviour
         CheckStateTransitions();
         transform.SetLossyScale(Vector3.one);
         if (!_canGlideCurrent) _timeWhenCantGlide = Time.time;
-        if (GameManager.i.WindCharges > 0 && Input.GetMouseButtonDown(0)) UseWindCharge();
+
+        
+        if (Time.time - _timeWhenLastBoosted > _chargeCooldown && GameManager.i.WindCharges > 0 && Input.GetMouseButtonDown(0)) UseWindCharge();
     }
 
     private void UseWindCharge()
     {
+        _timeWhenLastBoosted = Time.time;
+#if UNITY_EDITOR
+        _timeWhenLastBoosted = 0;
+#endif
+
         if (_glideBehavior.enabled) _glideBehavior.Boost();
         else if (_runWalkBehavior.IsCoyoteGrounded) _runWalkBehavior.BoostJump();
         else return;
@@ -121,10 +130,14 @@ public class PlayerController : MonoBehaviour
         _glideBehavior.enabled = newState == PlayerState.GLIDE;
 
         if (oldstate == PlayerState.CLIMB && newState == PlayerState.WALK) _runWalkBehavior.HasBeenGrounded = true;
+        if (newState == PlayerState.STUNNED) _runWalkBehavior.HasBeenGrounded = true;
+
+        var cam = GameManager.i.Camera.GetComponent<CameraController>();
+        cam.SetFlyParticles(0, newState == PlayerState.GLIDE);
     }
 
     private bool ShouldStartGliding() {
-        return (CanGlide && InputController.GetDown(Control.JUMP));
+        return (CanGlide && Input.GetMouseButton(1));
     }
 
     private bool ShouldStartClimbing() {

@@ -56,6 +56,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: baf0d24a4f2397b4889c0cd95ce26106, type: 2}
   _targetHeight: 17
   _difficultyThreshold: 0
+  _palette: {fileID: 0}
+  _testTower: 0
 --- !u!114 &8781711337011915082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69,11 +71,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name: A
-  Index: 0
+  ID: 0
   _initialBuildTime: 13
   _secondToFullExpansion: 500
+  _individualFloorExpansionTime: 3
   _completeSound: {fileID: 11400000, guid: 7612bd5aa041e9040944c46a16af08eb, type: 2}
+  _calmSound: {fileID: 11400000, guid: f20a8022b525f8d4d922763c0e531986, type: 2}
   _isCurrentTower: 0
+  _displayOnly: 0
+  _startOffsetTime: 1
 --- !u!114 &8917216657033817255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,3 +92,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e38ccd74b0a23248874bd1b29f416b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _offset: 0.1
+  _save: 0

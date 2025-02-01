@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -11,9 +12,6 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager i;
-    private void Awake() { i = this;
-        Settings.Initialize();
-    }
 
     public Transform Camera;
     public float TowerStunTime = 30;
@@ -27,6 +25,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] MusicPlayer _music;
     [SerializeField] private GameObject _flood;
     [SerializeField] private float _trigggerFloodStartHeight = 15;
+    [SerializeField] private GameObject _windChargePrefab;
+    [SerializeField] private float _towerStartTimeGap;
 
     [HideInInspector] public PlayerController Player;
     [HideInInspector] public Vector3 MiddlePoint;
@@ -37,11 +37,23 @@ public class GameManager : MonoBehaviour
     private bool _lostGame;
     private bool _startedGame;
     private bool _fading;
+    private List<Transform> _respawnPoints = new List<Transform>();
+    private List<float> _towerTimes = new List<float>();
 
     public int WindCharges { get; private set; }
     public List<TowerController> Towers { get; private set; } = new List<TowerController>();
     private float _playerY => Player.transform.position.y;  
     private float _playerTowerProgress => _currentTower == null ? 0 : _currentTower.CheckProgress(_playerY);
+    public float GetStartTime(int ID) => _towerTimes[ID] * _towerStartTimeGap;
+
+    private void Awake()
+    {
+        i = this;
+        Settings.Initialize();
+
+        _towerTimes = new List<float> { 0, 1, 2, 3 };
+        _towerTimes = _towerTimes.Shuffle().ToList();
+    }
 
     private void Start()
     { 
@@ -55,7 +67,10 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) SetMouseState(false);
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
+
+#if UNITY_EDITOR
         if (InputController.GetDown(Control.DEBUG)) AddCharge(5);
+#endif
 
         CalculateHighScore();
 
@@ -72,10 +87,30 @@ public class GameManager : MonoBehaviour
         UIManager.i.HUD.ShowWindCharges(WindCharges);
     }
 
+    public void AddRespawnPoint(Transform point)
+    {
+        _respawnPoints.Add(point);  
+    }
+
     public void RemoveCharge()
     {
         WindCharges -= 1;
         UIManager.i.HUD.ShowWindCharges(WindCharges);
+        if (_respawnPoints.Count > 0) RespawnPickup();
+    }
+
+    private async void RespawnPickup()
+    {
+        await Task.Delay(1000);
+
+        if (_respawnPoints.Count == 0) return;
+        var point = _respawnPoints[0];
+        _respawnPoints.RemoveAt(0);
+        var newPickup = Instantiate(_windChargePrefab, point.parent);
+        newPickup.transform.localPosition = point.localPosition;
+        newPickup.transform.localScale = point.localScale;
+        Destroy(point.gameObject);
+        newPickup.GetComponent<PikcupItem>().Respawn();
     }
 
     public void RegisterTower(TowerController _tower)
@@ -119,14 +154,16 @@ public class GameManager : MonoBehaviour
         return height;
     }
 
-    public void CompleteTower()
+    public void CompleteTower(TowerController tower = null)
     {
-        if (_currentTower == null) return;
+        if (tower == null) tower = _currentTower;
+        if (tower == null) return;
 
         _towersLeft -= 1;
-        _currentTower.Complete();
-        UIManager.i.TowerIndicator.Complete(_currentTower.ID);
+        tower.Complete();
+        UIManager.i.TowerIndicator.Complete(tower.ID);
         if (_towersLeft == 0) StartCoroutine(WaitThenEndGame());
+        else UIManager.i.HUD.MakeTowersHarder();
     }
 
     private IEnumerator WaitThenEndGame()
@@ -153,6 +190,16 @@ public class GameManager : MonoBehaviour
     public void StunAllTowers()
     {
         foreach (var t in Towers) t.Stun(_abandonRecoveryStunTime);
+    }
+
+    public void AbandonAllTowers()
+    {
+        foreach (var t in Towers) t.ForceAbandon();
+    }
+
+    public void AddFloorsToTowers(int ID)
+    {
+        foreach (var t in Towers) if (t.ID != ID) t.AddFloors();
     }
 
     public void UpdateCurrentTower(TowerController newTower)

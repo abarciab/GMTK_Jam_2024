@@ -23,7 +23,9 @@ public class PlayerClimbBehavior : MonoBehaviour
         _rb.isKinematic = false;
     }
 
-    public void SetClosestLadder(Ladder ladder) {
+    public void SetClosestLadder(Ladder ladder)
+    {
+        if (!_controller) _controller = GetComponent<PlayerController>();
         if (ladder == null) return;
         if (_currentLadder != null && _currentLadderDist < _controller.DistanceTo(ladder.transform.position)) return;
 
@@ -50,7 +52,7 @@ public class PlayerClimbBehavior : MonoBehaviour
         GameManager.i.UpdateCurrentTower(_currentLadder.GetComponentInParent<TowerController>());
         if (_currentLadder.IsRope) {
             var rot = Vector3.up * inputDir.x * -_ropSpinSpeed * Time.deltaTime;
-            transform.parent.Rotate(rot);
+            if (transform.parent) transform.parent.Rotate(rot);
             climbDir.x = 0;
         }
         climbDir.y *= _vertClimbSpeed;
