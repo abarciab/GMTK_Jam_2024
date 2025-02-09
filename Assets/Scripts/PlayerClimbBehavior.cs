@@ -30,7 +30,7 @@ public class PlayerClimbBehavior : MonoBehaviour
         if (_currentLadder != null && _currentLadderDist < _controller.DistanceTo(ladder.transform.position)) return;
 
         transform.SetParent(ladder.transform);
-        if (ladder.IsRope) _rb.velocity = Vector3.zero;
+        if (ladder.IsRope) _rb.linearVelocity = Vector3.zero;
         _currentLadder = ladder;
     }
 
@@ -57,7 +57,7 @@ public class PlayerClimbBehavior : MonoBehaviour
         }
         climbDir.y *= _vertClimbSpeed;
         climbDir.x *= _climbStrafeSpeed;
-        _rb.velocity = climbDir;
+        _rb.linearVelocity = climbDir;
     }
 
     private Vector3 GetClimbDir(Vector3 inputDir) {

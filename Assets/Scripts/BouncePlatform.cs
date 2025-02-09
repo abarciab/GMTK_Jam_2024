@@ -28,7 +28,7 @@ public class BouncePlatform : MonoBehaviour
         if (player) _playerInRange = true;
 
         if (!_passiveBounce) return;
-        if (player) _storedVel = other.GetComponent<Rigidbody>().velocity.y;
+        if (player) _storedVel = other.GetComponent<Rigidbody>().linearVelocity.y;
     }
 
     private void OnTriggerExit(Collider other)

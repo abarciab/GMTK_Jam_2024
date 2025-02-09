@@ -50,7 +50,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     private Rigidbody _rb => _controller.RB;
     private PlayerSounds _sounds => _controller.Sounds; 
     private bool _isCoyoteGrounded => _isGrounded || (_numJumpsLeft > 0 && (Time.time - _timeWhenLastGrounded) < _coyoteTime);
-    private void ApplySpecificGravity(float amount) => _rb.velocity += 10 * amount * Time.deltaTime * Vector3.down;
+    private void ApplySpecificGravity(float amount) => _rb.linearVelocity += 10 * amount * Time.deltaTime * Vector3.down;
     public void ApplyFallingGravity() => ApplySpecificGravity(_fallingGravityMinMax.x);
 
     private void OnEnable() {
@@ -79,12 +79,12 @@ public class PlayerRunWalkBehavior : MonoBehaviour
 
     private void ApplyGravity()
     {
-        if (Mathf.Abs(_rb.velocity.y) < _topOfJumpThreshold) _timeWhenTopOfJump = Time.time;
+        if (Mathf.Abs(_rb.linearVelocity.y) < _topOfJumpThreshold) _timeWhenTopOfJump = Time.time;
 
-        if (_rb.velocity.y > _topOfJumpThreshold) {
+        if (_rb.linearVelocity.y > _topOfJumpThreshold) {
             ApplySpecificGravity(_jumpingUpGravity);
         }
-        else if (_rb.velocity.y < -_topOfJumpThreshold) {
+        else if (_rb.linearVelocity.y < -_topOfJumpThreshold) {
             float timeSinceTopOfJump = Time.time - _timeWhenTopOfJump;
             float progress = Mathf.InverseLerp(_minFallAccelerationTime, _timeToMaxFallGravity, timeSinceTopOfJump);
             ApplySpecificGravity(Mathf.Lerp(_fallingGravityMinMax.x, _fallingGravityMinMax.y, progress));
@@ -96,11 +96,11 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         if (speed < 0.5f) return;
         _sounds.Get(PlayerSoundKey.BOUNCE).Play();
         _numJumpsLeft = 0;
-        var vel = _rb.velocity;
+        var vel = _rb.linearVelocity;
         vel.y = speed;
-        _rb.velocity = vel;
+        _rb.linearVelocity = vel;
         await Task.Delay(10);
-        _rb.velocity = vel;
+        _rb.linearVelocity = vel;
     }
 
     public void UpdateIsGrounded(bool canLand = true) {
@@ -145,7 +145,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         bool pressingInput = _controller.GetInputDir().magnitude > 0;
         var groundedDrag = _groundedAndUngroundedDrag.x + (pressingInput ? 0 : _groundDragNoInputIncrease);
         var ungroundedDrag = _groundedAndUngroundedDrag.y;
-        _rb.drag = _isGrounded ? groundedDrag : ungroundedDrag;
+        _rb.linearDamping = _isGrounded ? groundedDrag : ungroundedDrag;
     }
 
     private void WalkRun() {
@@ -158,10 +158,10 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         if (!_isGrounded) inputDir *= _airSpeedMod;
         _isRunning = InputController.Get(Control.RUN);
         
-        var moveDir = _rb.velocity;
+        var moveDir = _rb.linearVelocity;
         AddSpeedAlongAxisWithLimits(inputDir.x, transform.right, ref moveDir);
         AddSpeedAlongAxisWithLimits(inputDir.y, transform.forward, ref moveDir);
-        _rb.velocity = moveDir;
+        _rb.linearVelocity = moveDir;
     }
 
     private void AddSpeedAlongAxisWithLimits(float inputVel, Vector3 Axis, ref Vector3 currentTotalVel) {
@@ -182,9 +182,9 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         transform.SetParent(null);
         _numJumpsLeft -= 1;
         _sounds.Get(PlayerSoundKey.JUMP).Play(restart: false);
-        var vel = _rb.velocity;
+        var vel = _rb.linearVelocity;
         vel.y = boost ? _boostJumpForce : _jumpForce;
-        _rb.velocity = vel;
+        _rb.linearVelocity = vel;
         _lastJumpTime = Time.time;
         _timeWhenLastGrounded = Time.time;
     }

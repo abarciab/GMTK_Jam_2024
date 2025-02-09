@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
     public bool IsGliding => _currentState == PlayerState.GLIDE;
     public float GlideSpeedPercent => _glideBehavior.GlideSpeedPercent;
     private bool _resetFromGlideInturrupt => _runWalkBehavior.HasBeenGrounded || _glideBehavior.InturruptPoint.y - transform.position.y > 1f;
-    private bool _canGlideCurrent => _resetFromGlideInturrupt && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.velocity.y < 0;
+    private bool _canGlideCurrent => _resetFromGlideInturrupt && _currentState == PlayerState.WALK && !_runWalkBehavior.IsCoyoteGrounded && RB.linearVelocity.y < 0;
     public void ApplyFallingGravity() => _runWalkBehavior.ApplyFallingGravity();
     public float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     public void Shock() => ChangeState(PlayerState.STUNNED);
