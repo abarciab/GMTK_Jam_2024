@@ -16,6 +16,15 @@ public class ColorPaletteData : ScriptableObject
 {
     [SerializeField] private MaterialListData _inputData;
     [SerializeField] private List<MaterialPairData> _pairs = new List<MaterialPairData>();
+    private MaterialListData GetInputData => _inputData; 
+    private List<MaterialPairData> GetPairs => new List<MaterialPairData>(_pairs); 
+
+    public ColorPaletteData() {}
+    public ColorPaletteData(ColorPaletteData original)
+    {
+        _inputData = original.GetInputData;
+        _pairs = original.GetPairs;
+    }
 
     private void OnValidate() {
         if (!_inputData) return;

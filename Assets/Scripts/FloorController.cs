@@ -91,20 +91,34 @@ public class FloorController : MonoBehaviour
         return transform.position;
     }
 
+    public void SetPalette(ColorPaletteData palette, Gradient gradient, float randomizeFactor)
+    {
+        foreach (Transform child in transform) {
+            var modColor = gradient.Evaluate(Random.Range(0, 1f));
+            SetMaterials(child, palette, modColor, randomizeFactor);
+        }
+    }
+
     public void SetPalette(ColorPaletteData palette) {
         foreach (Transform child in transform) SetMaterials(child, palette);
     }
 
-    private void SetMaterials(Transform obj, ColorPaletteData palette) {
+    private void SetMaterials(Transform obj, ColorPaletteData palette, Color tint = default, float tintFactor = 0) {
         var renderer = obj.GetComponent<MeshRenderer>();
         if (renderer) {
             var materials = new List<Material>(renderer.sharedMaterials);
+            if (tint !=  default) materials = new List<Material>(renderer.materials);
+            
             for (int i = 0; i < materials.Count; i++) {
-                materials[i] = palette.GetMaterial(materials[i]);
+                var mat = palette.GetMaterial(materials[i]);
+                if (tint != default) mat.color = Color.Lerp(mat.color, tint, tintFactor);
+                materials[i] = mat;
             }
-            renderer.sharedMaterials = materials.ToArray();
+
+            if (tint == default) renderer.sharedMaterials = materials.ToArray();
+            else renderer.materials = materials.ToArray();
         }
-        foreach (Transform child in obj) SetMaterials(child, palette);
+        foreach (Transform child in obj) SetMaterials(child, palette, tint, tintFactor);
     }
 
     private void ResetMaterials(Transform obj, ColorPaletteData palette)

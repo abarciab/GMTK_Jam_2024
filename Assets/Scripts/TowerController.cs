@@ -242,11 +242,17 @@ public class TowerController : MonoBehaviour
         return progress;
     }
 
+    public void SetColor(ColorPaletteData palette)
+    {
+        print("setting color: " + palette.name);
+        foreach (var f in _floors) f.SetPalette(palette);
+    }
+
     public void Complete()
     {
         if (_completePalette) foreach (var f in _floors) f.ResetAndChangePalette(_builder.Palette, _completePalette);
         StopAllCoroutines();
-
+        SetColor(_completePalette);
 
         IsComplete = true;
         _completeSound.Play();
