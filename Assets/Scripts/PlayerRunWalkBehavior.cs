@@ -104,6 +104,8 @@ public class PlayerRunWalkBehavior : MonoBehaviour
     }
 
     public void UpdateIsGrounded(bool canLand = true) {
+        if (!_controller || !_controller.RB) return;
+
         bool WasGrounded = _isGrounded;
         var colliders = _controller.GetCollidersBelow().Where(x => !x.isTrigger && !x.GetComponent<PlayerController>() && x.gameObject.layer == _groundLayer).ToList();
         _currentGroundObj = colliders.Count > 0 ? colliders[0].gameObject : null;
@@ -118,6 +120,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         }
 
         _onMovingPlatform = _currentGroundObj.GetComponentInParent<MovingPlatform>() != null;
+        if (_onMovingPlatform) transform.SetParent(_currentGroundObj.transform);
 
         GameManager.i.UpdateCurrentTower(_currentGroundObj.GetComponentInParent<TowerController>());
         if (!WasGrounded && canLand) Land();

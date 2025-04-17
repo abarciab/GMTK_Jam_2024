@@ -43,19 +43,20 @@ public class FloorController : MonoBehaviour
     [SerializeField] private bool _findFloorSections;
     [SerializeField] private bool _setMaxHeight;
 
-    [HideInInspector] public CardinalDirection ExitSide => _exitSide;
-    [HideInInspector] public Vector3 TopPos => GetTopPos();
-    [HideInInspector] public int SectionCount => _sections.Count;
-    [HideInInspector] public bool Complete => _targetExpansion == 1;
     [HideInInspector] public bool HasBridge;
     [HideInInspector] public FloorController PreviousFloor;
     [ReadOnly] public float MaxHeight;
 
-    private FloorSection _highestActiveSection => _sections.Where(x => x.gameObject.activeInHierarchy).Last();
     private List<TowerController> _connectedTowers = new List<TowerController>(); 
     private float _targetExpansion;
     private bool _manuallyExtended;
-        
+
+    [HideInInspector] public CardinalDirection ExitSide => _exitSide;
+    [HideInInspector] public Vector3 TopPos => GetTopPos();
+    [HideInInspector] public int SectionCount => _sections.Count;
+    [HideInInspector] public bool Complete => _targetExpansion == 1;
+    private FloorSection _highestActiveSection => _sections.Where(x => x.gameObject.activeInHierarchy).Last();
+
     private void OnValidate()
     {
         if (_findFloorSections) {
@@ -95,34 +96,59 @@ public class FloorController : MonoBehaviour
     {
         foreach (Transform child in transform) {
             var modColor = gradient.Evaluate(Random.Range(0, 1f));
-            SetMaterials(child, palette, modColor, randomizeFactor);
+            SetMaterialsTint(child, palette, modColor, randomizeFactor);
         }
     }
 
-    public void SetPalette(ColorPaletteData palette) {
+    public void SetPalette(ColorPaletteData palette)
+    {
+        //print("floor controller setting palette: " + palette.name + " for gameobject: " + gameObject.name + ", childCount: " + transform.childCount);
         foreach (Transform child in transform) SetMaterials(child, palette);
     }
 
-    private void SetMaterials(Transform obj, ColorPaletteData palette, Color tint = default, float tintFactor = 0) {
+    private void SetMaterialsTint(Transform obj, ColorPaletteData palette, Color tint, float tintFactor)
+    {
         var renderer = obj.GetComponent<MeshRenderer>();
-        if (renderer) {
-            var materials = new List<Material>(renderer.sharedMaterials);
-            if (tint !=  default) materials = new List<Material>(renderer.materials);
-            
-            for (int i = 0; i < materials.Count; i++) {
-                var mat = palette.GetMaterial(materials[i]);
-                if (tint != default) mat.color = Color.Lerp(mat.color, tint, tintFactor);
-                materials[i] = mat;
-            }
+        if (!renderer) return;
 
-            if (tint == default) renderer.sharedMaterials = materials.ToArray();
-            else renderer.materials = materials.ToArray();
+        var materials = new List<Material>(renderer.materials);
+
+        for (int i = 0; i < materials.Count; i++) {
+            var mat = palette.GetMaterial(materials[i]);
+            mat.color = Color.Lerp(mat.color, tint, tintFactor);
+            materials[i] = mat;
         }
-        foreach (Transform child in obj) SetMaterials(child, palette, tint, tintFactor);
+
+        renderer.materials = materials.ToArray();
+
+        foreach (Transform child in obj) SetMaterialsTint(child, palette, tint, tintFactor);
+    }
+
+    private void SetMaterials(Transform obj, ColorPaletteData palette) {
+        var renderer = obj.GetComponent<MeshRenderer>();
+        if (renderer) SetMaterialsOnRenderer(renderer, palette);
+
+        foreach (Transform child in obj) SetMaterials(child, palette);
+    }
+
+    private void SetMaterialsOnRenderer(MeshRenderer renderer, ColorPaletteData palette)
+    {
+        var materials = new List<Material>(renderer.sharedMaterials);
+
+        for (int i = 0; i < materials.Count; i++) {
+            var mat = palette.GetMaterial(materials[i]);
+            //if (mat == materials[i]) print("Palette: " + palette.name + ", no replacement for: " + mat.name);
+            //else print("Palette: " + palette.name + ", has replacement for: " + materials[i].name + " => " + mat.name);
+            materials[i] = mat;
+        }
+
+        renderer.materials = materials.ToArray();
     }
 
     private void ResetMaterials(Transform obj, ColorPaletteData palette)
     {
+        //print("Reseting materials");
+
         var renderer = obj.GetComponent<MeshRenderer>();
         if (renderer) {
             var materials = new List<Material>(renderer.sharedMaterials);

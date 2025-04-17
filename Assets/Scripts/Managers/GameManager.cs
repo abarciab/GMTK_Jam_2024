@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Diagnostics;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
@@ -23,13 +24,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] pauseMenuController _pauseMenu;
     [SerializeField] Fade _fade;
     [SerializeField] MusicPlayer _music;
-    [SerializeField] private GameObject _flood;
-    [SerializeField] private float _trigggerFloodStartHeight = 15;
     [SerializeField] private GameObject _windChargePrefab;
     [SerializeField] private float _towerStartTimeGap;
 
     [HideInInspector] public PlayerController Player;
     [HideInInspector] public Vector3 MiddlePoint;
+    [HideInInspector] public int MenusOpen;
 
     private float _highScore;
     private TowerController _currentTower;
@@ -60,12 +60,11 @@ public class GameManager : MonoBehaviour
         _fade.Disappear();
         _towersLeft = _totalTowerCount;
         SetMouseState(false);
-        _flood.SetActive(false);
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && Time.timeScale > 0) SetMouseState(false);
+        if (MenusOpen <= 0 && Input.GetMouseButtonDown(0) && Time.timeScale > 0) SetMouseState(false);
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
 
 #if UNITY_EDITOR
@@ -133,11 +132,19 @@ public class GameManager : MonoBehaviour
         return validTowers[Random.Range(0, validTowers.Count)].GetFloorAtY(y);
     }
 
+    public void ShowUITutorial()
+    {
+        UIManager.i.ShowUITutorial();
+        SetMouseState(true);
+        MenusOpen += 1;
+    }
+
     public void StartTowersGrowing()
     {
         _startedGame = true;
         Settings.CompletedTutorial = true;
         foreach (var t in Towers) t.StartGrowing();
+        SetMouseState(false);
     }
 
     public float GetMaxHeight()
@@ -180,10 +187,6 @@ public class GameManager : MonoBehaviour
         if (Mathf.FloorToInt(currentScore) > _highScore) {
             _highScore = currentScore;
             UIManager.i.ShowHighScore(Mathf.FloorToInt(_highScore));
-        }
-        if (currentScore > _trigggerFloodStartHeight) {
-            print("starting flood");
-            _flood.SetActive(true);
         }
     }
 

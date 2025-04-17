@@ -92,11 +92,12 @@ public class PlayerGlideBehavior : MonoBehaviour
 
         var forwardPoint = camTrans.TransformPoint(_forwardGlideCheckerOffset);
         var forward = Physics.OverlapSphere(forwardPoint, _forwardGlideCheckerRadius);
-        var forwardList = forward.Where(x => x.GetComponent<PlayerController>() == null && !x.isTrigger).ToList();
+        var forwardList = forward.Where(x => x.GetComponent<PlayerController>() == null).ToList();
         var belowList = _controller.GetCollidersBelow().Where(x => x.gameObject.layer == _groundLayer);
 
         all.AddRange(forwardList);
         all.AddRange(belowList);
+        all = all.Where(x => !x.isTrigger).ToList();
         if (all.Count == 0) return;
 
         if (forwardList.Count > 0) {

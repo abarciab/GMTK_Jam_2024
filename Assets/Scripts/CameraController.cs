@@ -113,8 +113,7 @@ public class CameraController : MonoBehaviour
     private void SetPosAndRotation()
     {
         SetPosition();
-        SetRotation();
-
+        if (GameManager.i.MenusOpen <= 0) SetRotation();
     }
 
     private void SetPosition()

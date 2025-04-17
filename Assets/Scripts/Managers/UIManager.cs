@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _blackBlocker;
     [SerializeField] private GameObject _stunFlash;
     [SerializeField] private GameObject _deathScreen;
+    [SerializeField] private GameObject _uiTutorial;
     [SerializeField] private Sound _deathSound;
 
     [Header("crosshair")]
@@ -51,11 +52,13 @@ public class UIManager : MonoBehaviour
     public void FadeFromBlack(float time) => _blackBlocker.SetActive(false);
     public void ShowHighScore(int score) => _highScoreText.text = _highScoreTemplateString.Replace("SCORE", (Mathf.Max(0, score - 90)).ToString());
     public void SetStunFlashVisbility(bool visible) => _stunFlash.SetActive(visible);
+    public void ShowUITutorial() => _uiTutorial.SetActive(true);
     private void Awake() { i = this; }
 
     private void Start()
     {
         _deathSound = Instantiate(_deathSound);
+        _uiTutorial.SetActive(false );
     }
 
     private void Update()
@@ -72,6 +75,13 @@ public class UIManager : MonoBehaviour
     private void LateUpdate()
     {
         AdjustPointsOfInterest();
+    }
+
+    public void CompleteUITutorial()
+    {
+        GameManager.i.MenusOpen -= 1;
+        _uiTutorial.SetActive(false);
+        GameManager.i.StartTowersGrowing();
     }
 
     public void Die()

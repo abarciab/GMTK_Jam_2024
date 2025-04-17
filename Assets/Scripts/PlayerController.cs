@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 _groundCheckOffset;
     [SerializeField] private LayerMask _nonPlayerLayers;
     [SerializeField] private float _chargeCooldown;
+    [SerializeField] private bool _hasGlider;
     private float _timeWhenLastBoosted;
 
     public ParticleSystem _teleportParticles;
@@ -45,13 +46,13 @@ public class PlayerController : MonoBehaviour
     public float DistanceTo(Vector3 pos) => Vector3.Distance(transform.position, pos);
     public void Shock() => ChangeState(PlayerState.STUNNED);
     public Collider[] GetCollidersBelow() => Physics.OverlapSphere(transform.TransformPoint(_groundCheckOffset), _groundCheckRadius);
-    public bool CanGlide => _canGlideCurrent && Time.time - _timeWhenCantGlide > _glideBehavior.MinGlideTimeReq && DistanceDown() > _glideBehavior.MinGlideDistReq;
+    public bool CanGlide => _canGlideCurrent && Time.time - _timeWhenCantGlide > _glideBehavior.MinGlideTimeReq && DistanceDown() > _glideBehavior.MinGlideDistReq && _hasGlider;
 
     private float _timeWhenCantGlide;
 
     private void Awake()
     {
-        FindObjectOfType<GameManager>().Player = this;
+        FindFirstObjectByType<GameManager>().Player = this;
         _runWalkBehavior = GetComponent<PlayerRunWalkBehavior>();
         _runWalkBehavior.HasBeenGrounded = true;
     }
@@ -71,8 +72,16 @@ public class PlayerController : MonoBehaviour
         transform.SetLossyScale(Vector3.one);
         if (!_canGlideCurrent) _timeWhenCantGlide = Time.time;
 
-        
+#if UNITY_EDITOR
+        if (InputController.GetDown(Control.DEBUG)) EnableGlider();
+#endif
+
         if (Time.time - _timeWhenLastBoosted > _chargeCooldown && GameManager.i.WindCharges > 0 && Input.GetMouseButtonDown(0)) UseWindCharge();
+    }
+
+    public void EnableGlider()
+    {
+        _hasGlider = true;
     }
 
     private void UseWindCharge()
