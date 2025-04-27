@@ -40,6 +40,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TowerStatusUI _towerIndicator;
     [SerializeField] private CurrentTowerUI _currentTowerDisplay;
     [SerializeField] private HUDController _hud;
+    [SerializeField] private TeleporterUIController _teleportUI;
 
     private GameObject _promptSource;
 
@@ -48,11 +49,12 @@ public class UIManager : MonoBehaviour
     public TowerStatusUI TowerIndicator => _towerIndicator; 
     public CurrentTowerUI CurrentTower => _currentTowerDisplay;
     public HUDController HUD => _hud;
+    public TeleporterUIController Teleporter => _teleportUI;
     public void FadeToBlack(float time) => _blackBlocker.SetActive(true);
     public void FadeFromBlack(float time) => _blackBlocker.SetActive(false);
     public void ShowHighScore(int score) => _highScoreText.text = _highScoreTemplateString.Replace("SCORE", (Mathf.Max(0, score - 90)).ToString());
     public void SetStunFlashVisbility(bool visible) => _stunFlash.SetActive(visible);
-    public void ShowUITutorial() => _uiTutorial.SetActive(true);
+
     private void Awake() { i = this; }
 
     private void Start()
@@ -77,9 +79,13 @@ public class UIManager : MonoBehaviour
         AdjustPointsOfInterest();
     }
 
+    public void ShowUITutorial()
+    {
+        _uiTutorial.SetActive(true);
+    }
+
     public void CompleteUITutorial()
     {
-        GameManager.i.MenusOpen -= 1;
         _uiTutorial.SetActive(false);
         GameManager.i.StartTowersGrowing();
     }
@@ -110,6 +116,7 @@ public class UIManager : MonoBehaviour
         if (closestPoint == default) return;
 
         _detailedInterest.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = closestPoint.Item2;
+
         Vector3 screenPos = Camera.main.WorldToScreenPoint(closestPoint.Item1.position);
         if(screenPos.z < 0f)
         {

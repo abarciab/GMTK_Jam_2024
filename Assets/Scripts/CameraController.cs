@@ -131,7 +131,7 @@ public class CameraController : MonoBehaviour
         if (GameManager.i.Player.IsStunned) return;
 
         var mouseY = Input.GetAxis("Mouse Y");
-        var rotDelta = mouseY * Time.deltaTime * Settings.MouseSensetivity * 100 * _verticalRotSpeed * -1;
+        var rotDelta = mouseY * Settings.MouseSensetivity * 100 * _verticalRotSpeed * -1;
         transform.localEulerAngles += Vector3.right * rotDelta;
     }
 

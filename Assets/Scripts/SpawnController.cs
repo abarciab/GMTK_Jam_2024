@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SpawnLocation { StartGame, StartCity, EndTutorial, StartTowers}
+public enum SpawnLocation { StartGame, StartCity, EndTutorial, StartTowers, Testing}
 
 [System.Serializable]
 public class RespawnData
@@ -27,6 +27,6 @@ public class SpawnController : MonoBehaviour
 #if !UNITY_EDITOR
         _selected = SpawnLocation.StartGame;
 #endif
-        foreach (var p in _spawnPoints) p.SpawnParent.SetActive(p.Type == _selected);
+        foreach (var p in _spawnPoints) if (p.SpawnParent) p.SpawnParent.SetActive(p.Type == _selected);
     }
 }

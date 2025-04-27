@@ -20,7 +20,8 @@ public class TeleportPlatform : MonoBehaviour
     private float _currentCooldown;
     private bool _playerInRange;
     private bool _ready => _target && _playerInRange && _currentCooldown <= 0;
-    [HideInInspector] public Vector3 TeleportPoint => transform.TransformPoint(_teleportOffset);
+    public Transform Target => _target ? _target.transform : transform;
+    public Vector3 TeleportPoint => transform.TransformPoint(_teleportOffset);
 
     public void SetTarget(TeleportPlatform newTarget) => _target = newTarget;
 
@@ -39,11 +40,10 @@ public class TeleportPlatform : MonoBehaviour
         if (_target) _particleParent.LookAt(_target.TeleportPoint + Vector3.up * 1f);
 
         _currentCooldown -= Time.deltaTime;
-        if (_ready) {
-            UIManager.i.SetInteractPromptState(true, gameObject, "teleport");
-            if (InputController.GetDown(Control.INTERACT)) Teleport();
+        if (_ready && InputController.GetDown(Control.INTERACT)) {
+            UIManager.i.Teleporter.StartTeleporting(this);
         }
-        else UIManager.i.SetInteractPromptState(false, gameObject);
+        else if (!_ready) UIManager.i.Teleporter.CancelTeleport(this);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -80,7 +80,7 @@ public class TeleportPlatform : MonoBehaviour
         SetActive(false);
     }
 
-    private void Teleport()
+    public void Teleport()
     {
         _sound.Play();
         _playerInRange = false;
@@ -88,6 +88,8 @@ public class TeleportPlatform : MonoBehaviour
         GameManager.i.Player.transform.position = _target.TeleportPoint;
         _target.Recieve();
         GameManager.i.Player._teleportParticles.Play();
+
+        GameManager.i.Camera.GetComponent<CameraAnimator>().TeleportAnimate();
 
         SetActive(false);
     }

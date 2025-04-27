@@ -14,6 +14,7 @@ public class pauseMenuController : MonoBehaviour
     {
         if (!_openSound.Instantialized) Initialize();
         _openSound.Play();
+        GameManager.i.OpenMenu();
     }
 
     private void OnDisable()
@@ -37,6 +38,7 @@ public class pauseMenuController : MonoBehaviour
         if (_settings.activeInHierarchy) _settings.GetComponent<Animator>().SetTrigger("Exit");
         if (!_animator) Initialize();
         _animator.SetTrigger("Exit");
+        GameManager.i.CloseMenu();
     }
 
     public void Resume()

@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour
     public void Rotate(float speedMod = 1) {
         var mouseX = Input.GetAxis("Mouse X");
 
-        var rotDelta = (_rotateSpeed * speedMod) * 100 * mouseX * Time.deltaTime * Settings.MouseSensetivity;
+        var rotDelta = (_rotateSpeed * speedMod) * 100 * mouseX * Settings.MouseSensetivity;
 
         transform.Rotate(rotDelta * Vector3.up);
     }

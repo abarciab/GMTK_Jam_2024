@@ -13,6 +13,13 @@ public class UITutorialController : MonoBehaviour
         }
 
         if (_skip) Complete();
+
+        GameManager.i.OpenMenu();
+    }
+
+    private void OnDisable()
+    {
+        GameManager.i.CloseMenu();
     }
 
     private void Complete()
