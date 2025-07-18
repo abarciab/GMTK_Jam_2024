@@ -5,8 +5,38 @@ using UnityEngine.UI;
 using MyBox;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using Unity.VisualScripting;
+using System.Runtime.ExceptionServices;
 
 public enum SelectableItemDataType { GRAPHIC, GAMEOBJECT, CANVASGROUP, SPRITE}
+public enum ButtonState { NORMAL, HOVERED, SELECTED, DISABLED }
+public enum ClickBehavior { NONE, SELECT, TOGGLE };
+
+[System.Serializable] public abstract class ListWrapper { public abstract void Set(int index); }
+
+[System.Serializable] public class ListWrapperGeneric<T> : ListWrapper
+{
+    [SerializeField] private T _normal;
+    [SerializeField] private T _hovered;
+    [SerializeField] private T _selected;
+    [SerializeField] private T _disabled;
+
+    private List<T> _list => new List<T>() {_normal, _hovered, _selected, _disabled };
+    private UnityAction<T> _setter;
+
+    public T Get(int index) => _list[index];
+    public override void Set(int index) => _setter(Get(index));
+
+    public ListWrapperGeneric(T defaultValue)
+    {
+        _normal = _hovered = _selected = _disabled = defaultValue;
+    }
+
+    public void OnValidate(UnityAction<T> setter)
+    {
+        _setter = setter;
+    }
+};
 
 [System.Serializable]
 public class SelectableItemData
@@ -14,36 +44,19 @@ public class SelectableItemData
     [HideInInspector] public string Name;
     [SerializeField] private SelectableItemDataType _type;
 
-    [ConditionalField(nameof(_showGraphicSettings)), SerializeField] private Graphic _target;
+    [ConditionalField(nameof(_showGraphicSettings)), SerializeField] private Graphic _graphic;
     [ConditionalField(nameof(_showGraphicSettings)), SerializeField] private bool _useMaterials;
+    [ConditionalField(nameof(_showGraphicColorSettings)), SerializeField] private ListWrapperGeneric<Color> _colors;
+    [ConditionalField(nameof(_useMaterials)), SerializeField] private ListWrapperGeneric<Material> _materials;
 
-    [ConditionalField(nameof(_showGraphicColorSettings)), SerializeField] private Color _normalColor = Color.white;
-    [ConditionalField(nameof(_showGraphicColorSettings)), SerializeField] private Color _hoveredColor = Color.white;
-    [ConditionalField(nameof(_showGraphicColorSettings)), SerializeField] private Color _selectedColor = Color.white;
-    [ConditionalField(nameof(_showGraphicColorSettings)), SerializeField] private Color _disabledColor = Color.white;
+    [ConditionalField(nameof(_showGOSettings)), SerializeField] private GameObject _gameObjectTarget;
+    [ConditionalField(nameof(_showGOSettings)), SerializeField] private ListWrapperGeneric<bool> _activeStates;
 
-    [ConditionalField(nameof(_useMaterials)), SerializeField] private Material _normalMat;
-    [ConditionalField(nameof(_useMaterials)), SerializeField] private Material _hoveredMat;
-    [ConditionalField(nameof(_useMaterials)), SerializeField] private Material _selectedMat;
-    [ConditionalField(nameof(_useMaterials)), SerializeField] private Material _disabledMat;
-
-    [ConditionalField(nameof(_showGOSettings)), SerializeField] private GameObject _obj;
-    [ConditionalField(nameof(_showGOSettings)), SerializeField] private bool _normalState = false;
-    [ConditionalField(nameof(_showGOSettings)), SerializeField] private bool _hoveredState = false;
-    [ConditionalField(nameof(_showGOSettings)), SerializeField] private bool _selectedState = true;
-    [ConditionalField(nameof(_showGOSettings)), SerializeField] private bool _disabledState = false;
-
-    [ConditionalField(nameof(_showGroupSettings)), SerializeField] private CanvasGroup _group;
-    [ConditionalField(nameof(_showGroupSettings)), SerializeField, Range(0, 1)] private float _normalAlpha = 0.3f;
-    [ConditionalField(nameof(_showGroupSettings)), SerializeField, Range(0, 1)] private float _hoveredAlpha = 0.6f;
-    [ConditionalField(nameof(_showGroupSettings)), SerializeField, Range(0, 1)] private float _selectedAlpha = 1;
-    [ConditionalField(nameof(_showGroupSettings)), SerializeField, Range(0, 1)] private float _disabledAlpha = 0.2f;
+    [ConditionalField(nameof(_showGroupSettings)), SerializeField] private CanvasGroup _canvasGroup;
+    [ConditionalField(nameof(_showGroupSettings)), SerializeField] private ListWrapperGeneric<float> _alphaValues;
 
     [ConditionalField(nameof(_showSpriteSettings)), SerializeField] private Image _spriteTarget;
-    [ConditionalField(nameof(_showSpriteSettings)), SerializeField] private Sprite _normalSprite;
-    [ConditionalField(nameof(_showSpriteSettings)), SerializeField] private Sprite _hoveredSprite;
-    [ConditionalField(nameof(_showSpriteSettings)), SerializeField] private Sprite _selectedSprite;
-    [ConditionalField(nameof(_showSpriteSettings)), SerializeField] private Sprite _disabledSprite;
+    [ConditionalField(nameof(_showSpriteSettings)), SerializeField] private ListWrapperGeneric<Sprite> _sprites;
 
     [SerializeField, HideInInspector] private bool _showGraphicSettings;
     [SerializeField, HideInInspector] private bool _showGraphicColorSettings;
@@ -51,16 +64,29 @@ public class SelectableItemData
     [SerializeField, HideInInspector] private bool _showGroupSettings;
     [SerializeField, HideInInspector] private bool _showSpriteSettings;
 
+    private ListWrapper _current;
+    private object _valid;
+
     private bool _isGraphic => _type == SelectableItemDataType.GRAPHIC;
     private bool _isGameObject => _type == SelectableItemDataType.GAMEOBJECT;
     private bool _isGroup => _type == SelectableItemDataType.CANVASGROUP;
     private bool _isSprite => _type == SelectableItemDataType.SPRITE;
-    private bool _usingMaterials => _isGraphic && _useMaterials;
+    private bool _isValid => _valid != null;
 
     public void OnValidate()
     {
-        if ((_isGraphic && !_target) || (_isGameObject && !_obj) || (_isGroup && !_group) || (_isSprite && !_spriteTarget)) Initialize();
-        else SetName();
+        if ((_isGraphic && !_graphic) || (_isGameObject && !_gameObjectTarget) || (_isGroup && !_canvasGroup) || (_isSprite && !_spriteTarget)) Initialize();
+        else SetCurrent();
+
+        if (_isValid) {
+            if (_isGraphic) {
+                _colors.OnValidate((color) => _graphic.GetComponent<CanvasRenderer>().SetColor(color));
+                _materials.OnValidate((material) => _graphic.material = material);
+            }
+            if (_isGameObject) _activeStates.OnValidate((state) => _gameObjectTarget.SetActive(state));
+            if (_isGroup)_alphaValues.OnValidate((alpha) => _canvasGroup.alpha = alpha);
+            if (_isSprite)_sprites.OnValidate((sprite) => _spriteTarget.sprite = sprite);
+        }
 
         if (!_isGraphic) _useMaterials = false;
         _showGraphicSettings = _isGraphic;
@@ -70,119 +96,70 @@ public class SelectableItemData
         _showGraphicColorSettings = _showGraphicSettings && !_useMaterials;
     }
 
-    private void SetName()
+    private void SetCurrent()
     {
-        if (_isGraphic) Name = _target.gameObject.name;
-        if (_isGameObject) Name = _obj.name;
-        if (_isGroup) Name = _group.gameObject.name;
-        if (_isSprite) Name = _spriteTarget.gameObject.name;
+        if (_isGraphic) {
+            Name = _graphic.gameObject.name;
+            _current = _useMaterials ? _materials : _colors;
+            _valid = _graphic;
+        }
+        if (_isGameObject) {
+            Name = _gameObjectTarget.name;
+            _current = _activeStates;
+            _valid = _gameObjectTarget;
+        }
+        if (_isGroup) {
+            Name = _canvasGroup.gameObject.name;
+            _current = _alphaValues;
+            _valid = _canvasGroup;
+        }
+        if (_isSprite) {
+            Name = _spriteTarget.gameObject.name;
+            _current = _sprites;
+            _valid = _spriteTarget;
+        }
     }
 
     private void Initialize()
     {
-        _normalColor = Color.white;
-        _hoveredColor = Color.white;
-        _selectedColor = Color.white;
-        _disabledColor = Color.white;
-
-        _normalState = false;
-        _hoveredState = false;
-        _selectedState = true;
-        _disabledState = false;
-
-        _normalAlpha = 0.3f;
-        _hoveredAlpha = 0.6f;
-        _selectedAlpha = 1;
-        _disabledAlpha = 0.2f;
-
-        _normalSprite = null;
-        _hoveredSprite = null;
-        _selectedSprite = null;
-        _disabledSprite = null;
+        _colors = new ListWrapperGeneric<Color>(Color.white);
+        _materials = new ListWrapperGeneric<Material>(null);
+        _activeStates = new ListWrapperGeneric<bool>(false);
+        _alphaValues = new ListWrapperGeneric<float>(1);
     }
 
-    public void Update(bool selected, bool hovered, bool disabled)
+    public void Update(ButtonState state)
     {
-        if (!IsValid()) return;
-        if (disabled) Disable();
-        else if (selected) Select();
-        else if (hovered) Hover();
-        else Deselect();
+        if (!_isValid) return;
+        _current.Set((int)state);
     }
-
-    private bool IsValid()
-    {
-        if (_isGraphic) return _target;
-        if (_isGroup) return _group;
-        if (_isGameObject) return _obj;
-        if (_isSprite) return _spriteTarget;
-        return false;
-    }
-
-    private void Select()
-    {
-        if (_isGraphic && !_usingMaterials) _target.color = _selectedColor;
-        else if (_usingMaterials) _target.material = _selectedMat;
-
-        if (_isGroup) _group.alpha = _selectedAlpha;
-        if (_isGameObject) _obj.SetActive(_selectedState);
-        if (_isSprite) _spriteTarget.sprite = _selectedSprite;
-    }
-
-    private void Hover()
-    {
-        if (_isGraphic && !_usingMaterials) _target.color = _hoveredColor;
-        else if (_usingMaterials) _target.material = _hoveredMat;
-
-        if (_isGroup) _group.alpha = _hoveredAlpha;
-        if (_isGameObject) _obj.SetActive(_hoveredState);
-        if (_isSprite) _spriteTarget.sprite = _hoveredSprite;
-    }
-
-    private void Deselect()
-    {
-        if (_isGraphic && !_usingMaterials) _target.color = _normalColor;
-        else if (_usingMaterials) _target.material = _normalMat;
-
-        if (_isGroup) _group.alpha = _normalAlpha;
-        if (_isGameObject) _obj.SetActive(_normalState);
-        if (_isSprite) _spriteTarget.sprite = _normalSprite;
-    }
-
-    private void Disable()
-    {
-        if (_isGraphic && !_usingMaterials) _target.color = _disabledColor;
-        else if (_usingMaterials) _target.material = _disabledMat;
-
-        if (_isGroup) _group.alpha = _disabledAlpha;
-        if (_isGameObject) _obj.SetActive(_disabledState);
-        if (_isSprite) _spriteTarget.sprite = _disabledSprite;
-    }
-
 }
 
-public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
-{
-    [Header("Behavior")]
-    [SerializeField] private bool _selectOnClick = true;
-    [SerializeField, ConditionalField(nameof(_selectOnClick))] private bool _toggleOnClick;
-    [SerializeField, ConditionalField(nameof(_toggleOnClick))] private bool _deselectOnClick = false;
-    [SerializeField] private bool _dontHoverWhenSelected = false;
-    [SerializeField] private bool _selectOnHover;
-    [SerializeField, ConditionalField(nameof(_selectOnHover))] private bool _deselectOnExit = true;
+public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+{ 
+    [Header("Main")]
+    [SerializeField] private ClickBehavior _clickBehavior = ClickBehavior.SELECT;
+    [SerializeField, ConditionalField(nameof(_clickBehavior), true, false, ClickBehavior.NONE)] private bool _selectOnMouseDown = false;
+
+    [Header("Hover")]
+    [SerializeField] private ClickBehavior _hoverBehavior = ClickBehavior.NONE;
     [SerializeField] private bool _hasHoverCooldown;
     [SerializeField, ConditionalField(nameof(_hasHoverCooldown))] private float _hoverCooldown = 0.05f;
-    [SerializeField] private bool _deselectOnStart = true;
-    [SerializeField] private bool _autoDehover = true;
+    [SerializeField] private bool _hoverWhenSelected = true;
 
-    [Header("data")]
+    [Header("Appearance")]
     [SerializeField] private List<SelectableItemData> _data = new List<SelectableItemData>();
+
+    [Header("Animation")]
     [SerializeField] private bool _hasAnimation;
     [SerializeField, ConditionalField(nameof(_hasAnimation))] private Animator _animator;
-    [SerializeField, ConditionalField(nameof(_hasAnimation))] private string _animationBool = "Selected";
+    [SerializeField, ConditionalField(nameof(_hasAnimation))] private string _animationSelectedBool = "Selected";
+    [SerializeField, ConditionalField(nameof(_hasAnimation))] private string _animationHoveredBool = "Hovered";
+    [SerializeField, ConditionalField(nameof(_hasAnimation))] private string _animationDisabledBool = "Disabled";
 
     [Header("Sounds")]
     [SerializeField] private Sound _hoverSound;
+    [SerializeField] private Sound _mouseDownSound;
     [SerializeField] private Sound _selectSound;
     [SerializeField] private Sound _deselectSound;
 
@@ -193,146 +170,183 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public UnityEvent OnDeselect;
 
     [Header("Debug")]
-    [SerializeField] private bool _printSelections;
-    [SerializeField, ReadOnly] private bool _disabled;
+    [SerializeField] private bool _debugStateChange;
+
+    private ButtonState _visualState = ButtonState.NORMAL;
+    private float _hoverDisabledTimeLeft;
+    private bool _disabled;
+    private bool _hovered;
+    private bool _clickedDown;
 
     public bool Selected { get; private set; }
-    public bool Hovered { get; private set; }
-    public bool Disabled { get; private set; }
-
-    private float _lastHoverTime = 0;
-    private bool _hasBeenSelected;
 
     private void OnValidate()
     {
-        foreach (var d in _data) d.OnValidate();
-        foreach (var d in _data) d.Update(false, false, false);
+        ValidateAll();
+        foreach (var d in _data) d.Update(ButtonState.NORMAL);
+    }
+
+    private void OnEnable()
+    {
+        ValidateAll();
     }
 
     private void Start()
     {
-        if (_hoverSound) _hoverSound = Instantiate(_hoverSound);
-        if (_selectSound) _selectSound = Instantiate(_selectSound);
-        if (_deselectSound) _deselectSound = Instantiate(_deselectSound);
-
-        //Disabled = false;
-        if (_deselectOnStart && !_hasBeenSelected) Deselect();
+        InitializeSounds();
+        ValidateAll();
+        SetVisuals(_visualState);
     }
 
     private void Update()
     {
-        _disabled = Disabled;
-    }
-
-    [ButtonMethod]
-    private void printTest()
-    {
-        print("buttonStatus: seleted: " + Selected + ", hovered: " + Hovered + ", disabled: " + Disabled);
-    }
-
-    [ButtonMethod]
-    private void SetNormal()
-    {
-        foreach (var d in _data) d.Update(false, false, false);
-#if UNITY_EDITOR
-        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
-#endif
-    }
-
-    public void ToggleSelected()
-    {
-        if (Disabled) return;
-        Selected = !Selected;
-        UpdateVisuals();
-    }
-
-    public void SelectSilent()
-    {
-        var sound = _selectSound;
-        _selectSound = null;
-        Select();
-        _selectSound = sound;
-    }
-
-    public void Select()
-    {
-        _hasBeenSelected = true;
-        if (_printSelections) print(gameObject.name + " selected");
-        if (_selectSound && _selectSound.Instantialized) _selectSound.Play(); 
-        SetState(true);
-        OnSelect.Invoke();
-    }
-    public void Deselect()
-    {
-        if (_printSelections) print(gameObject.name + " deselected");
-        OnDeselect.Invoke();
-        if (_deselectSound) _deselectSound.Play();
-        SetState(false);
-    }
-
-    public void SetState(bool selected)
-    {
-        if (Disabled) return;
-        Selected = selected;
-        if (_autoDehover) Hovered = false;
-        UpdateVisuals();
-    }
-
-    public void SetEnabled(bool enabled)
-    {
-        //print(gameObject.name + " setting enab    xled: " + enabled);
-        Disabled = !enabled;
-        UpdateVisuals();
-    }
-
-    private void UpdateVisuals()
-    {
-        foreach (var d in _data) d.Update(Selected, Hovered, Disabled);
-        if (_animator) _animator.SetBool(_animationBool, Selected);
+        _hoverDisabledTimeLeft -= Time.deltaTime;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (Disabled) return;
-        if (Selected && (!_toggleOnClick || !_deselectOnClick)) return;
-        if (Selected && _dontHoverWhenSelected) return;
-        OnHover.Invoke();
+        if (_disabled) return;
+        if (Selected && !_hoverWhenSelected) return;
+        if (_hasHoverCooldown && _hoverDisabledTimeLeft > 0)return;
 
-        if (_hasHoverCooldown) {
-            var timeSinceLastHover = Time.time - _lastHoverTime;
-            if (timeSinceLastHover < _hoverCooldown) return;
-            _lastHoverTime = Time.time;
-        }
+        _clickedDown = false;
 
-        Hovered = true;
-        if (_hoverSound) _hoverSound.Play();
-        if (_selectOnHover) Select();
-        else UpdateVisuals();
+        StartHover();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (Disabled) return;
-        if (Hovered) OnEndHover.Invoke();
-
-        Hovered = false;
-        if (_selectOnHover && _deselectOnExit) Deselect();
-        else UpdateVisuals();
+        if (_disabled) return;
+        if (_hovered) EndHover();
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!Input.GetMouseButton(0)) return;
+        if (_disabled) return;
 
-        if (Disabled) return;
-        if (Selected && _toggleOnClick && _deselectOnClick) {
-            Deselect();
-            return;
+        if (_clickBehavior == ClickBehavior.SELECT) SetVisuals(ButtonState.SELECTED);
+        else if (_clickBehavior == ClickBehavior.TOGGLE) {
+            if (_visualState != ButtonState.SELECTED) SetVisuals(ButtonState.SELECTED);
+            else SetVisuals(ButtonState.NORMAL);
         }
 
-        if (_selectOnClick && !Selected) {
+        if (_mouseDownSound) _mouseDownSound.Play();
+        _clickedDown = true;
+
+        if (_selectOnMouseDown) CompleteSelection();
+    }
+
+    public void OnPointerUp(PointerEventData eventData) => CompleteSelection();
+
+    private void CompleteSelection()
+    {
+        if (_disabled || !_clickedDown) return;
+        _clickedDown = false;
+
+        if (_clickBehavior == ClickBehavior.SELECT) {
             Select();
-            if (!_toggleOnClick) Deselect();
+            Deselect(true);
+        }
+        else if (_clickBehavior == ClickBehavior.TOGGLE) ToggleSelected();
+
+        if (_hovered && _hoverWhenSelected) SetVisuals(ButtonState.HOVERED);
+    }
+
+    public void SetDisabled(bool disabled)
+    {
+        if (_disabled == disabled) return;
+
+        _disabled = disabled;
+        if (disabled) SetVisuals(ButtonState.DISABLED);
+        else {
+            if (_hovered) SetVisuals(ButtonState.HOVERED);
+            else SetVisuals(ButtonState.NORMAL);
         }
     }
+
+    private void ValidateAll()
+    {
+        foreach (var d in _data) d.OnValidate();
+    }
+
+    private void InitializeSounds()
+    {
+        if (_hoverSound) _hoverSound = Instantiate(_hoverSound);
+        if (_selectSound) _selectSound = Instantiate(_selectSound);
+        if (_mouseDownSound) _mouseDownSound = Instantiate(_mouseDownSound);
+        if (_deselectSound) _deselectSound = Instantiate(_deselectSound);
+    }
+
+    public void ToggleSelected()
+    {
+        if (_disabled) return;
+        if (Selected) Deselect();
+        else Select();
+    }
+
+    public void Select(bool silent = false, bool triggerEvent = true)
+    {   
+        Selected = true;
+        if (_debugStateChange) print(gameObject.name + " selected");
+        if (!silent && _selectSound && _selectSound.Instantialized) _selectSound.Play();
+
+        if (triggerEvent) OnSelect.Invoke();
+        SetVisuals(ButtonState.SELECTED);
+    }
+
+    public void Deselect(bool silent = false, bool triggerEvent = true)
+    {
+        if (!Selected) return;
+
+        Selected = false;
+        if (_debugStateChange) print(gameObject.name + " deselected");
+        if (_deselectSound && !silent) _deselectSound.Play();
+
+        if (triggerEvent) OnDeselect.Invoke();
+        if (_hovered) SetVisuals(ButtonState.HOVERED);
+        else SetVisuals(ButtonState.NORMAL);
+    }
+
+    private void StartHover()
+    {
+        _hovered = true;
+
+        if (_debugStateChange) print(gameObject.name + " hovered");
+        if (_hoverSound) _hoverSound.Play();
+        if (_hoverBehavior == ClickBehavior.SELECT) Select();
+        else if (_hoverBehavior == ClickBehavior.TOGGLE) ToggleSelected();
+        else {
+            OnHover.Invoke();
+            SetVisuals(ButtonState.HOVERED);
+        }
+    }
+
+    private void EndHover()
+    {
+        _hovered = false;
+        if (_hasHoverCooldown) _hoverDisabledTimeLeft = _hoverCooldown;
+        if (_debugStateChange) print(gameObject.name + " end hover");
+
+        OnEndHover.Invoke();
+        if (Selected) SetVisuals(ButtonState.SELECTED);
+        else SetVisuals(ButtonState.NORMAL);
+    }
+
+    public void SetVisuals(ButtonState state)
+    {
+        if (_debugStateChange) print("Changing visuals: " + state);
+
+        _visualState = state;
+        foreach (var d in _data) d.Update(_visualState);
+        UpdateAnimator();
+    }
+
+    private void UpdateAnimator()
+    {
+        if (!_hasAnimation) return;
+        _animator.SetBool(_animationSelectedBool, _visualState == ButtonState.SELECTED);
+        _animator.SetBool(_animationHoveredBool, _visualState == ButtonState.HOVERED);
+        _animator.SetBool(_animationDisabledBool, _visualState == ButtonState.DISABLED);
+    }
+
 }

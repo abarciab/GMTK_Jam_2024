@@ -45,8 +45,7 @@ public class GameManager : MonoBehaviour
     private float _playerY => Player.transform.position.y;  
     private float _playerTowerProgress => _currentTower == null ? 0 : _currentTower.CheckProgress(_playerY);
     public float GetStartTime(int ID) => _towerTimes[ID] * _towerStartTimeGap;
-    public void OpenMenu() { MenusOpen += 1; print("Opened menu"); }
-    public void CloseMenu() { MenusOpen -= 1; print("Closed menu"); }
+    public void AddSingleCharge() => AddCharge();
 
     private void Awake()
     {
@@ -79,9 +78,17 @@ public class GameManager : MonoBehaviour
             StartCoroutine(FadeThenLoadScene(1));
         }
     }
+    public void OpenMenu(bool showMouse = false)
+    {
+        if (showMouse) SetMouseState(true);
+        MenusOpen += 1;
+    }
 
-
-    public void AddSingleCharge() => AddCharge();
+    public void CloseMenu(bool hideMouse = true)
+    {
+        if (hideMouse) SetMouseState(false);
+        MenusOpen -= 1;
+    }
 
     public void AddCharge(int count = 1)
     {

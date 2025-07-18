@@ -43,7 +43,7 @@ public class SettingsController : MonoBehaviour
         await Task.Delay(100);
         foreach (var button in _tabButtons) button.Deselect();
         for (int i = 0; i < _sections.Count; i++) {
-            if (_sections[i].activeInHierarchy) _tabButtons[i].SelectSilent();
+            if (_sections[i].activeInHierarchy) _tabButtons[i].Select(true);
         }
     }
 

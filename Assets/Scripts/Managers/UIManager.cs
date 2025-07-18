@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _timerText;
 
     [Header("Misc")]
-    public DialogueController _dialogue;
+    public DialogueController Dialogue;
     [SerializeField] private GameObject _interactPrompt;
     [SerializeField] private TextMeshProUGUI _interactText;
     [SerializeField] private GameObject _blackBlocker;
@@ -37,6 +37,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private float _maxPOIDist = 150;
 
     [Header("SubScripts")]
+    [SerializeField] private JournalController _journal;
     [SerializeField] private TowerStatusUI _towerIndicator;
     [SerializeField] private CurrentTowerUI _currentTowerDisplay;
     [SerializeField] private HUDController _hud;
@@ -46,6 +47,7 @@ public class UIManager : MonoBehaviour
 
     private List<(Transform, Sprite)> pointsOfInterest = new List<(Transform, Sprite)>();
 
+    public JournalController Journal => _journal; 
     public TowerStatusUI TowerIndicator => _towerIndicator; 
     public CurrentTowerUI CurrentTower => _currentTowerDisplay;
     public HUDController HUD => _hud;
@@ -70,6 +72,9 @@ public class UIManager : MonoBehaviour
             bool detailed = !_detailedInterest.activeInHierarchy;
             _detailedInterest.SetActive(detailed);
             _simpleInterest.SetActive(!detailed);
+        }
+        if (InputController.GetDown(Control.OPEN_JOURNAL)) {
+            _journal.Toggle();
         }
         _crosshairImg.SetBool("Glide", GameManager.i.Player.CanGlide || GameManager.i.Player.IsGliding);
     }

@@ -30,7 +30,7 @@ public class TutorialMentor : MonoBehaviour
 
     private void Update()
     {
-        if (UIManager.i._dialogue.gameObject.activeInHierarchy) return;
+        if (UIManager.i.Dialogue.Talking) return;
 
         var dist = Vector3.Distance(transform.position, _player.position);
         UIManager.i.SetInteractPromptState(dist < _activationDistance, gameObject, "Read");
@@ -40,7 +40,7 @@ public class TutorialMentor : MonoBehaviour
 
     private void Activate()
     {
-        UIManager.i._dialogue.StartDialogue(_lines);
+        UIManager.i.Dialogue.StartDialogue(_lines);
         UIManager.i.SetInteractPromptState(false, gameObject);
     }
 

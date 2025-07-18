@@ -12,6 +12,6 @@ public class Test : MonoBehaviour
     [ButtonMethod]
     private void startConversation()
     {
-        UIManager.i._dialogue.StartDialogue(lines);
+        UIManager.i.Dialogue.StartDialogue(lines);
     }
 }

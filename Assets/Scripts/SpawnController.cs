@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SpawnLocation { StartGame, StartCity, EndTutorial, StartTowers, Testing}
+public enum SpawnLocation { StartGame, StartCity, EndTutorial, StartTowers, Testing, Fire, Water, Earth, Air}
 
 [System.Serializable]
 public class RespawnData

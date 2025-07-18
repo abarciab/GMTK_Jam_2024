@@ -16,7 +16,7 @@ public class Lever : MonoBehaviour
         if (!GameManager.i) return;
         if (!_player) _player = GameManager.i.Player.transform;
 
-        if (UIManager.i._dialogue.gameObject.activeInHierarchy) return;
+        if (UIManager.i.Dialogue.gameObject.activeInHierarchy) return;
 
         var dist = Vector3.Distance(transform.position, _player.position);
         UIManager.i.SetInteractPromptState(dist < _activationDistance, gameObject, "pull");
