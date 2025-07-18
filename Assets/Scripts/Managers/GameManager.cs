@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public PlayerController Player;
     [HideInInspector] public Vector3 MiddlePoint;
+    [HideInInspector] public bool CountingDownTowerStart = true;
 
     private float _highScore;
     private TowerController _currentTower;
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
     private List<Transform> _respawnPoints = new List<Transform>();
     private List<float> _towerTimes = new List<float>();
 
-    public float TowerStartTimeLeft => _towerStartTime;
+    public float TowerStartTimeLeft => CountingDownTowerStart ? _towerStartTime : 0;
     public int MenusOpen { get; private set; }
     public int WindCharges { get; private set; }
     public List<TowerController> Towers { get; private set; } = new List<TowerController>();
@@ -65,7 +66,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (_towerStartTime > 0) { 
+        if (CountingDownTowerStart && _towerStartTime > 0) { 
             _towerStartTime -= Time.deltaTime;
             if (_towerStartTime <= 0) {
                 UIManager.i.ShowUITutorial();

@@ -9,10 +9,8 @@ public class TowerCountdownUI : MonoBehaviour
 
     public void UpdateTime(float secondsLeft)
     {
-        if (secondsLeft <= 0) {
-            gameObject.SetActive(false);
-            return;
-        }
+        gameObject.SetActive(secondsLeft > 0);
+        if (secondsLeft <= 0) return;
 
         var minutes = Mathf.Floor(secondsLeft / 60);
         secondsLeft %= 60;

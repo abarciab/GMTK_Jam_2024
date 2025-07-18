@@ -18,4 +18,11 @@ public static class Utils
 #endif
     }
 
+    public static float XZDistance(Vector3 pos1, Vector3 pos2)
+    {
+        var pos1XZ = new Vector2(pos1.x, pos1.z);
+        var pos2XZ = new Vector2(pos2.x, pos2.z);
+        return Vector2.Distance(pos1XZ, pos2XZ);
+    }
+
 }
