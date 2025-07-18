@@ -2,11 +2,8 @@ using MyBox;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Diagnostics;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(InputController))]
@@ -14,22 +11,23 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager i;
 
-    public Transform Camera;
+    [Header("Tower parameters")]
     public float TowerStunTime = 30;
     public float AbandonedTowerTimer = 45;
-    [SerializeField] private float _abandonRecoveryStunTime = 30;
-
-    [SerializeField] private int _totalTowerCount = 4;
-
-    [SerializeField] pauseMenuController _pauseMenu;
-    [SerializeField] Fade _fade;
-    [SerializeField] MusicPlayer _music;
-    [SerializeField] private GameObject _windChargePrefab;
     [SerializeField] private float _towerStartTimeGap;
+    [SerializeField] private float _abandonRecoveryStunTime = 30;
+    [SerializeField] private int _totalTowerCount = 4;
+    [SerializeField] private float _towerStartTime = 120; 
+
+    [Header("References")]
+    public Transform Camera;
+    [SerializeField] private pauseMenuController _pauseMenu;
+    [SerializeField] private Fade _fade;
+    [SerializeField] private MusicPlayer _music;
+    [SerializeField] private GameObject _windChargePrefab;
 
     [HideInInspector] public PlayerController Player;
     [HideInInspector] public Vector3 MiddlePoint;
-    [HideInInspector] public int MenusOpen { get; private set; }
 
     private float _highScore;
     private TowerController _currentTower;
@@ -40,6 +38,8 @@ public class GameManager : MonoBehaviour
     private List<Transform> _respawnPoints = new List<Transform>();
     private List<float> _towerTimes = new List<float>();
 
+    public float TowerStartTimeLeft => _towerStartTime;
+    public int MenusOpen { get; private set; }
     public int WindCharges { get; private set; }
     public List<TowerController> Towers { get; private set; } = new List<TowerController>();
     private float _playerY => Player.transform.position.y;  
@@ -65,6 +65,14 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (_towerStartTime > 0) { 
+            _towerStartTime -= Time.deltaTime;
+            if (_towerStartTime <= 0) {
+                UIManager.i.ShowUITutorial();
+                //StartTowersGrowing();
+            }
+        }
+
         if (MenusOpen <= 0 && Input.GetMouseButtonDown(0) && Time.timeScale > 0) SetMouseState(false);
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
 
@@ -150,6 +158,8 @@ public class GameManager : MonoBehaviour
 
     public void StartTowersGrowing()
     {
+        _towerStartTime = 0;
+
         _startedGame = true;
         Settings.CompletedTutorial = true;
         foreach (var t in Towers) t.StartGrowing();

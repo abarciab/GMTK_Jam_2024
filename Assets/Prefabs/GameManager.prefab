@@ -1,5 +1,50 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &264569898064882802
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8778138351312686455}
+  - component: {fileID: 3983790471992374900}
+  m_Layer: 0
+  m_Name: ConditionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8778138351312686455
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264569898064882802}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4689747702072972079}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3983790471992374900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264569898064882802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 115fa6e3877da9448b1990877add6509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _conditions: []
 --- !u!1 &2645981787316093988
 GameObject:
   m_ObjectHideFlags: 0
@@ -11,6 +56,7 @@ GameObject:
   - component: {fileID: 4689747702072972079}
   - component: {fileID: 7732473814443129502}
   - component: {fileID: 3152263444425945685}
+  - component: {fileID: 7230168331042786690}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -33,6 +79,7 @@ Transform:
   m_Children:
   - {fileID: 1926439518413088785}
   - {fileID: 3835954944680784367}
+  - {fileID: 8778138351312686455}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7732473814443129502
@@ -48,13 +95,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Camera: {fileID: 0}
+  TowerStunTime: 45
+  AbandonedTowerTimer: 35
+  _abandonRecoveryStunTime: 30
   _totalTowerCount: 4
   _pauseMenu: {fileID: 0}
   _fade: {fileID: 0}
   _music: {fileID: 988911364681260916}
-  _growthSpeed: 0.002
+  _windChargePrefab: {fileID: 5889050987138818885, guid: e0c10cba5ec5dd244b436d1d2f354f6e, type: 3}
+  _towerStartTimeGap: 1
   Player: {fileID: 0}
-  Towers: []
+  MiddlePoint: {x: 0, y: 0, z: 0}
 --- !u!114 &3152263444425945685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,6 +119,47 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: 3b6b64c547688e44dbf6b25c250a2989, type: 2}
+--- !u!114 &7230168331042786690
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2645981787316093988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baa62708a52eecb4f99fe6e4c1ee2485, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _selected: 4
+  _spawnPoints:
+  - Name: StartGame
+    Type: 0
+    SpawnParent: {fileID: 0}
+  - Name: StartCity
+    Type: 1
+    SpawnParent: {fileID: 0}
+  - Name: EndTutorial
+    Type: 2
+    SpawnParent: {fileID: 0}
+  - Name: StartTowers
+    Type: 3
+    SpawnParent: {fileID: 0}
+  - Name: Testing
+    Type: 4
+    SpawnParent: {fileID: 0}
+  - Name: Fire
+    Type: 5
+    SpawnParent: {fileID: 0}
+  - Name: Water
+    Type: 6
+    SpawnParent: {fileID: 0}
+  - Name: Earth
+    Type: 7
+    SpawnParent: {fileID: 0}
+  - Name: Air
+    Type: 8
+    SpawnParent: {fileID: 0}
 --- !u!1 &3077240813515125109
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,11 +291,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4a03c4e32066fe4d975a943ec7f7434, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMusic: {fileID: 11400000, guid: ffa2817c886bfef4fbed5061af9c81d9, type: 2}
+  mainMusics:
+  - {fileID: 11400000, guid: ffa2817c886bfef4fbed5061af9c81d9, type: 2}
+  - {fileID: 11400000, guid: 134c4008ee0ebd142aa0aad2f3a4e6a6, type: 2}
+  - {fileID: 11400000, guid: 7aad9306eb182d040ab7df42899beaae, type: 2}
+  - {fileID: 11400000, guid: 66a6c7f8b3586554ca69fee5765b039d, type: 2}
+  - {fileID: 11400000, guid: 2ffa5725370d80f46b85e6f242cf4321, type: 2}
   altMusic: {fileID: 11400000, guid: 2f40e13e476edfa4e93376789c7e5396, type: 2}
   pauseMusic: {fileID: 11400000, guid: 41f86f40607ab3c40af7a495fa8dbf17, type: 2}
   ambientLoop: {fileID: 11400000, guid: 0571276f56b5f6440b169547da1eab38, type: 2}
   silenceWaitRange: {x: 1, y: 10}
   fadeIn: 1
   playAltMusic: 0
+  CurrentSong: 0
   ambientSounds: []

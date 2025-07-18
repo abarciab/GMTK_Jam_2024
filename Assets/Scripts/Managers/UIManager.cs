@@ -42,6 +42,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private CurrentTowerUI _currentTowerDisplay;
     [SerializeField] private HUDController _hud;
     [SerializeField] private TeleporterUIController _teleportUI;
+    [SerializeField] private TowerCountdownUI _countdownUI;
 
     private GameObject _promptSource;
 
@@ -67,6 +68,8 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        _countdownUI.UpdateTime(GameManager.i.TowerStartTimeLeft);
+
         _timerText.text = GetTimeString((int) Time.timeSinceLevelLoad);
         if (InputController.GetDown(Control.DETAILS)) {
             bool detailed = !_detailedInterest.activeInHierarchy;
