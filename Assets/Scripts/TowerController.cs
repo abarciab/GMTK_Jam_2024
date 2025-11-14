@@ -244,7 +244,7 @@ public class TowerController : MonoBehaviour
 
     public void SetColor(ColorPaletteData palette)
     {
-        print("setting color: " + palette.name);
+        //print("setting color: " + palette.name);
         foreach (var f in _floors) f.SetPalette(palette);
     }
 

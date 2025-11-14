@@ -74,7 +74,7 @@ public class PlayerRunWalkBehavior : MonoBehaviour
 
     public void BoostJump()
     {
-        Jump(boost: true);
+        Jump(true, boost: true);
     }
 
     private void ApplyGravity()
@@ -180,6 +180,9 @@ public class PlayerRunWalkBehavior : MonoBehaviour
         if (!overrideConditions) {
             float timeSinceLastJump = Time.time - _lastJumpTime;
             if (_numJumpsLeft <= 0) return;
+        }
+        else {
+            _numJumpsLeft = 1;
         }
 
         transform.SetParent(null);

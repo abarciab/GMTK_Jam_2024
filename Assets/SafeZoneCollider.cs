@@ -33,7 +33,7 @@ public class SafeZoneCollider : MonoBehaviour
     {
         if (Time.timeSinceLevelLoad < 0.5f) return;
         if (other.GetComponent<PlayerController>()) {
-            print("player entered" + gameObject.name);
+            //print("player entered" + gameObject.name);
             CheckDestroyAll();
             PlayerInside = true;
         }
@@ -51,7 +51,7 @@ public class SafeZoneCollider : MonoBehaviour
             var dist = Utils.XZDistance(transform.position, other.transform.position);
             if (dist < _collider.radius * 0.95) return;
 
-            print("player left" + gameObject.name);
+            //print("player left" + gameObject.name);
             PlayerInside = false;
             CheckDestroyAll();
         }

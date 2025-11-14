@@ -92,8 +92,9 @@ public class PlayerController : MonoBehaviour
 #endif
 
         if (_glideBehavior.enabled) _glideBehavior.Boost();
-        else if (_runWalkBehavior.IsCoyoteGrounded) _runWalkBehavior.BoostJump();
-        else return;
+        //else if (_runWalkBehavior.IsCoyoteGrounded) _runWalkBehavior.BoostJump();
+        else _runWalkBehavior.BoostJump();
+        //else return;
 
         GameManager.i.RemoveCharge();
         Sounds.Get(PlayerSoundKey.WIND_CHARGE).Play();
