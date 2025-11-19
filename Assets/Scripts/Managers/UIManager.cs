@@ -24,6 +24,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _deathScreen;
     [SerializeField] private GameObject _uiTutorial;
     [SerializeField] private Sound _deathSound;
+    [SerializeField] private InspectorUI _inspectorUI;
 
     [Header("crosshair")]
     [SerializeField] private Animator _crosshairImg;
@@ -48,6 +49,7 @@ public class UIManager : MonoBehaviour
 
     private List<(Transform, Sprite)> pointsOfInterest = new List<(Transform, Sprite)>();
 
+    public InspectorUI Inspector => _inspectorUI;
     public JournalController Journal => _journal; 
     public TowerStatusUI TowerIndicator => _towerIndicator; 
     public CurrentTowerUI CurrentTower => _currentTowerDisplay;

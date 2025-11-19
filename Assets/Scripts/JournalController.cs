@@ -2,12 +2,15 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+public enum JournalItemType { ITEM, CONVERSATION }
+
 [System.Serializable]
 public class JournalItem
 {
     public string Name;
     public Sprite Sprite;
     [TextArea(3, 10)] public string Content;
+    public JournalItemType Type = JournalItemType.ITEM;
 
     public override bool Equals(object obj)
     {
@@ -29,12 +32,27 @@ public class JournalController : MonoBehaviour
     [SerializeField] private GameObject _listItemPrefab;
     [SerializeField] private Transform _listParent;
     [SerializeField] private JournalSelectedItemDisplay _selectedDisplay;
+    [SerializeField] private GameObject _conversationParent;
+    [SerializeField] private GameObject _itemParent;
 
     private List<JournalItemListEntry> _spawnedEntries = new List<JournalItemListEntry>();
 
     private void OnEnable()
     {
-        BuildList();
+        ShowConversations();
+    }
+
+    public void ShowItems()
+    {
+        BuildList(_allItems.Where(x => x.Type == JournalItemType.ITEM).ToList());
+        _itemParent.SetActive(true);
+        _conversationParent.SetActive(false);
+    }
+    public void ShowConversations()
+    {
+        BuildList(_allItems.Where(x => x.Type == JournalItemType.ITEM).ToList());
+        _conversationParent.SetActive(true);
+        _itemParent.SetActive(false);
     }
 
     public void AddConversation(ConversationData conversation)
@@ -42,6 +60,7 @@ public class JournalController : MonoBehaviour
         var item = new JournalItem();
         var allLines = string.Join("\n", conversation.Lines.Select(x => x.Text));
         item.Content = allLines;
+        item.Type = JournalItemType.CONVERSATION;
 
         AddItem(item);
     }
@@ -74,12 +93,12 @@ public class JournalController : MonoBehaviour
         _selectedDisplay.DisplayItem(item);
     }
 
-    private void BuildList()
+    private void BuildList(List<JournalItem> itemsToShow)
     {
         foreach (var e in _spawnedEntries) Destroy(e.gameObject);
         _spawnedEntries.Clear();
 
-        foreach (var i in _allItems) SpawnEntry(i);
+        foreach (var i in itemsToShow) SpawnEntry(i);
     }
 
     private void SpawnEntry(JournalItem item)

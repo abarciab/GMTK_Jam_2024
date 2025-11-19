@@ -5,8 +5,6 @@ using UnityEngine.UI;
 using MyBox;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using Unity.VisualScripting;
-using System.Runtime.ExceptionServices;
 
 public enum SelectableItemDataType { GRAPHIC, GAMEOBJECT, CANVASGROUP, SPRITE}
 public enum ButtonState { NORMAL, HOVERED, SELECTED, DISABLED }
@@ -140,6 +138,7 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [Header("Main")]
     [SerializeField] private ClickBehavior _clickBehavior = ClickBehavior.SELECT;
     [SerializeField, ConditionalField(nameof(_clickBehavior), true, false, ClickBehavior.NONE)] private bool _selectOnMouseDown = false;
+    [SerializeField, ConditionalField(nameof(_clickBehavior), false, false, ClickBehavior.TOGGLE)] private bool _canToggleOff = true;
 
     [Header("Hover")]
     [SerializeField] private ClickBehavior _hoverBehavior = ClickBehavior.NONE;
@@ -227,7 +226,7 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (_clickBehavior == ClickBehavior.SELECT) SetVisuals(ButtonState.SELECTED);
         else if (_clickBehavior == ClickBehavior.TOGGLE) {
             if (_visualState != ButtonState.SELECTED) SetVisuals(ButtonState.SELECTED);
-            else SetVisuals(ButtonState.NORMAL);
+            else if (_canToggleOff) SetVisuals(ButtonState.NORMAL);
         }
 
         if (_mouseDownSound) _mouseDownSound.Play();
@@ -280,7 +279,7 @@ public class SelectableItem : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void ToggleSelected()
     {
         if (_disabled) return;
-        if (Selected) Deselect();
+        if (Selected && _canToggleOff) Deselect();
         else Select();
     }
 

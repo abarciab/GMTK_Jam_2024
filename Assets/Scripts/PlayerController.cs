@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public Rigidbody RB;
 
+    private Vector3 _noMenusPosition = new Vector3();
     private PlayerRunWalkBehavior _runWalkBehavior;
     private PlayerClimbBehavior _climbBehavior;
     private PlayerGlideBehavior _glideBehavior;
@@ -68,6 +69,13 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.i.MenusOpen <= 0) {
+            _noMenusPosition = transform.localPosition;
+        }
+        else {
+            transform.localPosition = _noMenusPosition;
+        }
+
         CheckStateTransitions();
         transform.SetLossyScale(Vector3.one);
         if (!_canGlideCurrent) _timeWhenCantGlide = Time.time;

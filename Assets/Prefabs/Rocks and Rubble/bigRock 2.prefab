@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4131762785283355728}
   - component: {fileID: 6307031996687322911}
   m_Layer: 0
-  m_Name: bigRock
+  m_Name: bigRock 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,7 +124,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 1fbb16592406fbb4e97009074afcf46a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 67a21e4e5dccfbd40909e1da154d4777, type: 2}
+      objectReference: {fileID: 2100000, guid: cdbb16ce2d05abc428c6f9c369e9f6e0, type: 2}
     - target: {fileID: 919132149155446097, guid: 1fbb16592406fbb4e97009074afcf46a, type: 3}
       propertyPath: m_Name
       value: model
@@ -138,7 +138,7 @@ PrefabInstance:
       addedObject: {fileID: 9043451099619909841}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1fbb16592406fbb4e97009074afcf46a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 9120878061341283751}
+      addedObject: {fileID: 5741351046139211339}
   m_SourcePrefab: {fileID: 100100000, guid: 1fbb16592406fbb4e97009074afcf46a, type: 3}
 --- !u!23 &2682173982610887453 stripped
 MeshRenderer:
@@ -174,7 +174,7 @@ LODGroup:
     renderers:
     - renderer: {fileID: 2682173982610887453}
   m_Enabled: 1
---- !u!64 &9120878061341283751
+--- !u!64 &5741351046139211339
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
