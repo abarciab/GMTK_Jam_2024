@@ -24,5 +24,4 @@ public static class Utils
         var pos2XZ = new Vector2(pos2.x, pos2.z);
         return Vector2.Distance(pos1XZ, pos2XZ);
     }
-
 }

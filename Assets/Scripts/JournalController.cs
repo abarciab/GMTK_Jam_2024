@@ -5,6 +5,23 @@ using System.Linq;
 public enum JournalItemType { ITEM, CONVERSATION }
 
 [System.Serializable]
+public class QuestObjective
+{
+    public string Name;
+    [TextArea(2, 2)] public string Description;
+    [TextArea(5, 10)] public string LongDescription;
+    [TextArea(5, 10)] public string Lore;
+}
+
+[System.Serializable]
+public class Quest
+{
+    public string Name;
+    public string Description;
+    public List<QuestObjective> Objectives = new();
+}
+
+[System.Serializable]
 public class JournalItem
 {
     public string Name;
@@ -33,26 +50,53 @@ public class JournalController : MonoBehaviour
     [SerializeField] private Transform _listParent;
     [SerializeField] private JournalSelectedItemDisplay _selectedDisplay;
     [SerializeField] private GameObject _conversationParent;
-    [SerializeField] private GameObject _itemParent;
+    [SerializeField] private JournalItemsUI _itemParent;
+    [SerializeField] private QuestUIController _questParent;
 
-    private List<JournalItemListEntry> _spawnedEntries = new List<JournalItemListEntry>();
+    [Header("Testing")]
+    [SerializeField] private List<Quest> _quests = new();
+
+    private List<JournalItemListEntry> _spawnedEntries = new();
+
+    private void Start()
+    {
+        ShowQuest();
+    }
 
     private void OnEnable()
     {
-        ShowConversations();
+        if (_questParent.gameObject.activeInHierarchy) ShowQuest();
+        if (_conversationParent.activeInHierarchy) ShowConversations();
+        if (_itemParent.gameObject.activeInHierarchy) ShowItems();
+        if (GameManager.i) GameManager.i.OpenMenu(true);
+        else gameObject.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        if (GameManager.i) GameManager.i.CloseMenu();
     }
 
     public void ShowItems()
     {
-        BuildList(_allItems.Where(x => x.Type == JournalItemType.ITEM).ToList());
-        _itemParent.SetActive(true);
+        var items = _allItems.Where(x => x.Type == JournalItemType.ITEM).ToList();
+        _itemParent.Initialize(items);
         _conversationParent.SetActive(false);
+        _questParent.gameObject.SetActive(false);
     }
     public void ShowConversations()
     {
-        BuildList(_allItems.Where(x => x.Type == JournalItemType.ITEM).ToList());
+        BuildList(_allItems.Where(x => x.Type == JournalItemType.CONVERSATION).ToList());
         _conversationParent.SetActive(true);
-        _itemParent.SetActive(false);
+        _itemParent.gameObject.SetActive(false);
+        _questParent.gameObject.SetActive(false);
+    }
+
+    public void ShowQuest()
+    {
+        _questParent.Initialize(_quests);
+        _itemParent.gameObject.SetActive(false);
+        _conversationParent.SetActive(false);
     }
 
     public void AddConversation(ConversationData conversation)

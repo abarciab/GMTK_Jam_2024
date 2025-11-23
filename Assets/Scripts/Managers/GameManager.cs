@@ -78,7 +78,8 @@ public class GameManager : MonoBehaviour
         if (InputController.GetDown(Control.PAUSE)) TogglePause();
 
 #if UNITY_EDITOR
-        if (InputController.GetDown(Control.DEBUG)) AddCharge(5);
+        if (Input.GetKeyDown(KeyCode.P)) LoseGame();
+        if (MenusOpen <= 0 && InputController.GetDown(Control.DEBUG)) AddCharge(5);
 #endif
 
         CalculateHighScore();
@@ -89,14 +90,15 @@ public class GameManager : MonoBehaviour
     }
     public void OpenMenu(bool showMouse = false)
     {
-        if (showMouse) SetMouseState(true);
         MenusOpen += 1;
+        if (showMouse) SetMouseState(true);
     }
 
     public void CloseMenu(bool hideMouse = true)
     {
-        if (hideMouse) SetMouseState(false);
         MenusOpen -= 1;
+        MenusOpen = Mathf.Max(0, MenusOpen);
+        if (hideMouse && MenusOpen <= 0) SetMouseState(false);
     }
 
     public void AddCharge(int count = 1)
@@ -248,6 +250,7 @@ public class GameManager : MonoBehaviour
 
     private void SetMouseState(bool visible)
     {
+        if (!visible && MenusOpen > 1) return;
         Cursor.lockState = visible ? CursorLockMode.Confined : CursorLockMode.Locked;
         Cursor.visible = visible;
     }
@@ -285,6 +288,8 @@ public class GameManager : MonoBehaviour
     public void LoseGame()
     {
         if (_lostGame) return;
+
+        SaveManager.i.SaveGame();
         _lostGame = true;
         UIManager.i.Die();
     }
@@ -306,8 +311,11 @@ public class GameManager : MonoBehaviour
         _music.FadeOutCurrent(_fade.FadeTime);
         yield return new WaitForSeconds(_fade.FadeTime + 0.5f);
         Destroy(AudioManager.i.gameObject);
+        Destroy(SaveManager.i);
         SetMouseState(true);
-        SceneManager.LoadScene(num);
+        Destroy(this);
+
+        SceneManager.LoadSceneAsync(num);
     }
 
 }

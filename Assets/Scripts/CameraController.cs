@@ -35,11 +35,15 @@ public class CameraController : MonoBehaviour
     private float _yOffset;
     [SerializeField, ReadOnly] private bool _cinematic;
 
+    public void SetCinematic(bool cinematic) => _cinematic = cinematic;
+
     public void SetOffset(float newOffset) => _yOffset = newOffset;
 
     void LateUpdate() {
         if (!_playerController) _playerController = GameManager.i.Player;
         if (_cinematic) return;
+
+
         if (_yOffset > 0.05f) _yOffset = Mathf.Lerp(_yOffset, 0, _yOffsetLerpFactor * Time.deltaTime);
         SetPosAndRotation();
         if (_playerController.IsGliding) SetGlideFov();

@@ -74,6 +74,7 @@ public class PlayerController : MonoBehaviour
         }
         else {
             transform.localPosition = _noMenusPosition;
+            return;
         }
 
         CheckStateTransitions();

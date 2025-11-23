@@ -8,6 +8,7 @@ public class MovePlayer : MonoBehaviour
 
     public void MovePlayerHere()
     {
+        print("moved player to " + gameObject.name);
         if (Settings.CompletedTutorial) return;
         GameManager.i.Player.transform.position = transform.position;
     }

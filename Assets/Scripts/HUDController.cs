@@ -9,6 +9,7 @@ public class HUDController : MonoBehaviour
     [SerializeField] private GameObject _checkpointUnlockedPopup;
     [SerializeField] private GameObject _harderTowersPopup;
     [SerializeField] private TextMeshProUGUI _windChargeCount;
+    [SerializeField] private TextMeshProUGUI _numAttempts;
     [SerializeField] private Animator _windChargeAnimator;
     private int _lastCount;
 
@@ -18,6 +19,7 @@ public class HUDController : MonoBehaviour
     private void Start()
     {
         ShowWindCharges(0);
+        _numAttempts.text = "Attempts: " + SaveManager.i.Data.NumAttempts;
     }
 
     public void ShowWindCharges(int count)

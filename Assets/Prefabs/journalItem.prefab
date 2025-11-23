@@ -160,6 +160,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1000280649287944335}
   - component: {fileID: 3723383971401336325}
+  - component: {fileID: 8761015108941884938}
   m_Layer: 5
   m_Name: journalItem
   m_TagString: Untagged
@@ -200,13 +201,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 778f443d7943602488af763cfbb99fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SelectableItem
-  _clickBehavior: 1
+  _clickBehavior: 2
   _selectOnMouseDown: 0
-  _canToggleOff: 1
+  _canToggleOff: 0
   _hoverBehavior: 0
   _hasHoverCooldown: 0
   _hoverCooldown: 0.05
-  _hoverWhenSelected: 1
+  _hoverWhenSelected: 0
   _data:
   - Name: backing
     _type: 0
@@ -256,7 +257,19 @@ MonoBehaviour:
   _deselectSound: {fileID: 0}
   OnSelect:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8761015108941884938}
+        m_TargetAssemblyTypeName: JournalInspectedItemUI, Assembly-CSharp
+        m_MethodName: Select
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnHover:
     m_PersistentCalls:
       m_Calls: []
@@ -267,3 +280,16 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _debugStateChange: 0
+--- !u!114 &8761015108941884938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8478406108173463877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7e0a7b357290294d8efb798ea4dd7a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  _image: {fileID: 5456356918089796546}

@@ -5,17 +5,32 @@ public class JournalItemsUI : MonoBehaviour
 {
     [SerializeField] private GameObject _itemPrefab;
     [SerializeField] private Transform _gridParent;
+    [SerializeField] private JournalInspectedItemDisplay _selectedItemDisplay;
+    [SerializeField] private SingleButtonSelector _buttonSelector;
 
-    private List<Transform> _spawnedItems = new List<Transform>();
+    private readonly List<Transform> _spawnedItems = new List<Transform>();
 
-    private void OnEnable()
+    public void Initialize(List<JournalItem> items)
     {
-        BuildList();
+        gameObject.SetActive(true);
+        BuildList(items);
     }
 
-    private void BuildList()
+    private void BuildList(List<JournalItem> items)
     {
-        foreach (var item in _spawnedItems) Destroy(item.gameObject);
+        _selectedItemDisplay.gameObject.SetActive(false);
+
+        foreach (var item in _spawnedItems) if (item) Destroy(item.gameObject);
+        _spawnedItems.Clear();
+
+        foreach (var i in items) {
+            var obj = Instantiate(_itemPrefab, _gridParent);
+            var ui = obj.GetComponent<JournalInspectedItemUI>();
+            ui.Initialize(i, _selectedItemDisplay);
+            _spawnedItems.Add(obj.transform);
+        }
+
+        _buttonSelector.Initialize(true);
 
     }
 }

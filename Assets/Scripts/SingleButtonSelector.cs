@@ -10,29 +10,24 @@ public class SingleButtonSelector : MonoBehaviour
     [SerializeField] private bool _selectOnEnable = false;
     [SerializeField, ConditionalField(nameof(_selectOnEnable))] private int _onEnableChildIndex = 0;
 
-    bool initialized = false;
+    bool _initialized = false;
 
     private void OnEnable()
     {
-        if (!initialized) Initialize();
-        if (_selectOnEnable && _buttons.Count > 0) _buttons[_onEnableChildIndex].Select(true, true); 
+        if (!_initialized) Initialize();
+        if (_selectOnEnable && _buttons.Count > 0) if (_buttons[_onEnableChildIndex] != null)_buttons[_onEnableChildIndex].Select(true, true); 
     }
 
-    private void Start()
+    public void Initialize(bool force = false)
     {
-        Initialize();
-    }
-
-    private void Initialize()
-    {
-        if (initialized) return;
+        if (_initialized && !force) return;
         _buttons = GetComponentsInChildren<SelectableItem>().ToList();
-        foreach (var b in _buttons) b.OnSelect.AddListener(() => DeselectOthers(b));
-        initialized = true;
+        foreach (var b in _buttons) if (b) b.OnSelect.AddListener(() => DeselectOthers(b));
+        _initialized = true;
     }
 
     private void DeselectOthers(SelectableItem selected)
     {
-        foreach (var b in _buttons) if (selected != b) b.Deselect();
+        foreach (var b in _buttons) if (b && selected != b) b.Deselect();
     }
 }
